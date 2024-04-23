@@ -7,22 +7,21 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 \*******************************************************************/
 
 #include "build_analyzer.h"
-
+#include <util/options.h>
+#include <goto-programs/goto_model.h>
 #include <analyses/ai.h>
 #include <analyses/call_stack_history.h>
 #include <analyses/constant_propagator.h>
 #include <analyses/dependence_graph.h>
 #include <analyses/interval_domain.h>
+#include <analyses/example_domain.h>
+#include <tvpi/tvpi.h>
 #include <analyses/local_control_flow_history.h>
 #include <analyses/variable-sensitivity/three_way_merge_abstract_interpreter.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_configuration.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_dependence_graph.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_domain.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_object_factory.h>
-
-#include <goto-programs/goto_model.h>
-
-#include <util/options.h>
 
 /// Ideally this should be a pure function of options.
 /// However at the moment some domains require the goto_model or parts of it
@@ -78,6 +77,26 @@ std::unique_ptr<ai_baset> build_analyzer(
       df = std::make_unique<variable_sensitivity_domain_factoryt>(
         vs_object_factory, vsd_config);
     }
+    else if(options.get_bool_option("example"))
+    {
+      // If you want to pass command line options to domains, you will
+      // need to replace ai_domain_factory_default_constructort with
+      // your own factory which inherits from
+      //  ai_domain_factoryt<example_domaint>
+      // and implements the ai_domain_factory_baset::make method
+      df = std::make_unique<ai_domain_factory_default_constructort<example_domaint>>();
+    }
+    
+    else if(options.get_bool_option("tvpi"))
+    {
+      // If you want to pass command line options to domains, you will
+      // need to replace ai_domain_factory_default_constructort with
+      // your own factory which inherits from
+      //  ai_domain_factoryt<example_domaint>
+      // and implements the ai_domain_factory_baset::make method
+      df = std::make_unique<ai_domain_factory_default_constructort<tvpi_domaint>>();
+    }
+    
     // non-null is not fully supported, despite the historical options
     // dependency-graph is quite heavily tied to the legacy-ait infrastructure
     // dependency-graph-vs is very similar to dependency-graph
@@ -140,6 +159,17 @@ std::unique_ptr<ai_baset> build_analyzer(
     {
       return std::make_unique<ait<interval_domaint>>();
     }
+    else if(options.get_bool_option("example"))
+    {
+      auto df = std::make_unique<ai_domain_factory_default_constructort<example_domaint>>();
+      return std::make_unique<ait<variable_sensitivity_domaint>>(std::move(df));
+    }
+    else if(options.get_bool_option("tvpi"))
+    {
+      auto df = std::make_unique<ai_domain_factory_default_constructort<tvpi_domaint>>();
+      return std::make_unique<ait<variable_sensitivity_domaint>>(std::move(df));
+    }
+    
 #if 0
     // Not actually implemented, despite the option...
     else if(options.get_bool_option("non-null"))

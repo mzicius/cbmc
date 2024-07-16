@@ -10,7 +10,7 @@ SRC = coordinate.cpp \
       complete.cpp \
       parser.cpp \
       vertex.cpp \
-      hull.cpp \
+      join.cpp \
       tvpi.cpp \
 
 OBJ += ../util/util$(LIBEXT) \

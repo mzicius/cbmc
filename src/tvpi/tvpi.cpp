@@ -2,7 +2,7 @@
 #include "tikz_printer.h"
 #include "smt_printer.h"
 #include <util/mp_arith.h>
-#include "hull.h"
+#include "join.h"
 #include "tvpi.h"
 #include <cstring>
 #include <cmath>

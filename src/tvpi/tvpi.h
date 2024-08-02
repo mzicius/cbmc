@@ -69,10 +69,12 @@ static void generate_u(std::string location,std::string dim, std::string constra
 private:
 static std::vector<std::shared_ptr<inequality>> sys;
 
+
 protected:
   // Domain state goes here
   // For now we will track which states may (an overapproximation) be reachable.
   bool may_reach;
+  static std::vector<symbol_exprt> labels;
 
 };
 

@@ -8,6 +8,7 @@
 #include <cmath>
 #include <fstream>
 #include <chrono>
+#include <algorithm>
 
 tvpi_domaint::tvpi_domaint()
 {
@@ -31,6 +32,8 @@ void tvpi_domaint::transform(
 {
   std::cerr << "TVPI domain @ 0x" << this << " transform using instruction "
             << from->current_location()->location_number << '\n';
+  
+  std::cout<<"size of labels: "<<labels.size()<<std::endl;
 
   // If e is an exprt (an expression) then
   //   std::cerr << e.pretty()
@@ -42,15 +45,18 @@ void tvpi_domaint::transform(
   this->may_reach = true;
 
   const goto_programt::instructiont &instruction = *(from->current_location());
+
   switch(instruction.type())
   {
     /** These are the instructions you actually need to implement **/
   case DECL:
     // Creates a new variable to_code_decl(instruction.code).symbol()
+    labels.push_back(to_code_decl(instruction.code()).symbol());  
     break;
 
   case DEAD:
     // Says that to_code_dead(instruction.code).symbol() is no longer needed
+    labels.erase(std::remove(labels.begin(),labels.end(),to_code_dead(instruction.code()).symbol()),labels.end());
     break;
 
   case ASSIGN:
@@ -177,6 +183,7 @@ void tvpi_domaint::output(
 }
 
 std::vector<std::shared_ptr<inequality>> tvpi_domaint::sys;
+std::vector<symbol_exprt> tvpi_domaint::labels;
 
 int tvpi_domaint::result_call;
 std::chrono::milliseconds tvpi_domaint::total_duration;

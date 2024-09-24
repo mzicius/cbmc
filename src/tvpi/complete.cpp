@@ -5,7 +5,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
-#include "tvpi.h"
+#include "tvpi_domaint.h"
 #include <fstream>
 #include <map>
 
@@ -25,8 +25,8 @@ int complete::modulo(int i, int l){
 
 void complete::closure(std::string in_dir, std::string out_dir){
 
-
-	tvpi_domaint::result_call = 0; 
+	//changed
+	//tvpi_domaint::result_call = 0; 
 
 	//std::cout<<in_dir<<std::endl;
 
@@ -39,7 +39,8 @@ void complete::closure(std::string in_dir, std::string out_dir){
 
 	std::ofstream output;
 	output.open(out_dir);
-	tvpi_domaint::input_sys_size = cs.size();
+	//to fix
+	//tvpi_domaint::input_sys_size = cs.size();
 
 	//detailed stats
     detailed_stats.open("../../test/detailed_stats.txt",std::ios_base::app);
@@ -72,12 +73,13 @@ void complete::closure(std::string in_dir, std::string out_dir){
 
 	//calculation of completion
 	vs = complete::inc_complete(vs,c0);
-
-	tvpi_domaint::output_sys_size = vs.size();
+	//to fix
+	//tvpi_domaint::output_sys_size = vs.size();
 
 	plot_inputs_results<<version_label<<","; 
 	plot_inputs_results<<item_id<<",";
-	plot_inputs_results<<tvpi_domaint::output_sys_size<<std::endl;
+	//to fix
+	//plot_inputs_results<<tvpi_domaint::output_sys_size<<std::endl;
 	item_id++;
 
 	//break if you get an unsat constant constraint
@@ -110,7 +112,8 @@ void complete::closure(std::string in_dir, std::string out_dir){
 	//std::cout<<"end of closure operation"<<std::endl;
 	
 	output.close();
-	detailed_stats<<"total result calls: "<<tvpi_domaint::result_call<<std::endl;
+	//changed
+	//detailed_stats<<"total result calls: "<<tvpi_domaint::result_call<<std::endl;
 	detailed_stats.close();
 	plot_inputs_results.close();
 	
@@ -360,7 +363,8 @@ std::vector<std::shared_ptr<inequality>> complete::result(std::shared_ptr<inequa
 	std::string x1, y1, x2, y2;
 
 	//register the result call
-	tvpi_domaint::result_call +=1; 
+	//changed
+	//tvpi_domaint::result_call +=1; 
 
 	if (std::dynamic_pointer_cast<unary_inequality>(i1)!=nullptr){
 		

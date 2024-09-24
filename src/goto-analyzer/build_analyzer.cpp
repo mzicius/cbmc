@@ -15,7 +15,7 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 #include <analyses/dependence_graph.h>
 #include <analyses/interval_domain.h>
 #include <analyses/example_domain.h>
-#include <tvpi/tvpi.h>
+#include <tvpi/tvpi_domaint.h>
 #include <analyses/local_control_flow_history.h>
 #include <analyses/variable-sensitivity/three_way_merge_abstract_interpreter.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_configuration.h>

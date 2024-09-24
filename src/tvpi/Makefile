@@ -11,7 +11,8 @@ SRC = coordinate.cpp \
       parser.cpp \
       vertex.cpp \
       join.cpp \
-      tvpi.cpp \
+      tvpi_domaint.cpp \
+      tvpi_systemt.cpp \
 
 OBJ += ../util/util$(LIBEXT) \
        ../big-int/big-int$(LIBEXT) \

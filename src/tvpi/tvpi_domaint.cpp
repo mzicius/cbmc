@@ -78,6 +78,7 @@ void tvpi_domaint::output(
 {
   //print binding
   out << "binding size: " << binding.size();
+  //TVPI constraints 
 }
 
 //Create a dimension in the TVPI-system that over-approximates
@@ -194,14 +195,15 @@ void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
     //since original tmp is a dimensiont (number)
     //sys.existential_projection(tmp);
     //sys is a tvpi system
-
+    //throw away 
     sys.existential_project(tmp);
+
   }
   else
   {
     binding.insert(std::make_pair(lhs, ev));
   }
-
+//make dimension 
   for(const std::string &t : temporaries)
   {
     sys.existential_project(t);
@@ -225,7 +227,8 @@ void tvpi_domaint::transform(
   std::cerr << "TVPI domain @ 0x" << this << " transform using instruction "
             << from->current_location()->location_number << '\n';
 
-  //std::cout<<"size of labels: "<<labels.size()<<std::endl;
+  //
+  //std::cerr<<"size of labels: "<<labels.size()<<std::endl;
 
   // If e is an exprt (an expression) then
   //   std::cerr << e.pretty()
@@ -242,6 +245,7 @@ void tvpi_domaint::transform(
     /** These are the instructions you actually need to implement **/
   case DECL:
     //Create new dimension and add to binding
+    //should move to system
     dimension_counter += 1;
     this->binding.insert(std::make_pair(
       to_code_decl(instruction.code()).symbol(), dimension_counter - 1));
@@ -249,6 +253,7 @@ void tvpi_domaint::transform(
 
   case DEAD:
     //Remove variable from binding and decrease the dimension_counter
+     //existential project 
     this->binding.erase(to_code_dead(instruction.code()).symbol());
     dimension_counter -= 1;
     break;
@@ -342,24 +347,69 @@ void tvpi_domaint::transform(
 
   return;
 }
-
+//trace_ptrt can be seen as location, will be used for widening 
 bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
-{
-  bool is_modified = false;
+{ 
 
+  std::cerr<<"entry"<<std::endl;
+  //b.binding;
   //check if both systems are not bottom
+  //too strict 
+  //empty {} can be top or empty 
+  //CASE 1 bottom return the other 
+  //Case 2 if one is top then result is top
+
+  //calculate merge when both are not top and not bottom
+  /*
   if(!this->is_bottom() && !b.is_bottom())
   {
-    std::vector<std::shared_ptr<inequality>> new_sys =
+  
+  }*/
+   // nothing to do
+   if(b.is_bottom()){
+    return false;
+    std::cerr<<"CASE 1"<<std::endl;
+   }
+
+     // just copy
+  if(this->is_bottom())
+  {
+    INVARIANT(!b.is_bottom(),"CASE HANDLED");
+    // copy
+    this->sys.constraints = b.sys.constraints;
+  std::cerr<<"CASE 2"<<std::endl;
+    return true;
+  }
+    
+  INVARIANT(!this->is_bottom() && !b.is_bottom(), "Case handled");
+
+
+  bool is_modified = false;
+  // handle top
+  if(b.is_top())
+  {
+
+
+    // change if it was not top
+    is_modified = !this->is_top();
+
+    make_top();
+    std::cerr<<"CASE 3"<<std::endl;
+    return is_modified;
+  }
+
+      std::vector<std::shared_ptr<inequality>> new_sys =
       join::calc_hull(this->sys.constraints, b.sys.constraints);
+
     //check if the new system is different
 
     if(new_sys != this->sys.constraints)
     {
       is_modified = true;
       this->sys.constraints = new_sys;
+      std::cerr<<"CASE 4"<<std::endl;
+      return is_modified;
     }
-  }
 
   return is_modified;
 }

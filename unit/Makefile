@@ -48,6 +48,7 @@ SRC += analyses/ai/ai.cpp \
        analyses/variable-sensitivity/value_set_pointer_abstract_object/to_predicate.cpp \
        analyses/variable-sensitivity/variable_sensitivity_domain/to_predicate.cpp \
        analyses/variable-sensitivity/variable_sensitivity_test_helpers.cpp \
+       analyses/tvpi_domain.cpp \
        ansi-c/expr2c.cpp \
        ansi-c/max_malloc_size.cpp \
        ansi-c/type2name.cpp \

@@ -78,16 +78,20 @@ void tvpi_domaint::output(
 {
   //print binding
   out << "binding size: " << binding.size();
-  //TVPI constraints 
+  //TVPI constraints
 }
 
 //Create a dimension in the TVPI-system that over-approximates
 //the value of an expression.
-tvpi_systemt::dimensiont
-tvpi_domaint::eval(exprt e, std::vector<std::string> &temporaries)
+tvpi_systemt::dimensiont eval(exprt e, std::vector<tvpi_systemt::dimensiont> &temporaries)
 {
+  if(e.type().id()== ID_equal)
+  {
+
+  }
   if(e.type().id() == ID_symbol)
   {
+
   }
   else if(e.type().id() == ID_constant)
   {
@@ -113,8 +117,9 @@ void tvpi_domaint::assume(exprt e)
 {
   // Can only assume logical conditions
   PRECONDITION(e.type().id() == ID_bool);
+
   // May need to add some extra dimensions..
-  std::vector<std::string> temporaries;
+  std::vector<tvpi_systemt::dimensiont> temporaries;
 
   if(e.type().id() == ID_equal)
   {
@@ -124,13 +129,16 @@ void tvpi_domaint::assume(exprt e)
     tvpi_systemt::dimensiont l = eval(to_index_expr(e).op0(), temporaries);
     tvpi_systemt::dimensiont r = eval(to_index_expr(e).op1(), temporaries);
 
-    // Link the two!
-    //sys.add_inequality( 1, l, -1, r, 0);
-    //sys.add_inequality(-1, l,  1, r, 0);
+    std::string label_l, label_r;
+    label_l  =  "d" + integer2string(l);
+    label_r  = "d" + integer2string(r);
+
+    sys.add_inequality( 1, label_l, -1, label_r, 0);
+    sys.add_inequality(-1, label_l,  1, label_r, 0);
   }
   if(e.type().id() == ID_le)
   {
-    //tvpi_domaint::dimensiont l = eval(e.left(), temporaries);
+    // tvpi_systemt::dimensiont l = eval(less_equal_zero, temporaries);
     //tvpi_domaint::dimensiont r = eval(e.right(), temporaries);
     // Link the two!
     //s.add_inequality( 1, l, -1, r, 0);
@@ -146,8 +154,8 @@ void tvpi_domaint::assume(exprt e)
 
   if(e.type().id() == ID_and)
   {
-    //assume(e.left());
-    //assume(r.right());
+    assume(to_and_expr(e).op0());
+    assume(to_and_expr(e).op1());
   }
   if(e.type().id() == ID_or)
   {
@@ -176,35 +184,24 @@ for (const auto &t : temporaries) {
 // that over-approximates e
 void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 {
-  //old temporaries must be a mistake
-  //std::vector<tvpi_systemt::dimensiont> temporaries;
-
-  std::vector<std::string> temporaries;
+  std::vector<tvpi_systemt::dimensiont> temporaries;
   tvpi_systemt::dimensiont ev = eval(e, temporaries);
 
   //search for mapping
   auto mapping_it = binding.find(lhs);
   if(mapping_it != binding.end())
   {
-    //tvpi_systemt::dimensiont tmp = binding[lhs];
-
+  
     binding.insert(std::make_pair(lhs, ev));
-    std::string tmp = lhs.id_string();
-
-    //original version must be wrong
-    //since original tmp is a dimensiont (number)
-    //sys.existential_projection(tmp);
-    //sys is a tvpi system
-    //throw away 
+    tvpi_systemt::dimensiont tmp = binding[lhs];
     sys.existential_project(tmp);
-
   }
   else
   {
     binding.insert(std::make_pair(lhs, ev));
   }
-//make dimension 
-  for(const std::string &t : temporaries)
+
+  for(const mp_integer &t : temporaries)
   {
     sys.existential_project(t);
   }
@@ -245,15 +242,15 @@ void tvpi_domaint::transform(
     /** These are the instructions you actually need to implement **/
   case DECL:
     //Create new dimension and add to binding
-    //should move to system
-    dimension_counter += 1;
+    this->sys.add_new_dimension();
     this->binding.insert(std::make_pair(
-      to_code_decl(instruction.code()).symbol(), dimension_counter - 1));
+    to_code_decl(instruction.code()).symbol(), dimension_counter - 1));
     break;
 
   case DEAD:
     //Remove variable from binding and decrease the dimension_counter
-     //existential project 
+    //existential project
+    this->sys.existential_project(this->binding[to_code_dead(instruction.code()).symbol()]);
     this->binding.erase(to_code_dead(instruction.code()).symbol());
     dimension_counter -= 1;
     break;
@@ -308,6 +305,7 @@ void tvpi_domaint::transform(
   case ASSUME:
     // It is safe to over-approximate these by ... ignoring them!
     //ASSUME allows to restrict the
+    assume(instruction.code());
     break;
 
     /** These are instructions you really can ignore **/
@@ -347,69 +345,52 @@ void tvpi_domaint::transform(
 
   return;
 }
-//trace_ptrt can be seen as location, will be used for widening 
+//trace_ptrt can be seen as location, will be used for widening
 bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
-{ 
+{
+  std::cerr << "CASE 0: ENTRY" << std::endl;
 
-  std::cerr<<"entry"<<std::endl;
-  //b.binding;
-  //check if both systems are not bottom
-  //too strict 
-  //empty {} can be top or empty 
-  //CASE 1 bottom return the other 
-  //Case 2 if one is top then result is top
-
-  //calculate merge when both are not top and not bottom
-  /*
-  if(!this->is_bottom() && !b.is_bottom())
+  if(b.is_bottom())
   {
-  
-  }*/
-   // nothing to do
-   if(b.is_bottom()){
     return false;
-    std::cerr<<"CASE 1"<<std::endl;
-   }
+    std::cerr << "CASE 1: B IS BOTTOM" << std::endl;
+  }
 
-     // just copy
   if(this->is_bottom())
   {
-    INVARIANT(!b.is_bottom(),"CASE HANDLED");
+    INVARIANT(!b.is_bottom(), "CASE HANDLED");
     // copy
     this->sys.constraints = b.sys.constraints;
-  std::cerr<<"CASE 2"<<std::endl;
+    std::cerr << "CASE 2: A is BOTTOM" << std::endl;
     return true;
   }
-    
-  INVARIANT(!this->is_bottom() && !b.is_bottom(), "Case handled");
 
+  INVARIANT(!this->is_bottom() && !b.is_bottom(), "Case handled");
 
   bool is_modified = false;
   // handle top
   if(b.is_top())
   {
-
-
     // change if it was not top
     is_modified = !this->is_top();
 
     make_top();
-    std::cerr<<"CASE 3"<<std::endl;
+    std::cerr << "CASE 3: B IS TOP" << std::endl;
     return is_modified;
   }
 
-      std::vector<std::shared_ptr<inequality>> new_sys =
-      join::calc_hull(this->sys.constraints, b.sys.constraints);
+  std::vector<std::shared_ptr<inequality>> new_sys =
+    join::calc_hull(this->sys.constraints, b.sys.constraints);
 
-    //check if the new system is different
+  //check if the new system is different
 
-    if(new_sys != this->sys.constraints)
-    {
-      is_modified = true;
-      this->sys.constraints = new_sys;
-      std::cerr<<"CASE 4"<<std::endl;
-      return is_modified;
-    }
+  if(new_sys != this->sys.constraints)
+  {
+    is_modified = true;
+    this->sys.constraints = new_sys;
+    std::cerr << "CASE 4: CALL TO CONVEX UNION" << std::endl;
+    return is_modified;
+  }
 
   return is_modified;
 }

@@ -3,6 +3,7 @@
 
 #include "complete.h"
 #include "tvpi_systemt.h"
+#include <util/mp_arith.h>
 
 #include <vector>
 
@@ -63,7 +64,7 @@ public:
   //reason for seperating dimension from adding inequality
   //number of vars and dimensions should be the same after resolving all interm ops
 
-  tvpi_systemt::dimensiont eval(exprt e, std::vector<std::string> &temporaries);
+  tvpi_systemt::dimensiont eval(exprt e, std::vector<tvpi_systemt::dimensiont> &temporaries);
   void assume(exprt e);
   void assign(symbol_exprt lhs, exprt e);
 

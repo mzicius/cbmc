@@ -8,10 +8,12 @@
 tvpi_systemt::tvpi_systemt()
 {
   constraints = {};
+  dimension_counter = 0;
 }
 
-void tvpi_systemt::existential_project(std::string var)
-{
+void tvpi_systemt::existential_project(mp_integer dimensiont)
+{ 
+  std::string var = "d" + integer2string(dimensiont);
   std::vector<std::shared_ptr<inequality>> project;
   for(std::shared_ptr<inequality> c : constraints)
   {
@@ -33,7 +35,7 @@ void tvpi_systemt::make_unsat_system()
 //if the TVPI domaint hold the binding why is this function inside the TVPI system class
 tvpi_systemt::dimensiont tvpi_systemt::add_new_dimension()
 {
-  return 0;
+  return dimension_counter+=1;
 }
 
 std::shared_ptr<inequality> tvpi_systemt::add_inequality(

@@ -8,12 +8,20 @@
 class tvpi_systemt
 {
 public:
-  std::vector<std::shared_ptr<inequality>> constraints;
+
   tvpi_systemt();
-  void make_unsat_system();
   typedef mp_integer dimensiont;
-  void existential_project(std::string var);
+  mp_integer dimension_counter;
+  std::vector<std::shared_ptr<inequality>> constraints;
+
+  void make_unsat_system();
+  
   dimensiont add_new_dimension();
+
+  //take dimension
+  void existential_project(mp_integer dimensiont);
+
+  //strings are d0 - dn where n is the dimentiont 
   std::shared_ptr<inequality> add_inequality(
     mp_integer a,
     std::string x,

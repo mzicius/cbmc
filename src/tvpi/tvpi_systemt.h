@@ -21,8 +21,10 @@ public:
   //take dimension
   void existential_project(mp_integer dimensiont);
 
+  std::vector<std::shared_ptr<inequality>> filter_ineqs(mp_integer dimensiont);
+
   //strings are d0 - dn where n is the dimentiont 
-  std::shared_ptr<inequality> add_inequality(
+  void add_inequality(
     mp_integer a,
     std::string x,
     mp_integer b,

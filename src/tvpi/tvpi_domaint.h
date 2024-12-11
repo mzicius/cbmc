@@ -67,6 +67,7 @@ public:
   tvpi_systemt::dimensiont eval(exprt e, std::vector<tvpi_systemt::dimensiont> &temporaries);
   void assume(exprt e);
   void assign(symbol_exprt lhs, exprt e);
+  tvpi_systemt::dimensiont lookup_binding(symbol_exprt sym);
 
 protected:
   //the TVPI system object
@@ -81,6 +82,7 @@ protected:
   //binding = {{x,0}};
   //int y;
   //binding = {{x,0},{y,1}};
+  std::map<symbol_exprt, mp_integer> references;
 
   //the number of mathematical dimensions is 2
   //the number of program variables is 2

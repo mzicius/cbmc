@@ -1,5 +1,6 @@
 #include "tvpi_domaint.h"
 
+#include <util/arith_tools.h>
 #include <util/mp_arith.h>
 
 #include "complete.h"
@@ -77,6 +78,8 @@ void tvpi_domaint::output(
   const namespacet &ns) const
 {
   out << "Number of dimensions: " << this->sys.dimension_counter << std::endl;
+  out << "Binding of size: " << this->binding.size()
+      << " contains: " << std::endl;
   for(const auto &[symbol, dimension] : binding)
     out << id2string(symbol.get_identifier()) << "-> " << dimension
         << std::endl;
@@ -91,53 +94,78 @@ tvpi_systemt::dimensiont
 tvpi_domaint::eval(exprt e, std::vector<tvpi_systemt::dimensiont> &temporaries)
 {
   std::cerr << "in eval with e: " << e.pretty() << std::endl;
-  //Evaluate dimension for a constant e.g. number 3 could live in dimension 0
+
   if(e.id() == ID_constant)
   {
     tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
-    temporaries.push_back(c);
-    auto ce = string2integer(id2string(to_constant_expr(e).get_value()));
-    this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", ce);
-    this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", -ce);
-    std::cerr << "size after assign constant: " << this->sys.constraints.size()
-              << std::endl;
+    mp_integer const_e = numeric_cast_v<mp_integer>(to_constant_expr(e));
+    this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", const_e);
+    this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", -const_e);
     return c;
   }
   else if(e.id() == ID_symbol)
   {
-    auto dim = binding[to_symbol_expr(e)];
-    std::cerr << "Dimension: " << dim << std::endl;
-    //look for prev assigments
-    std::vector<std::shared_ptr<inequality>> filtered_system =
-      this->sys.filter_ineqs(dim);
-    if(filtered_system.empty())
+    std::cerr << "in ID:" << std::endl;
+    std::cerr << e.pretty() << std::endl;
+    tvpi_systemt::dimensiont tmp = this->sys.add_new_dimension();
+    temporaries.push_back(tmp);
+    symbol_exprt symbol = to_symbol_expr(e);
+    tvpi_systemt::dimensiont result = lookup_binding(symbol);
+    if(result > 0)
     {
-      std::cerr << "This var is top" << std::endl;
+      std::cerr << "I did find something!" << std::endl;
+      tmp = result;
     }
-    else
-    {
-      tvpi_systemt::dimensiont c = sys.add_new_dimension();
-      auto first = filtered_system[0];
-      auto second = filtered_system[1];
-      if(std::dynamic_pointer_cast<dyadic_inequality>(first) != nullptr)
-      {
-        std::shared_ptr<dyadic_inequality> f =
-          std::dynamic_pointer_cast<dyadic_inequality>(first);
-        this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", f->c);
-      }
-      if(std::dynamic_pointer_cast<dyadic_inequality>(second) != nullptr)
-      {
-        std::shared_ptr<dyadic_inequality> s =
-          std::dynamic_pointer_cast<dyadic_inequality>(second);
-        this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", s->c);
-      }
-      sys.existential_project(dim);
-      this->binding.insert(
-        std::make_pair(to_symbol_expr(e), this->sys.dimension_counter));
-      this->dimension_counter = dimension_counter - 1;
+    std::cerr << "tmp is: " << tmp << std::endl;
+    return tmp;
+  }
+  else if(e.id() == ID_plus)
+  {
+    tvpi_systemt::dimensiont sum_dim = this->sys.add_new_dimension();
+    plus_exprt plus_e = to_plus_expr(e);
+    tvpi_systemt::dimensiont left =
+      eval(to_symbol_expr(plus_e.op0()), temporaries);
+    tvpi_systemt::dimensiont right =
+      eval(to_symbol_expr(plus_e.op1()), temporaries);
+
+    std::cerr << "left: " << left << " right: " << right << std::endl;
+
+    std::optional<mp_integer> u_bound_left = this->sys.get_ub(left);
+    std::optional<mp_integer> l_bound_left = this->sys.get_lb(left);
+    std::optional<mp_integer> u_bound_right = this->sys.get_ub(right);
+    std::optional<mp_integer> l_bound_right = this->sys.get_lb(right);
+
+    //auto filter_left = this->sys.tvpi_systemt::filter_ineqs(left);
+    //auto filter_right = this->sys.tvpi_systemt::filter_ineqs(right);
+    
+    //std::optional<std::shared_ptr<unary_inequality>> u_ineq_left = tvpi_systemt::cast_to_unary(filter_left[0]);
+    //std::optional<std::shared_ptr<unary_inequality>> u_ineq_right = tvpi_systemt::cast_to_unary(filter_right[0]);
+
+    //Theorem 1
+    if(u_bound_left.has_value() && u_bound_right.has_value()){
+       this->sys.add_inequality(-1,"d"+integer2string(left),1,"d"+integer2string(sum_dim),u_bound_right.value());
+       this->sys.add_inequality(-1,"d"+integer2string(right),1,"d"+integer2string(sum_dim),u_bound_left.value());
+    }
+    //Theorem 2
+    if(l_bound_left.has_value() && l_bound_right.has_value()){
+       this->sys.add_inequality(1,"d"+integer2string(left),-1,"d"+integer2string(sum_dim),-u_bound_right.value());
+       this->sys.add_inequality(1,"d"+integer2string(right),-1,"d"+integer2string(sum_dim),-u_bound_left.value());
     }
 
-    return dim;
+    // 
+    //(ma-mb)a+ mb*c<=n
+
+    //Theorem 2
+    //Theorem 3
+    //Theorem 4
+    //Theorem N
+
+
+    return sum_dim;
+  }
+  else if(e.id() == ID_mult)
+  {
+    return 8000;
   }
   else
   {
@@ -201,13 +229,15 @@ void tvpi_domaint::assume(exprt e)
   }
   if(e.id() == ID_le)
   {
-    auto &rel = to_binary_relation_expr(e);
-    tvpi_systemt::dimensiont l = eval(rel.lhs(), temporaries);
-    tvpi_systemt::dimensiont r = eval(rel.rhs(), temporaries);
-    std::string label_l, label_r;
-    label_l = "d" + integer2string(l);
-    label_r = "d" + integer2string(r);
-    this->sys.add_inequality(1, label_l, -1, label_r, 0);
+    //a<=b ->1*a - 1*b <= 0
+    //auto &rel = to_binary_relation_expr(e);
+    //tvpi_systemt::dimensiont l = eval(rel.lhs(), temporaries);
+    //tvpi_systemt::dimensiont r = eval(rel.rhs(), temporaries);
+    //std::string label_l, label_r;
+    //label_l = "d" + integer2string(l);
+    //label_r = "d" + integer2string(r);
+    //this->sys.add_inequality(1, label_l, -1, label_r, 0);
+
   }
   if(e.id() == ID_ge)
   {
@@ -256,27 +286,32 @@ void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 
   tvpi_systemt::dimensiont ev = eval(e, temporaries);
 
-  /*
-  if(ev > 0)
+  //eval has an abstraction
+  //std::cerr<<"Ev for "<<e.pretty()<<"is: "<<ev<<std::endl;
+
+  if(ev >= 0)
   {
-    //search for mapping
-    auto mapping_it = binding.find(lhs);
-    if(mapping_it != binding.end())
+    if(lookup_binding(lhs) >= 0)
     {
+      //old dimension
       tvpi_systemt::dimensiont tmp = this->binding[lhs];
+      std::cerr << "On " << lhs.pretty() << "I found" << std::endl;
       this->binding[lhs] = ev;
       //this->sys.existential_project(tmp);
     }
     else
     {
+      std::cerr << "Binding was not" << lhs.pretty()
+                << "found, new binding pair was created" << std::endl;
+      this->sys.add_new_dimension();
       this->binding.insert(std::make_pair(lhs, ev));
     }
   }
-  for(const mp_integer &t : temporaries)
-  {
-   this->sys.existential_project(t);
-  }
-  */
+
+  //for(const mp_integer &t : temporaries)
+  //{
+  //this->sys.existential_project(t);
+  //}
 }
 
 //int tvpi_domaint::result_call;
@@ -312,23 +347,23 @@ void tvpi_domaint::transform(
   {
     /** These are the instructions you actually need to implement **/
   case DECL:
-    //Add to binding, update dimension counter
+    //Add new dimension, binding
+    this->sys.add_new_dimension();
     this->binding.insert(std::make_pair(
       to_code_decl(instruction.code()).symbol(), this->sys.dimension_counter));
-    this->sys.add_new_dimension();
     break;
 
   case DEAD:
     //Project out the var, remove from binding and decrease the dimension_counter
-    if(
-      id2string(to_code_dead(instruction.code()).symbol().get_identifier())
-        .find("return_value") == std::string::npos)
-    {
-      this->sys.existential_project(
-        this->binding[to_code_dead(instruction.code()).symbol()]);
-      this->binding.erase(to_code_dead(instruction.code()).symbol());
-      this->sys.dimension_counter -= 1;
-    }
+    //if(
+    //  id2string(to_code_dead(instruction.code()).symbol().get_identifier())
+    //    .find("return_value") == std::string::npos)
+    //{
+    //this->sys.existential_project(
+    //  this->binding[to_code_dead(instruction.code()).symbol()]);
+    //this->binding.erase(to_code_dead(instruction.code()).symbol());
+    //this->sys.dimension_counter -= 1;
+    //}
     break;
 
   case ASSIGN:
@@ -425,6 +460,7 @@ void tvpi_domaint::transform(
 
   return;
 }
+
 //trace_ptrt can be seen as location, will be used for widening
 bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
 {
@@ -479,4 +515,16 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
   }
 
   return is_modified;
+}
+
+tvpi_systemt::dimensiont tvpi_domaint::lookup_binding(symbol_exprt sym)
+{
+  tvpi_systemt::dimensiont result_dim = -1;
+  std::__map_iterator mapping_it = binding.find(sym);
+  if(mapping_it != binding.end())
+  {
+    result_dim = binding[sym];
+  }
+  std::cerr << "result dim is: " << result_dim << std::endl;
+  return result_dim;
 }

@@ -10,8 +10,8 @@ std::shared_ptr<inequality> parser::parse_inequality(std::string line){
 
         std::string l = ss.str();
         
-        for(int i=0; getline(ss,token,',');i++){
-                parts.push_back(token);
+        while(getline(ss,token,',')){
+           parts.push_back(token);
         }
         
         if (parts.size()==2) c = std::make_shared<constant_inequality>(parts[0]<=parts[1]);
@@ -86,7 +86,7 @@ while(getline(input_file,line)){
         
         if (l.front()!='#'){
                 //std::cout<<l<<std::endl;
-                for(int i=0; getline(ss,token,',');i++){
+                while(getline(ss,token,',')){
                         parts.push_back(token);
                 }
         }

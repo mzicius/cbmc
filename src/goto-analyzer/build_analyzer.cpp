@@ -15,13 +15,13 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 #include <analyses/dependence_graph.h>
 #include <analyses/interval_domain.h>
 #include <analyses/example_domain.h>
-#include <tvpi/tvpi_domaint.h>
 #include <analyses/local_control_flow_history.h>
 #include <analyses/variable-sensitivity/three_way_merge_abstract_interpreter.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_configuration.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_dependence_graph.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_domain.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_object_factory.h>
+#include <analyses/tvpi/tvpi_domaint.h>
 
 /// Ideally this should be a pure function of options.
 /// However at the moment some domains require the goto_model or parts of it

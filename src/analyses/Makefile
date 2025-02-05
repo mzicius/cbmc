@@ -57,9 +57,10 @@ SRC = ai.cpp \
       variable-sensitivity/write_stack.cpp \
       variable-sensitivity/write_stack_entry.cpp \
       example_domain.cpp \
+      tvpi/tvpi_domaint.cpp\
       # Empty last line
 
-INCLUDES= -I ..
+INCLUDES= -I .. -I ../solvers
 
 include ../config.inc
 include ../common

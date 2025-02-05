@@ -1,5 +1,8 @@
 include ../config.inc
 
+subdir:
+	$(MAKE) -C tvpi
+
 ifneq ($(CHAFF),)
   CHAFF_SRC=sat/satcheck_zchaff.cpp sat/satcheck_zcore.cpp
   CHAFF_INCLUDE=-I $(CHAFF)
@@ -288,3 +291,4 @@ solvers$(LIBEXT): $(OBJ) $(SOLVER_LIB)
 smt2_solver$(EXEEXT): $(OBJ) smt2/smt2_solver$(OBJEXT) \
 	../util/util$(LIBEXT) ../big-int/big-int$(LIBEXT) $(SOLVER_LIB)
 	$(LINKBIN)
+

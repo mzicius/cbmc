@@ -29,7 +29,6 @@ DIRS = analyses \
        symtab2gb \
        util \
        xmllang \
-       tvpi \
        # Empty last line
 
 all: cbmc.dir \
@@ -44,7 +43,6 @@ all: cbmc.dir \
      goto-harness.dir \
      goto-synthesizer.dir \
      symtab2gb.dir \
-     tvpi.dir \
      # Empty last line
 
 ifndef WITH_MEMORY_ANALYZER
@@ -126,9 +124,6 @@ goto-synthesizer.dir: languages util.dir goto-programs.dir langapi.dir \
 
 goto-bmc.dir: libcprover-cpp.dir
 libcprover-cpp.dir: cbmc.dir
-
-tvpi.dir: util.dir 
-
 
 # building for a particular directory
 

@@ -5,6 +5,7 @@ unary_inequality::unary_inequality(std::string _x, mp_integer _a, mp_integer _c)
 : x(_x)
 {
     mp_integer common_factor = gcd(abs(_a),abs(_c));
+    common_factor = (common_factor == 0) ? 1 : common_factor;
     a = _a/common_factor;
     c = _c/common_factor;
 }

@@ -508,30 +508,28 @@ mp_integer abs(mp_integer n)
 
 /// @brief prints whole tvpi inequality
 /// @param tvpi inequality
-void show(std::shared_ptr<inequality> i)
+void print_ineq(std::shared_ptr<inequality> i)
 {
-  if(std::dynamic_pointer_cast<unary_inequality>(i) != nullptr)
+
+  if(cast_to_unary(i))
   {
-    std::shared_ptr<unary_inequality> u =
-      std::dynamic_pointer_cast<unary_inequality>(i);
+    std::shared_ptr<unary_inequality> u = cast_to_unary(i);
     std::cout << u->a << u->x << "\u2264" << u->c << std::endl;
   }
 
-  else if(std::dynamic_pointer_cast<dyadic_inequality>(i) != nullptr)
+  else if(cast_to_dyadic(i))
   {
     std::string sign = "";
-    std::shared_ptr<dyadic_inequality> d =
-      std::dynamic_pointer_cast<dyadic_inequality>(i);
+    std::shared_ptr<dyadic_inequality> d = cast_to_dyadic(i);
     if(d->b >= 0)
       sign = "+";
     std::cout << d->a << d->x << sign << d->b << d->y << "\u2264" << d->c
               << std::endl;
   }
 
-  else if(std::dynamic_pointer_cast<constant_inequality>(i) != nullptr)
+  else if(cast_to_const(i))
   {
-    std::shared_ptr<constant_inequality> c =
-      std::dynamic_pointer_cast<constant_inequality>(i);
+    std::shared_ptr<constant_inequality> c = cast_to_const(i);
     std::cout << c->sat << std::endl;
   }
 }
@@ -542,7 +540,7 @@ void print_cons(std::vector<std::shared_ptr<inequality>> &xs)
 {
   for(size_t i = 0; i < xs.size(); i++)
   {
-    show(xs[i]);
+    print_ineq(xs[i]);
   }
   if(xs.empty())
   {
@@ -578,27 +576,49 @@ void normalize_coeff(std::vector<std::shared_ptr<inequality>> &xs)
 
 inequality::direction inequality::calc_direction()
 {
-  mp_integer a, b, c;
-  std::string x, y;
-
+  direction dir;
+  mp_integer a, b;
   std::shared_ptr<inequality> i = widen(vars());
 
-  if(std::dynamic_pointer_cast<dyadic_inequality>(i) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> d =
-      std::dynamic_pointer_cast<dyadic_inequality>(i);
-    a = d->a;
-    b = d->b;
-    c = d->c;
-    x = d->x;
-    y = d->y;
+  if(cast_to_unary(i)){
+
+   std::shared_ptr<unary_inequality> u = cast_to_unary(i);
+
+   a = u->a;
+   if(dimensions.size()==1){
+   std::cout<<"Case Unary Monolithic"<<std::endl;
+   dir = (a > 0) ? East : West;
+   }
+
+  else{
+  std::cout<<"Case Mixed Unary"<<std::endl;
+
+     auto dim_target = dimensions.find(u->x);
+     if(dim_target==dimensions.begin()){
+      a = u->a;
+      b = 0;
+     }
+     else{
+      a = 0;
+      b = u->a;
+     }
+     dir = (a > 0)
+      ? ((b >= 0) ? East : South)
+      : ((a < 0) ? ((b > 0) ? North : West) : ((b > 0) ? North : South));
   }
 
-  //std::cout<<a<<b<<c<<x<<y<<std::endl;
 
-  return (a > 0)
-           ? ((b >= 0) ? East : South)
-           : ((a < 0) ? ((b > 0) ? North : West) : ((b > 0) ? North : South));
+  }
+  else{
+   std::cout<<"Case Dyadic"<<std::endl;
+   std::shared_ptr<dyadic_inequality> d = cast_to_dyadic(i);
+   a = d->a;
+   b = d->b;
+   dir = (a > 0)
+      ? ((b >= 0) ? East : South)
+      : ((a < 0) ? ((b > 0) ? North : West) : ((b > 0) ? North : South));
+  }
+  return dir;
 }
 
 void print_direction(inequality::direction d)
@@ -632,26 +652,60 @@ inequality::ordering
 cmp_angle(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
 {
   inequality::ordering res = inequality::EQ;
+  mp_integer a1;
+  mp_integer b1;
+  mp_integer a2;
+  mp_integer b2;
 
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
+  if(cast_to_unary(a)){
+    std::shared_ptr<unary_inequality> i1;
+    i1 = cast_to_unary(a);
+    auto dim_target = dimensions.find(i1->x);
+    if(dim_target==dimensions.begin()){
+      a1 = i1->a;
+      b1 = 0;
+     }
+     else{
+      a1 = 0;
+      b1 = i1->a;
+     }
+  }
+  else if(cast_to_dyadic(a)){
+    std::shared_ptr<dyadic_inequality> i1;
+    i1 = cast_to_dyadic(a);
+    a1 = i1->a;
+    b1 = i1->b;
+  }
+  if(cast_to_unary(b)){
+    std::shared_ptr<unary_inequality> i2;
+    i2 = cast_to_unary(b);
+    auto dim_target = dimensions.find(i2->x);
+    if(dim_target==dimensions.begin()){
+      a2 = i2->a;
+      b2 = 0;
+     }
+     else{
+      a2 = 0;
+      b2 = i2->a;
+     }
+  }
+  else if(cast_to_dyadic(b)){
+    std::shared_ptr<dyadic_inequality> i2;
+    i2 = cast_to_dyadic(b);
+    a2 = i2->a;
+    b2 = i2->b;
+  }
 
     inequality::direction dir_a = a->calc_direction();
     inequality::direction dir_b = b->calc_direction();
 
     if(dir_a == dir_b)
     {
-      if((i2->a * i1->b) == (i1->a * i2->b))
+      if((a2 * b1) == (a1 * b2))
       {
         return res;
       }
-      else if((i2->a * i1->b) > (i1->a * i2->b))
+      else if((a2 * b1) > (a1 * b2))
       {
         res = inequality::GT;
       }
@@ -667,7 +721,6 @@ cmp_angle(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
       else
         res = inequality::LT;
     }
-  }
 
   return res;
 }
@@ -694,19 +747,51 @@ mp_integer
 determinant(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
 {
   mp_integer det;
+  mp_integer a1;
+  mp_integer b1;
+  mp_integer a2;
+  mp_integer b2;
 
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
-
-    det = (i1->a * i2->b) - (i2->a * i1->b);
+  if(cast_to_unary(a)){
+    std::shared_ptr<unary_inequality> i1;
+    i1 = cast_to_unary(a);
+    auto dim_target = dimensions.find(i1->x);
+    if(dim_target==dimensions.begin()){
+      a1 = i1->a;
+      b1 = 0;
+     }
+     else{
+      a1 = 0;
+      b1 = i1->a;
+     }
+  }
+  else if(cast_to_dyadic(a)){
+    std::shared_ptr<dyadic_inequality> i1;
+    i1 = cast_to_dyadic(a);
+    a1 = i1->a;
+    b1 = i1->b;
+  }
+  if(cast_to_unary(b)){
+    std::shared_ptr<unary_inequality> i2;
+    i2 = cast_to_unary(b);
+    auto dim_target = dimensions.find(i2->x);
+    if(dim_target==dimensions.begin()){
+      a2 = i2->a;
+      b2 = 0;
+     }
+     else{
+      a2 = 0;
+      b2 = i2->a;
+     }
+  }
+  else if(cast_to_dyadic(b)){
+    std::shared_ptr<dyadic_inequality> i2;
+    i2 = cast_to_dyadic(b);
+    a2 = i2->a;
+    b2 = i2->b;
   }
 
+  det = (a1 * b2) - (a2 * b1);
   return det;
 }
 
@@ -746,16 +831,38 @@ bool less_than_pi(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
 rationalt dist_to_ineq(vertex ver, std::shared_ptr<inequality> a)
 {
   rationalt dis;
+  mp_integer a1;
+  mp_integer b1;
+  mp_integer c1;
 
-  if(std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
 
-    dis =
-      ver.x * rationalt(i1->a) + ver.y * rationalt(i1->b) - rationalt(i1->c);
+  if(cast_to_unary(a)){
+  
+  std::shared_ptr<unary_inequality> u = cast_to_unary(a);
+  c1 = u->c;
+  auto dim_target = dimensions.find(u->x);
+  if(dim_target==dimensions.begin()){
+      a1 = u->a;
+      b1 = 0;
+    }
+     else{
+      a1 = 0;
+      b1 = u->a;
+     }
+
+  }
+  else if(cast_to_dyadic(a)){
+  
+  std::shared_ptr<dyadic_inequality> d = cast_to_dyadic(a);
+  
+  a1 =  d->a;
+  b1  = d->b;
+  c1  = d->c;
+
   }
 
+  dis =
+      ver.x * rationalt(a1) + ver.y * rationalt(b1) - rationalt(c1);
   return dis;
 }
 
@@ -764,24 +871,63 @@ calc_intersection(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
 {
   rationalt x;
   rationalt y;
+  mp_integer a1;
+  mp_integer b1;
+  mp_integer c1;
+  mp_integer a2;
+  mp_integer b2;
+  mp_integer c2;
 
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
-
-    rationalt det_ab = rationalt(i1->a * i2->b - i1->b * i2->a);
-
-    //std::cout<<det_ab<<std::endl;
-
-    x = rationalt((i1->c * i2->b - i1->b * i2->c)) / det_ab;
-
-    y = rationalt((i1->a * i2->c - i1->c * i2->a)) / det_ab;
+  if(cast_to_unary(a)){
+    std::shared_ptr<unary_inequality> i1;
+    i1 = cast_to_unary(a);
+    c1 = i1->c;
+    auto dim_target = dimensions.find(i1->x);
+    if(dim_target==dimensions.begin()){
+      a1 = i1->a;
+      b1 = 0;
+     }
+     else{
+      a1 = 0;
+      b1 = i1->a;
+     }
   }
+  else if(cast_to_dyadic(a)){
+    std::shared_ptr<dyadic_inequality> i1;
+    i1 = cast_to_dyadic(a); 
+    a1 = i1->a;
+    b1 = i1->b;
+    c1 = i1->c;
+  }
+  if(cast_to_unary(b)){
+    std::shared_ptr<unary_inequality> i2;
+    i2 = cast_to_unary(b);
+    c2 = i2->c;
+    auto dim_target = dimensions.find(i2->x);
+    if(dim_target==dimensions.begin()){
+      a2 = i2->a;
+      b2 = 0;
+     }
+     else{
+      a2 = 0;
+      b2 = i2->a;
+     }
+  }
+  else if(cast_to_dyadic(b)){
+    std::shared_ptr<dyadic_inequality> i2;
+    i2 = cast_to_dyadic(b);
+    a2 = i2->a;
+    b2 = i2->b;
+    c2 = i2->c;
+  }
+
+  mp_integer det_ab = a1 * b2 - b1 * a2;
+  if(det_ab.is_zero()){
+    det_ab = 1;
+  }
+
+  x = rationalt(c1 * b2 - b1 * c2) / rationalt(det_ab);
+  y = rationalt(a1 * c2 - c1 * a2) / rationalt(det_ab);
 
   return vertex(x, y);
 }
@@ -792,42 +938,74 @@ calc_shift(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
   mp_integer f1 = 0;
   mp_integer f2 = 0;
   rationalt shift;
+  
+  mp_integer a1;
+  mp_integer b1;
+  mp_integer c1;
+  mp_integer a2;
+  mp_integer b2;
+  mp_integer c2;
 
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
-
-      std::cout<<"inside shift"<<std::endl;
-      std::cout<<i1->to_string()<<std::endl;
-      std::cout<<i2->to_string()<<std::endl;
-
-    if(i1->a.is_zero() || i2->a.is_zero())
-    {
-      f1 = i1->b;
-      f2 = i2->b;
-    }
-    else
-    {
-      f1 = i1->a;
-      f2 = i2->a;
-    }
-
-    std::cout<<f1<<" "<<f2<<std::endl;
-
-    assert(!f1.is_zero());
-    assert(!f2.is_zero());
-
-    shift =rationalt(i2->c * abs(f1) - i1->c * abs(f2)) / rationalt(abs(f1 * f2));
-    
-    std::cout<<shift<<std::endl;
+  if(cast_to_unary(a)){
+    std::shared_ptr<unary_inequality> i1;
+    i1 = cast_to_unary(a);
+    auto dim_target = dimensions.find(i1->x);
+    c1 = i1->c;
+    if(dim_target==dimensions.begin()){
+      a1 = i1->a;
+      b1 = 0;
+     }
+     else{
+      a1 = 0;
+      b1 = i1->a;
+     }
   }
+  else if(cast_to_dyadic(a)){
+    std::shared_ptr<dyadic_inequality> i1;
+    i1 = cast_to_dyadic(a);
+    a1 = i1->a;
+    b1 = i1->b;
+    c1 = i1->c;
+  }
+  if(cast_to_unary(b)){
+    std::shared_ptr<unary_inequality> i2;
+    i2 = cast_to_unary(b);
+    c2 = i2->c;
+    auto dim_target = dimensions.find(i2->x);
+    if(dim_target==dimensions.begin()){
+      a2 = i2->a;
+      b2 = 0;
+     }
+     else{
+      a2 = 0;
+      b2 = i2->a;
+     }
+  }
+  else if(cast_to_dyadic(b)){
+    std::shared_ptr<dyadic_inequality> i2;
+    i2 = cast_to_dyadic(b);
+    a2 = i2->a;
+    b2 = i2->b;
+    c2 = i2->c;
+  }
+
+  if(a1.is_zero() || a2.is_zero())
+  {
+      f1 = b1;
+      f2 = b2;
+  }
+  else
+  {
+      f1 = a1;
+      f2 = a2;
+  }
+
+  assert(!f1.is_zero());
+  assert(!f2.is_zero());
+
+  shift =rationalt(c2 * abs(f1) - c1 * abs(f2)) / rationalt(abs(f1 * f2));
+
   return shift;
-  //return shift * rationalt(f1);
 
 }
 
@@ -837,11 +1015,36 @@ add_shift(rationalt r, std::shared_ptr<inequality> a)
   std::string x, y;
   mp_integer _a, _b, _c;
   mp_integer new_a, new_b, new_c, d;
+  std::shared_ptr<inequality> new_ineq;
 
-  if(std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr)
+  if (cast_to_unary(a)){
+    std::shared_ptr<unary_inequality> i1 = cast_to_unary(a);
+    x = i1->x;
+    mp_integer nf = r.get_numerator();
+    mp_integer df = r.get_denominator();
+    new_a = df * i1->a;
+    new_c = df * i1->c + nf;
+    std::vector<mp_integer> new_coefs;
+
+    new_coefs.push_back(abs(new_a));
+    new_coefs.push_back(abs(new_b));
+    new_coefs.push_back(abs(new_c));
+
+    new_coefs.erase(
+      std::remove_if(
+        new_coefs.begin(),
+        new_coefs.end(),
+        [](mp_integer i) { return i.is_zero(); }),
+      new_coefs.end());
+
+    d = gcd_vector(new_coefs);
+    new_ineq = inequality_factory::make_inequality(
+    x,  new_a / d, new_c / d);
+
+  }
+  else if(cast_to_dyadic(a))
   {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
+    std::shared_ptr<dyadic_inequality> i1 = cast_to_dyadic(a);
 
     x = i1->x;
     y = i1->y;
@@ -867,10 +1070,15 @@ add_shift(rationalt r, std::shared_ptr<inequality> a)
       new_coefs.end());
 
     d = gcd_vector(new_coefs);
+    new_ineq = inequality_factory::make_inequality(
+    x, y, new_a / d, new_b / d, new_c / d);
   }
 
-  return std::make_shared<dyadic_inequality>(
-    x, y, new_a / d, new_b / d, new_c / d);
+
+
+
+
+  return new_ineq;
 }
 
 std::optional<rationalt> calc_dist(
@@ -878,34 +1086,22 @@ std::optional<rationalt> calc_dist(
   std::shared_ptr<inequality> e,
   std::shared_ptr<inequality> b)
 {
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(e) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
-    std::shared_ptr<dyadic_inequality> it =
-      std::dynamic_pointer_cast<dyadic_inequality>(e);
+    assert(cast_to_unary(a)||cast_to_dyadic(a));
+    assert(cast_to_unary(b)||cast_to_dyadic(b));
+    assert(cast_to_unary(e)||cast_to_dyadic(e));
 
-    
-    std::cout<<"calc_dist: i1: "<<i1->to_string()<<" i2: "<<i2->to_string()<<" e: "<<it->to_string()<<std::endl;
-
-    if(less_than_pi(i1, i2) && cmp_angle(i1, i2) != inequality::EQ)
+    if(less_than_pi(a, b) && cmp_angle(a, b) != inequality::EQ)
     {
-      return dist_to_ineq(calc_intersection(i1, i2), it);
+      return dist_to_ineq(calc_intersection(a, b), e);
     }
-    if(cmp_angle(i1, it) == inequality::EQ)
+    if(cmp_angle(a, e) == inequality::EQ)
     {
-      return calc_shift(it, i1);
+      return calc_shift(e, a);
     }
-    if(cmp_angle(i2, it) == inequality::EQ)
+    if(cmp_angle(b, e) == inequality::EQ)
     {
-      return calc_shift(it, i2);
+      return calc_shift(e, b);
     }
-  }
   return {};
 }
 
@@ -916,36 +1112,27 @@ bool inbetween(
 {
   bool result = false;
 
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(e) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
-    std::shared_ptr<dyadic_inequality> it =
-      std::dynamic_pointer_cast<dyadic_inequality>(e);
+    assert(cast_to_unary(a)||cast_to_dyadic(a));
+    assert(cast_to_unary(b)||cast_to_dyadic(b));
+    assert(cast_to_unary(e)||cast_to_dyadic(e));
 
-    if(cmp_angle(i1, i2) == inequality::EQ)
+    if(cmp_angle(a, b) == inequality::EQ)
       result = true;
     else
     {
-      bool r1 = less_than_pi(i1, it);
-      bool r2 = less_than_pi(it, i2);
+      bool r1 = less_than_pi(a, e);
+      bool r2 = less_than_pi(e, b);
 
       if(r1 && r2)
-        result = determinant(i1, it) >= 0 && determinant(it, i2) >= 0;
+        result = determinant(a, e) >= 0 && determinant(e, b) >= 0;
       else if(r1 && !r2)
-        result = determinant(i2, i1) >= 0;
+        result = determinant(b, a) >= 0;
       else if(!r1 && r2)
-        result = determinant(i2, i1) >= 0;
+        result = determinant(b, a) >= 0;
       else if(!r1 && !r2)
-        result = equal_to_pi(i1, i2) && determinant(i1, it) >= 0;
+        result = equal_to_pi(a, b) && determinant(a, e) >= 0;
     }
-  }
-
+  
   return result;
 }
 
@@ -993,11 +1180,13 @@ void rm_taut(std::vector<std::shared_ptr<inequality>> &cs)
       cs.end(),
       [](std::shared_ptr<inequality> a)
       {
-        if(std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr)
+        if(cast_to_unary(a)){
+          std::shared_ptr<unary_inequality> i = cast_to_unary(a);
+          return i->a.is_zero();
+        }
+        else if(cast_to_dyadic(a))
         {
-          std::shared_ptr<dyadic_inequality> i =
-            std::dynamic_pointer_cast<dyadic_inequality>(a);
-
+          std::shared_ptr<dyadic_inequality> i = cast_to_dyadic(a);
           return i->a.is_zero() && i->b.is_zero();
         }
         else
@@ -1066,7 +1255,7 @@ rm_local_red(std::vector<std::shared_ptr<inequality>> &cs)
     if(is_redundant(cs[prev], cs[cur], cs[x]))
     {
       std::cout << "The redundant inequality is: ";
-      show(cs[cur]);
+      print_ineq(cs[cur]);
       last_deleted = cur + 1;
 
       x++;
@@ -1118,6 +1307,73 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
   mp_integer new_a, new_b, new_c, d;
   std::string x, y;
 
+  mp_integer a1;
+  mp_integer b1;
+  mp_integer c1;
+  mp_integer a2;
+  mp_integer b2;
+  mp_integer c2;
+
+  if(cast_to_unary(a)){
+    std::cout<<"we are here"<<std::endl;
+    std::shared_ptr<unary_inequality> i1;
+    i1 = cast_to_unary(a);
+    std::cout<<"x is"<<x<<std::endl;
+    c1 = i1->c;
+    auto dim_target = dimensions.find(i1->x);
+    if(dim_target==dimensions.begin()){
+      std::cout<<"we hit a"<<std::endl;
+      a1 = i1->a;
+      b1 = 0;
+      std::advance(dim_target,1);
+
+     }
+     else{
+       std::cout<<"we hit b"<<std::endl;
+      a1 = 0;
+      b1 = i1->a;
+
+     }
+  }
+  else if(cast_to_dyadic(a)){
+    std::shared_ptr<dyadic_inequality> i1;
+    i1 = cast_to_dyadic(a);
+    a1 = i1->a;
+    b1 = i1->b;
+    c1 = i1->c;
+    x = i1 ->x;
+    y = i1 ->y;
+  }
+  if(cast_to_unary(b)){
+    std::shared_ptr<unary_inequality> i2;
+    i2 = cast_to_unary(b);
+    c2 = i2->c;
+    auto dim_target = dimensions.find(i2->x);
+    if(dim_target==dimensions.begin()){
+       std::cout<<"we hit c"<<std::endl;
+      a2 = i2->a;
+      b2 = 0;
+      std::advance(dim_target,1);
+
+     }
+     else{
+       std::cout<<"we hit d"<<std::endl;
+      a2 = 0;
+      b2 = i2->a;
+  
+     }
+  }
+  else if(cast_to_dyadic(b)){
+    std::shared_ptr<dyadic_inequality> i2;
+    i2 = cast_to_dyadic(b);
+    a2 = i2->a;
+    b2 = i2->b;
+    c2 = i2->c;
+    x = i2->x;
+    y = i2->y;
+  }
+
+  std::cout<<"the y is: "<<y<<std::endl;
   //haskell fix sign from denominator jumps to numerator
   n1 = fr1.get_numerator();
   d1 = fr1.get_denominator();
@@ -1134,22 +1390,9 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
 
   //std::cout<<n1<<" "<<d1<<" "<<n2<<" "<<d2<<" "<<std::endl;
 
-  if(
-    std::dynamic_pointer_cast<dyadic_inequality>(a) != nullptr &&
-    std::dynamic_pointer_cast<dyadic_inequality>(b) != nullptr)
-  {
-    std::shared_ptr<dyadic_inequality> i1 =
-      std::dynamic_pointer_cast<dyadic_inequality>(a);
-    std::shared_ptr<dyadic_inequality> i2 =
-      std::dynamic_pointer_cast<dyadic_inequality>(b);
-
-    x = i1->x;
-    y = i1->y;
-
-
-    new_a = abs(n2) * d1 * i1->a + abs(n1) * d2 * i2->a;
-    new_b = abs(n2) * d1 * i1->b + abs(n1) * d2 * i2->b;
-    new_c = abs(n2) * d1 * i1->c + abs(n1) * d2 * i2->c + abs(n1) * n2;
+    new_a = abs(n2) * d1 * a1 + abs(n1) * d2 * a2;
+    new_b = abs(n2) * d1 * b1 + abs(n1) * d2 * b2;
+    new_c = abs(n2) * d1 * c1 + abs(n1) * d2 * c2 + abs(n1) * n2;
 
     std::vector<mp_integer> new_coefs;
 
@@ -1165,17 +1408,22 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
       new_coefs.end());
 
     d = gcd_vector(new_coefs);
-  }
-  std::cout<<"d is:"<<d<<std::endl;
-
 
   if(new_a.is_zero() && new_b.is_zero())
   {
     return {};
   }
+  if(dimensions.size()==1){
+   x = *dimensions.begin();
+   return inequality_factory::make_inequality(x,new_a / d, new_c / d);
+  }
   else
   {
-    return std::make_shared<dyadic_inequality>(
+    auto it = dimensions.begin();
+    x = *it;
+    std::advance(it,1);
+    y = *it;
+    return inequality_factory::make_inequality(
       x, y, new_a / d, new_b / d, new_c / d);
   }
 }
@@ -1255,9 +1503,9 @@ void show_details(
   std::optional<rationalt> d)
 {
   std::cout << "iP: ";
-  show(iP);
+  print_ineq(iP);
   std::cout << "iC: ";
-  show(iC);
+  print_ineq(iC);
 
   /*
 		std::cout<<std::endl;
@@ -1268,9 +1516,9 @@ void show_details(
 		*/
 
   std::cout << "oP: ";
-  show(oP);
+  print_ineq(oP);
   std::cout << "oC: ";
-  show(oC);
+  print_ineq(oC);
 
   /*
 		std::cout<<"os: "<<std::endl;
@@ -1341,7 +1589,7 @@ void advance_outer(
 
         //retained edge
         std::cout << "retained edge is:" << std::endl;
-        show(oC);
+        print_ineq(oC);
 
         res.push_back(oC);
         os.erase(os.begin());
@@ -1376,7 +1624,7 @@ void advance_outer(
         //new edge
         if(!new_cons.empty()){
           std::cout << "new edge is:" << std::endl;
-          show(new_cons.back());
+          print_ineq(new_cons.back());
         }
         
         advance_inner(res, oP, os, iP, is);
@@ -1464,7 +1712,7 @@ void advance_inner(
         //new edge
         if(!new_cons.empty()){
          std::cout << "new edge is:" << std::endl;
-         show(new_cons.back());
+         print_ineq(new_cons.back());
         }
 
         advance_outer(res, oP, os, iP, is);

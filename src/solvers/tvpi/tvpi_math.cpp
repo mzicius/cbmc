@@ -10,7 +10,8 @@
 #include "../../analyses/tvpi/tvpi_domaint.h"
 
 int main(int argc, char *argv[])
-{
+{ 
+  /*
   tvpi_systemt a;
   tvpi_systemt b;
 
@@ -138,8 +139,48 @@ int main(int argc, char *argv[])
 
   }
 
+
+
   std::cout << "convex: " << std::endl;
   print_cons(convex_union);
 
-  return 0;
+  */
+
+   std::cout<<"final check"<<std::endl;
+  std::vector<std::shared_ptr<inequality>> left;
+   std::vector<std::shared_ptr<inequality>> right;
+   std::vector<std::shared_ptr<inequality>> cross;
+
+  std::shared_ptr<inequality> a = inequality_factory::make_inequality("x",5,7);
+  std::shared_ptr<inequality> b = inequality_factory::make_inequality("y",1,7);
+  std::shared_ptr<inequality> c = inequality_factory::make_inequality("x",-5,7);
+  std::shared_ptr<inequality> d = inequality_factory::make_inequality("y",-1,7);
+
+  std::shared_ptr<inequality> x = inequality_factory::make_inequality("x",1,11);
+  std::shared_ptr<inequality> y = inequality_factory::make_inequality("y",2,3);
+  std::shared_ptr<inequality> z = inequality_factory::make_inequality("x",-1,11);
+  std::shared_ptr<inequality> q = inequality_factory::make_inequality("y",-2,3);
+
+  sweep_dimensions();
+
+  left.push_back(a);
+    left.push_back(b);
+      left.push_back(c);
+        left.push_back(d);
+
+          right.push_back(x);
+            right.push_back(y);
+              right.push_back(z);
+                right.push_back(q);
+
+
+extract_dimensions(left);
+extract_dimensions(right);
+
+for(const std::string &v : dimensions){
+  std::cout<<v<<std::endl;
+}
+
+cross = join::calc_hull(left,right);
+return 0;
 }

@@ -6,7 +6,7 @@ dyadic_inequality::dyadic_inequality(std::string _x, std::string _y, mp_integer 
   y(_y)
 {  
 	mp_integer common_factor = gcd(abs(_a),gcd(abs(_b),abs(_c)));
-	//std::cout<<"factor: " + integer2string(common_factor)<<std::endl;
+	common_factor = (common_factor == 0) ? 1 : common_factor;
 	a = _a/common_factor;
 	b = _b/common_factor;
 	c = _c/common_factor;

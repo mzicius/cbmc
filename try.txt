@@ -1,0 +1,7 @@
+./goto-analyzer ../../example_programs/constants.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/more-constants.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/simple_add.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/add_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/less.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+ --show-goto-functions
+ ./goto-analyzer ../../example_programs/less.c   --show-goto-functions 

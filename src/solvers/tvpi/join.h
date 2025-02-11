@@ -20,6 +20,11 @@ public:
 
   static std::ofstream full_hull_trace;
   static int hull_ID;
+
 };
+
+extern void extract_dimensions(const std::vector<std::shared_ptr<inequality>> &sys);
+extern void sweep_dimensions();
+extern std::set<std::string> dimensions;
 
 #endif

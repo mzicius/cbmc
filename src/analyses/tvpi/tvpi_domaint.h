@@ -65,7 +65,7 @@ public:
   //reason for seperating dimension from adding inequality
   //number of vars and dimensions should be the same after resolving all interm ops
 
-  tvpi_systemt::dimensiont eval(exprt e, std::vector<tvpi_systemt::dimensiont> &temporaries);
+  tvpi_systemt::dimensiont eval(exprt e);
   void assume(exprt e);
   void assign(symbol_exprt lhs, exprt e);
   tvpi_systemt::dimensiont lookup_binding(symbol_exprt sym);

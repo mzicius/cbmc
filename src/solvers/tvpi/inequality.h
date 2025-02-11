@@ -136,7 +136,7 @@ extern void print_ins(const std::vector<std::shared_ptr<inequality>> ins);
 
 //haskell extension
 
-extern void show(std::shared_ptr<inequality> i);
+extern void print_ineq(std::shared_ptr<inequality> i);
 
 extern void print_cons(std::vector<std::shared_ptr<inequality>> &xs);
 

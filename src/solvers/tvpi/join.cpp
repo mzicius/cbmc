@@ -4,6 +4,7 @@
 
 std::ofstream join::full_hull_trace;
 int join::hull_ID = 0;
+std::set<std::string> dimensions;
 
 void join::rm_excess(
   std::shared_ptr<inequality> ref,
@@ -189,4 +190,28 @@ void join::merge(
 
   full_hull_trace.close();
   output.close();
+}
+
+void extract_dimensions(const std::vector<std::shared_ptr<inequality>> &sys){
+
+std::vector<std::string> vars;
+std::set<std::string> dims;
+
+for(const std::shared_ptr<inequality> &i: sys){
+
+if(dimensions.size()>=2){
+  break;
+}
+
+vars = i->vars();
+dims = std::set<std::string>(vars.begin(),vars.end());
+
+dimensions.insert(dims.begin(),dims.end());
+
+}
+
+}
+
+void sweep_dimensions(){
+  dimensions = {};
 }

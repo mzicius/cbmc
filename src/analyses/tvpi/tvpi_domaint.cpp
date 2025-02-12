@@ -96,6 +96,7 @@ tvpi_domaint::eval(exprt e)
 
   if(e.id() == ID_constant)
   {
+    std::cout<<"we met a constant"<<std::endl;
     tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
     mp_integer const_e = numeric_cast_v<mp_integer>(to_constant_expr(e));
     this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", const_e);
@@ -106,17 +107,21 @@ tvpi_domaint::eval(exprt e)
   {
     std::cerr << "in ID:" << std::endl;
     std::cerr << e.pretty() << std::endl;
-    tvpi_systemt::dimensiont tmp = this->sys.add_new_dimension();
     symbol_exprt symbol = to_symbol_expr(e);
     tvpi_systemt::dimensiont result = lookup_binding(symbol);
+    tvpi_systemt::dimensiont tmp;
     if(result > 0)
     {
-      std::cerr << "The variable assigment was found" << std::endl;
-      references[symbol] = references[symbol] + 1;
-      std::cout<<"The refrence count for this dimension is: "<<references[symbol]<<std::endl;
-      tmp = result;
+     std::cerr << "The variable assigment was found! " << std::endl;
+     references[symbol] = references[symbol] + 1;
+     std::cout<<"The refrence count for this dimension is: "<<references[symbol]<<std::endl;
+     tmp = result;
     }
-    std::cerr << "A tmp was generated for the assignemnt" << tmp << std::endl;
+    else{
+     tmp = this->sys.add_new_dimension();
+     std::cerr << "A tmp was generated for the assignemnt" << tmp << std::endl;
+    }
+
     return tmp;
   }
   else if(e.id() == ID_plus)
@@ -317,10 +322,9 @@ tvpi_domaint::eval(exprt e)
 
 // Takes a bool expression and reduces the domain
 // to an overapproximation of when this condition holds
-void tvpi_domaint::assume(exprt e)
+void tvpi_domaint::assume(const exprt &e)
 {
-  // Can only assume logical conditions
-  std::cout<<"ID here: "<<e.id_string()<<std::endl;
+  std::cout<<"inside assume"<<std::endl;
   //PRECONDITION(e.id() == ID_bool);
   if(e.id() == ID_equal)
   {
@@ -331,22 +335,30 @@ void tvpi_domaint::assume(exprt e)
     tvpi_systemt::dimensiont l = eval(to_equal_expr(e).lhs());
     tvpi_systemt::dimensiont r = eval(to_equal_expr(e).rhs());
 
+    std::string label_l, label_r;
+    label_l = "d" + integer2string(l);
+    label_r = "d" + integer2string(r);
+
+    std::cout<<"ID equal -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
+    
+    sys.add_inequality(1, label_l, -1, label_r, 0);
+    sys.add_inequality(-1, label_l, 1, label_r, 0);
+
+    return;
+    }
+  if(e.id() == ID_le)
+  {
+    auto bin = to_binary_expr(e);
+    tvpi_systemt::dimensiont l = eval(bin.lhs());
+    tvpi_systemt::dimensiont r = eval(bin.rhs());
 
     std::string label_l, label_r;
     label_l = "d" + integer2string(l);
     label_r = "d" + integer2string(r);
 
-    std::cout<<"label left"<<label_l<<" label right"<<label_r<<std::endl;
+   std::cout<<"less or equal -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
+   sys.add_inequality(1,label_l,-1,label_r,0);
 
-    //1 ∗a−1 ∗b ⩽ 0 ∧−1 ∗a + 1 ∗b ⩽ 0
-
-    sys.add_inequality(1, label_l, -1, label_r, 0);
-    sys.add_inequality(-1, label_l, 1, label_r, 0);
-    return;
-    }
-  if(e.id() == ID_le)
-  {
-    //a<=b ->1*a - 1*b <= 0
     //auto &rel = to_binary_relation_expr(e);
     //tvpi_systemt::dimensiont l = eval(rel.lhs(), temporaries);
     //tvpi_systemt::dimensiont r = eval(rel.rhs(), temporaries);
@@ -356,51 +368,88 @@ void tvpi_domaint::assume(exprt e)
     //this->sys.add_inequality(1, label_l, -1, label_r, 0);
   }
   if(e.id() == ID_lt){
+    std::cout<<"we are in the less than"<<std::endl;
     auto bin = to_binary_expr(e);
+    std::cout<<"before left "<<this->sys.constraints.size()<<std::endl;
     tvpi_systemt::dimensiont l = eval(bin.lhs());
+    std::cout<<"my left label is: "<<l<<std::endl;
+    std::cout<<"before right "<<this->sys.constraints.size()<<std::endl;
     tvpi_systemt::dimensiont r = eval(bin.rhs());
+    std::cout<<"final sys "<<this->sys.constraints.size()<<std::endl;
+       std::cout<<"my right label is: "<<r<<std::endl;
     this->sys.add_inequality(1, "d"+integer2string(l),  -1, "d"+integer2string(r), -1);
     return;
   }
   if(e.id() == ID_ge)
-  {
+  { 
     auto bin = to_binary_expr(e);
     tvpi_systemt::dimensiont l = eval(bin.lhs());
     tvpi_systemt::dimensiont r = eval(bin.rhs());
-    this->sys.add_inequality(-1, "d"+integer2string(l),  1, "d"+integer2string(r), 0);
+
+    std::string label_l, label_r;
+    label_l = "d" + integer2string(l);
+    label_r = "d" + integer2string(r);
+
+    std::cout<<"greater or equal -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
+    sys.add_inequality(-1,label_l,1,label_r,0);
+    return;
+  }
+  if(e.id() == ID_gt){
+        auto bin = to_binary_expr(e);
+    tvpi_systemt::dimensiont l = eval(bin.lhs());
+    tvpi_systemt::dimensiont r = eval(bin.rhs());
+
+    std::string label_l, label_r;
+    label_l = "d" + integer2string(l);
+    label_r = "d" + integer2string(r);
+
+    std::cout<<"greater -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
+    sys.add_inequality(-1,label_l,1,label_r,-1);
     return;
   }
   if(e.id() == ID_and)
   {
-    //assume(to_and_expr(e).op0());
-    //assume(to_and_expr(e).op1());
+    assume(to_and_expr(e).op0());
+    assume(to_and_expr(e).op1());
   }
   if(e.id() == ID_or)
   {
     // These requires some magic
     // Don't worry about it for now.
   }
-  
   if(e.id() == ID_not)
   { 
+    std::cout<<"we are in not"<<std::endl;
+    std::cout<<e.pretty()<<std::endl;
+
     not_exprt tmp(to_not_expr(e));
     if(tmp.op().id()==ID_not){
       assume(to_not_expr(tmp.op()).op());
+      
     }
     else if(tmp.op().id()==ID_lt){
       auto rel = to_binary_relation_expr(tmp.op());
-
       assume(greater_than_or_equal_exprt(rel.lhs(),rel.rhs()));
     }
+    else if(tmp.op().id()==ID_le){
+     auto rel = to_binary_relation_expr(tmp.op());
+     assume(greater_than_exprt(rel.lhs(),rel.rhs()));
+    }
+    else if(tmp.op().id()==ID_gt){
+     auto rel = to_binary_relation_expr(tmp.op());
+     assume(less_than_or_equal_exprt(rel.lhs(),rel.rhs()));
+    }
+    else if(tmp.op().id()==ID_ge){
+     auto rel = to_binary_relation_expr(tmp.op());
+     assume(less_than_exprt(rel.lhs(),rel.rhs()));
+
+    }
+
     // These requires some magic
     // Don't worry about it for now.
   }
-  
-
-  
-   std::cerr << "If only I knew how to assume a " << id2string(e.id())
+  std::cerr << "If only I knew how to assume a " << id2string(e.id())
               << std::endl;
-  
 
   /*
 for (const auto &t : temporaries) {
@@ -442,6 +491,33 @@ void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
   //{
   //this->sys.existential_project(t);
   //}
+}
+
+bool tvpi_domaint::ai_simplify(
+  exprt &condition,
+  const namespacet &ns) const
+{
+  std::cout<<"ai_simplify for tvpi!"<<std::endl;
+  bool unchanged = true;
+  tvpi_domaint d(*this);
+
+  if(condition.id()==ID_symbol){
+
+  }
+  else{
+
+  std::cout<<"trying to simplify"<<std::endl;
+  d.assume(not_exprt(condition));
+  
+  if(this->is_bottom()){
+    condition = true_exprt();
+  }
+  
+
+  }
+
+
+  return unchanged;
 }
 
 //int tvpi_domaint::result_call;
@@ -536,9 +612,23 @@ void tvpi_domaint::transform(
   case FUNCTION_CALL:
   {
     // Function calls are a bit of a fiddle...
-    // const code_function_callt &code_function_call =
-    //   to_code_function_call(instruction.code);
-    break;
+   //const code_function_callt &code_function_call =
+   //to_code_function_call(instruction.code());
+   //std::cout<<"code_function_call"<<code_function_call.pretty()<<std::endl;
+   //code_function_call.
+
+   const exprt &function = instruction.call_function();
+
+
+   if(function.id()==ID_symbol)
+      {
+        const irep_idt &identifier=to_symbol_expr(function).get_identifier();
+        if(identifier=="assume"){
+          std::cout<<"yes yes yes"<<std::endl;        
+        }
+      }
+ 
+   break;
   }
   /*  Removed from more recent versions
   case RETURN:  // Are transformed away into SET_RETURN_VALUE
@@ -552,13 +642,10 @@ void tvpi_domaint::transform(
     break;
   }
 
+  //__CPROVER_ASSUME
   case ASSUME:
-    // It is safe to over-approximate these by ... ignoring them!
-    //ASSUME allows to restrict the
-    //std::cerr<<"condition"<<instruction.condition().pretty()<<std::endl;
-     assume(instruction.condition());
+    assume(instruction.condition());
     break;
-
     /** These are instructions you really can ignore **/
   case ASSERT: // An assert is a check; they don't alter execution
     // If goto-analyzer is run with --verify they will be checked after fixpoint

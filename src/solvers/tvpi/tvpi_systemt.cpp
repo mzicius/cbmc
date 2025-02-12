@@ -102,7 +102,6 @@ void tvpi_systemt::add_inequality(
   mp_integer c)
 {
   auto i = inequality_factory::make_inequality(x, y, a, b, c);
-  std::cerr << "new ineq is: " << i->to_string() << std::endl;
   constraints.push_back(i);
   constraints = complete::closure(constraints);
 }

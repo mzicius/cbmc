@@ -3,5 +3,66 @@
 ./goto-analyzer ../../example_programs/simple_add.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 ./goto-analyzer ../../example_programs/add_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 ./goto-analyzer ../../example_programs/less.c  --show --tvpi --verbosity 10 --recursive-interprocedural
- --show-goto-functions
+
+
  ./goto-analyzer ../../example_programs/less.c   --show-goto-functions 
+./goto-analyzer ../../example_programs/less.c  --verify --tvpi
+
+
+./goto-analyzer ../../example_programs/first_assert.c  --verify --tvpi
+./cbmc ../../example_programs/first_assert.c 
+./goto-analyzer ../../example_programs/first_assert.c   --show-goto-functions 
+./goto-analyzer ../../example_programs/first_assert.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/first_assert.c  --show --intervals --verbosity 10 --recursive-interprocedural
+
+//tests
+
+for < look at left and right labels
+
+x = 2, assume(x<7)
+./goto-analyzer ../../example_programs/assume_less_cons.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+x = 7, y = 2, assume(x<y) evaluates to false 
+./goto-analyzer ../../example_programs/assume_less_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+x = 3, y = 9, assume(x<y)
+./goto-analyzer ../../example_programs/assume_less.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+ID equal -> 
+
+x = 3, y = 3, assume(x==y)
+./goto-analyzer ../../example_programs/assume_equal_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+x = 3, y = 7, assume(x==y)
+./goto-analyzer ../../example_programs/assume_equal_vars_false.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+assume(9==9)
+./goto-analyzer ../../example_programs/assume_equal_cons.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+assume(1==2)
+./goto-analyzer ../../example_programs/assume_equal_cons_false.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+x = 3 , y = 4, assume(x<=y)
+./goto-analyzer ../../example_programs/assume_leq_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+./goto-analyzer ../../example_programs/assume_leq_vars_false.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+x = 11, y = 13, assume(y<=x)
+
+./goto-analyzer ../../example_programs/assume_leq_cons.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+assume(-1<=0)
+
+./goto-analyzer ../../example_programs/assume_geq_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+x = 1000, y = -100, assume(x>=y)
+
+./goto-analyzer ../../example_programs/assume_geq_vars_false.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+x = 100, y = 150, assume(x>=y)
+
+./goto-analyzer ../../example_programs/assume_greater_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+x = 6000, y = -1000, assume(x,y) fails only works with same sign
+
+./goto-analyzer ../../example_programs/assume_greater_cons.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+assume(0>-40)
+
+./goto-analyzer ../../example_programs/assume_and.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+./goto-analyzer ../../example_programs/verify.c  --verify --tvpi --verbosity 10 --recursive-interprocedural

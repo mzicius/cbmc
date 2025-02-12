@@ -66,27 +66,22 @@ public:
   //number of vars and dimensions should be the same after resolving all interm ops
 
   tvpi_systemt::dimensiont eval(exprt e);
-  void assume(exprt e);
+
+  void assume(const exprt &e);
+
   void assign(symbol_exprt lhs, exprt e);
+  
+  virtual bool ai_simplify(
+    exprt &condition,
+    const namespacet &ns) const override;
+
   tvpi_systemt::dimensiont lookup_binding(symbol_exprt sym);
 
 protected:
-  //the TVPI system object
   tvpi_systemt sys;
-  //variable binded to some dimension
-  //provides seperation between abstract program and program variables
   binding_map binding;
-  //track the latest dimension
   mp_integer dimension_counter;
-  //example binding
-  //int x;
-  //binding = {{x,0}};
-  //int y;
-  //binding = {{x,0},{y,1}};
   std::map<symbol_exprt, mp_integer> references;
-
-  //the number of mathematical dimensions is 2
-  //the number of program variables is 2
 };
 
 extern symbol_exprt str2symex(const std::string &label);

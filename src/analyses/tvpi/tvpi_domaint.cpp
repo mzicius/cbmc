@@ -93,7 +93,6 @@ tvpi_systemt::dimensiont
 tvpi_domaint::eval(exprt e)
 {
   std::cerr << "in eval with e: " << e.pretty() << std::endl;
-
   if(e.id() == ID_constant)
   {
     std::cout<<"we met a constant"<<std::endl;
@@ -112,20 +111,21 @@ tvpi_domaint::eval(exprt e)
     tvpi_systemt::dimensiont tmp;
     if(result > 0)
     {
-     std::cerr << "The variable assigment was found! " << std::endl;
+     std::cerr << "the variable assigment was found! " << std::endl;
      references[symbol] = references[symbol] + 1;
-     std::cout<<"The refrence count for this dimension is: "<<references[symbol]<<std::endl;
+     std::cout<<"the refrence count for this dimension is: "<<references[symbol]<<std::endl;
      tmp = result;
     }
     else{
      tmp = this->sys.add_new_dimension();
-     std::cerr << "A tmp was generated for the assignemnt" << tmp << std::endl;
+     std::cerr << "a tmp was generated for the assignemnt" << tmp << std::endl;
     }
 
     return tmp;
   }
   else if(e.id() == ID_plus)
   {
+    std::cout<<"we are in plus"<<std::endl;
     tvpi_systemt::dimensiont sum_dim = this->sys.add_new_dimension();
     plus_exprt plus_e = to_plus_expr(e);
 
@@ -140,8 +140,14 @@ tvpi_domaint::eval(exprt e)
 
     tvpi_systemt::dimensiont left =
       eval(to_symbol_expr(plus_e.op0()));
-    tvpi_systemt::dimensiont right =
-      eval(to_symbol_expr(plus_e.op1()));
+    std::cout<<"plus e right"<<plus_e.op1().id_string()<<std::endl;
+    tvpi_systemt::dimensiont right;
+    if(plus_e.op1().id()==ID_symbol){
+      right = eval(to_symbol_expr(plus_e.op1()));
+    }
+    else if(plus_e.op1().id()==ID_unary_minus){
+      right = eval(to_unary_minus_expr(plus_e.op1()));
+    }
 
     std::optional<mp_integer> u_bound_left = this->sys.get_ub(left);
     std::optional<mp_integer> l_bound_left = this->sys.get_lb(left);
@@ -150,6 +156,7 @@ tvpi_domaint::eval(exprt e)
 
     if(u_bound_left.has_value()&&u_bound_right.has_value()){
 
+    std::cout<<u_bound_left.value()<<" was"<<std::endl;
 
     auto filter_left = this->sys.tvpi_systemt::filter_ineqs(left);
     auto filter_right = this->sys.tvpi_systemt::filter_ineqs(right);
@@ -235,23 +242,56 @@ tvpi_domaint::eval(exprt e)
 
     return sum_dim;
   }
+  else if(e.id()==ID_unary_minus){
+    std::cout<<"we are in unary minus"<<std::endl;
+    unary_minus_exprt u_min_e = to_unary_minus_expr(e);
+
+    tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
+  
+    mp_integer const_e;
+    if(u_min_e.op().id()==ID_constant){
+    const_e = numeric_cast_v<mp_integer>(to_constant_expr(u_min_e.op()));
+    this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", -const_e);
+    this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", const_e);
+
+    }
+    else if(u_min_e.op().id()==ID_symbol){
+    std::cout<<"we are in ID"<<std::endl;
+    symbol_exprt s = to_symbol_expr(u_min_e.op());
+    tvpi_systemt::dimensiont binded_dim = lookup_binding(s);
+    std::cout<<"the binded dimension we found is:"<<binded_dim<<std::endl;
+    
+    if(binded_dim<0){
+      binded_dim = c;
+    }
+
+    auto ub = this->sys.get_ub(binded_dim);
+    auto lb = this->sys.get_lb(binded_dim);
+
+    if(ub.has_value()&& lb.has_value()){
+    std::cout<<"ub is: "<<ub.value()<<"lb is: "<<lb.value()<<std::endl;
+    this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", lb.value());
+    this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", ub.value());
+    }
+  
+    }
+
+    return c;
+  }
   else if(e.id() == ID_minus)
   {
+    std::cout<<"we are in ID minus"<<std::endl;
     binary_exprt bin_exp = to_binary_expr(e);
     return eval(
       plus_exprt(bin_exp.lhs(), unary_minus_exprt(bin_exp.rhs())));
   }
-  else if(e.id() == ID_unary_minus)
+  else
   {
-    tvpi_systemt::dimensiont u_min_dim = this->sys.add_new_dimension();
-    unary_minus_exprt u_min_e = to_unary_minus_expr(e);
-    tvpi_systemt::dimensiont dt = eval(u_min_e.op());
-    mp_integer up = this->sys.get_ub(dt).value();
-    mp_integer lb = this->sys.get_lb(dt).value();
-    this->sys.add_inequality(-1, "d" + integer2string(dt), 0, "d", up);
-    this->sys.add_inequality(1, "d" + integer2string(dt), 0, "d", lb);
-    return dt;
+    std::cerr << "No evaluation for e:" << id2string(e.id()) << std::endl;
+    return -1;
   }
+  UNREACHABLE;
+  /*
   else if(e.id() == ID_mult)
   {
     tvpi_systemt::dimensiont mult_dim = this->sys.add_new_dimension();
@@ -285,38 +325,6 @@ tvpi_domaint::eval(exprt e)
 
     std::cerr << "left: " << left << " right: " << right << std::endl;
     return mult_dim;
-  }
-  else
-  {
-    std::cerr << "No evaluation for e:" << id2string(e.id()) << std::endl;
-    return -1;
-  }
-
-  UNREACHABLE;
-
-  /*
-  if(e.id() == ID_symbol)
-  {
-  std::cerr<<"We are reading IDs"<<std::endl;
-// LOOK UP BINDING RETTURN VALUE 
-  }
-  else if(e.id() == ID_constant)
-  {
-    // RESTRICT TO INTEGERS
-    // NEW TEMP DIMENSION
-    // ADD TWO TVPI CONSTRAINTS (BOUNDS OF THAT CONSTANT)
-  if(e.id() == ID_plus)
-  {
-    //new dimension for the sum
-    //take care of left and right to
-    //link the 
-    //e.g. x+y
-    //filter the the constraints that are involve the used dimensions x, y
-    //get x , get y 
-    // return the tmp "sum"
-    // tests for this should land in regression 
-    // 
-  }
   }*/
 }
 

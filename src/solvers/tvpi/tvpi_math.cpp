@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
   std::cout << "convex: " << std::endl;
   print_cons(convex_union);
 
-  */
+
 
    std::cout<<"final check"<<std::endl;
   std::vector<std::shared_ptr<inequality>> left;
@@ -183,4 +183,12 @@ for(const std::string &v : dimensions){
 
 cross = join::calc_hull(left,right);
 return 0;
+  */
+
+
+tvpi_systemt a;
+a.add_inequality(1,"d1",0,"d",6);
+a.add_inequality(-1,"d1",0,"d",-6);
+a.add_inequality(1,"d2",0,"d",-1);
+a.add_inequality(-1,"d2",0,"d",1);
 }

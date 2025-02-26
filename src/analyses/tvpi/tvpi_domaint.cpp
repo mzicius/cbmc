@@ -344,13 +344,7 @@ void tvpi_domaint::assume(const exprt &e)
               << " label right: " << label_r << std::endl;
     sys.add_inequality(1, label_l, -1, label_r, 0);
 
-    //auto &rel = to_binary_relation_expr(e);
-    //tvpi_systemt::dimensiont l = eval(rel.lhs(), temporaries);
-    //tvpi_systemt::dimensiont r = eval(rel.rhs(), temporaries);
-    //std::string label_l, label_r;
-    //label_l = "d" + integer2string(l);
-    //label_r = "d" + integer2string(r);
-    //this->sys.add_inequality(1, label_l, -1, label_r, 0);
+    return;
   }
   if(e.id() == ID_lt)
   {
@@ -401,6 +395,7 @@ void tvpi_domaint::assume(const exprt &e)
   {
     assume(to_and_expr(e).op0());
     assume(to_and_expr(e).op1());
+    return;
   }
   if(e.id() == ID_or)
   {
@@ -411,7 +406,6 @@ void tvpi_domaint::assume(const exprt &e)
   {
     std::cout << "we are in not" << std::endl;
     std::cout << e.pretty() << std::endl;
-
     not_exprt tmp(to_not_expr(e));
     if(tmp.op().id() == ID_not)
     {
@@ -443,13 +437,10 @@ void tvpi_domaint::assume(const exprt &e)
       auto rel = to_binary_relation_expr(tmp.op());
       assume(equal_exprt(rel.lhs(), rel.rhs()));
     }
-
-    // These requires some magic
-    // Don't worry about it for now.
+    return;
   }
   std::cerr << "If only I knew how to assume a " << id2string(e.id())
             << std::endl;
-  std::cout << "end of assume" << std::endl;
   /*
 for (const auto &t : temporaries) {
 //sys.existential_projection(t);

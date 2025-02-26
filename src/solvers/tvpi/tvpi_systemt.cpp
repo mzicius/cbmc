@@ -1,10 +1,8 @@
 #include <util/mp_arith.h>
-
 #include <analyses/tvpi/tvpi_domaint.h>
-
-#include "inequality_factory.h"
-
 #include <algorithm>
+#include <fstream>
+#include "inequality_factory.h"
 
 tvpi_systemt::tvpi_systemt()
 {
@@ -210,4 +208,13 @@ tvpi_systemt::relabel(mp_integer old_d, mp_integer new_d)
   }
 
   return new_labels;
+}
+
+void tvpi_systemt::print_system(){
+  std::ofstream system_trace;
+  system_trace.open("../../logs/system_trace.txt");
+  for(const std::shared_ptr<inequality> &i : constraints){
+      system_trace<<i->to_string()<< "\n";
+  }
+  system_trace.close();
 }

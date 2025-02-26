@@ -4,7 +4,7 @@
 #include <util/mp_arith.h>
 #include <solvers/tvpi/tvpi_systemt.h>
 #include <vector>
-
+#include "../variable-sensitivity/abstract_environment.h"
 #include "../ai_domain.h"
 
 class tvpi_domaint : public ai_domain_baset
@@ -37,7 +37,7 @@ public:
   /// Merges two domains together
   /// \return true if and only if *this has been modified / extended
   /// If it is true then it will requeue this domain for analysis
-  bool merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt);
+  bool merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to);
 
   /// Set the domain to be empty, i.e. representing nothing
   void make_bottom() override;
@@ -89,5 +89,4 @@ extern std::vector<std::shared_ptr<inequality>> relabel_ineqs(tvpi_systemt &sys,
 extern void align_bindings(const tvpi_domaint::binding_map &left, tvpi_domaint::binding_map &right,const tvpi_systemt &a, tvpi_systemt &b);
 extern std::set<std::string> find_relations(const tvpi_systemt &a, const tvpi_systemt &b);
 extern std::vector<std::shared_ptr<inequality>> filter(const tvpi_systemt &sys,std::vector<std::string> &target_vars);
-extern std::vector<std::shared_ptr<inequality>> add_var(tvpi_systemt sys);
 #endif

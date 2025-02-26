@@ -36,6 +36,7 @@ public:
   std::optional<mp_integer> get_ub(mp_integer dimensiont);
   std::optional<mp_integer> get_lb(mp_integer dimensiont);
   std::vector<std::shared_ptr<inequality>> relabel(mp_integer old_d, mp_integer new_d);
+  void print_system();
 
 };
 

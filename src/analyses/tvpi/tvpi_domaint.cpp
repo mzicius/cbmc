@@ -89,13 +89,12 @@ void tvpi_domaint::output(
 
 //Create a dimension in the TVPI-system that over-approximates
 //the value of an expression.
-tvpi_systemt::dimensiont
-tvpi_domaint::eval(exprt e)
+tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 {
   std::cerr << "in eval with e: " << e.pretty() << std::endl;
   if(e.id() == ID_constant)
   {
-    std::cout<<"we met a constant"<<std::endl;
+    std::cout << "we met a constant" << std::endl;
     tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
     mp_integer const_e = numeric_cast_v<mp_integer>(to_constant_expr(e));
     this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", const_e);
@@ -111,98 +110,49 @@ tvpi_domaint::eval(exprt e)
     tvpi_systemt::dimensiont tmp;
     if(result > 0)
     {
-     std::cerr << "the variable assigment was found! " << std::endl;
-     references[symbol] = references[symbol] + 1;
-     std::cout<<"the refrence count for this dimension is: "<<references[symbol]<<std::endl;
-     tmp = result;
+      std::cerr << "the variable assigment was found! " << std::endl;
+      references[symbol] = references[symbol] + 1;
+      std::cout << "the refrence count for this dimension is: "
+                << references[symbol] << std::endl;
+      tmp = result;
     }
-    else{
-     tmp = this->sys.add_new_dimension();
-     std::cerr << "a tmp was generated for the assignemnt" << tmp << std::endl;
+    else
+    {
+      tmp = this->sys.add_new_dimension();
+      std::cerr << "a tmp was generated for the assignemnt" << tmp << std::endl;
     }
 
     return tmp;
   }
   else if(e.id() == ID_plus)
   {
-    std::cout<<"we are in plus"<<std::endl;
+    std::cout << "we are in plus" << std::endl;
     tvpi_systemt::dimensiont sum_dim = this->sys.add_new_dimension();
     plus_exprt plus_e = to_plus_expr(e);
 
-    if(plus_e.op0().is_constant()&&plus_e.op1().is_constant())
+    //TODO: do constant folding
+    if(plus_e.op0().is_constant() && plus_e.op1().is_constant())
     {
-      mp_integer const_left = numeric_cast_v<mp_integer>(to_constant_expr(plus_e.op0()));
-      mp_integer const_right = numeric_cast_v<mp_integer>(to_constant_expr(plus_e.op1()));
-      this->sys.add_inequality(1,"d"+integer2string(sum_dim),0,"d",const_left+const_right);
-      this->sys.add_inequality(-1,"d"+integer2string(sum_dim),0,"d",-(const_left+const_right));
+      mp_integer const_left =
+        numeric_cast_v<mp_integer>(to_constant_expr(plus_e.op0()));
+      mp_integer const_right =
+        numeric_cast_v<mp_integer>(to_constant_expr(plus_e.op1()));
+      this->sys.add_inequality(
+        1, "d" + integer2string(sum_dim), 0, "d", const_left + const_right);
+      this->sys.add_inequality(
+        -1, "d" + integer2string(sum_dim), 0, "d", -(const_left + const_right));
     }
 
-
-    tvpi_systemt::dimensiont left =
-      eval(to_symbol_expr(plus_e.op0()));
-    std::cout<<"plus e right"<<plus_e.op1().id_string()<<std::endl;
-    tvpi_systemt::dimensiont right;
-    if(plus_e.op1().id()==ID_symbol){
-      right = eval(to_symbol_expr(plus_e.op1()));
-    }
-    else if(plus_e.op1().id()==ID_unary_minus){
-      right = eval(to_unary_minus_expr(plus_e.op1()));
-    }
+    tvpi_systemt::dimensiont left = eval(plus_e.op0());
+    tvpi_systemt::dimensiont right = eval(plus_e.op1());
 
     std::optional<mp_integer> u_bound_left = this->sys.get_ub(left);
     std::optional<mp_integer> l_bound_left = this->sys.get_lb(left);
     std::optional<mp_integer> u_bound_right = this->sys.get_ub(right);
     std::optional<mp_integer> l_bound_right = this->sys.get_lb(right);
 
-    if(u_bound_left.has_value()&&u_bound_right.has_value()){
-
-    std::cout<<u_bound_left.value()<<" was"<<std::endl;
-
-    auto filter_left = this->sys.tvpi_systemt::filter_ineqs(left);
-    auto filter_right = this->sys.tvpi_systemt::filter_ineqs(right);
-
-    this->sys.add_inequality(
-        -1,
-        "d" + integer2string(left),
-        1,
-        "d" + integer2string(sum_dim),
-        u_bound_right.value());
-    this->sys.add_inequality(
-        -1,
-        "d" + integer2string(right),
-        1,
-        "d" + integer2string(sum_dim),
-        u_bound_left.value());
-
-
-    }
-
-
-
-    //to_constant_expr
-    //tvpi_systemt::dimensiont left =
-    //eval(to_symbol_expr(plus_e.op0()));
-
-    /*
-
-    tvpi_systemt::dimensiont left =
-      eval(to_symbol_expr(plus_e.op0()));
-    tvpi_systemt::dimensiont right =
-      eval(to_symbol_expr(plus_e.op1()));
-
-    std::cerr << "left: " << left << " right: " << right << std::endl;
-
-
-    */
-    /*
-    //auto filter_left = this->sys.tvpi_systemt::filter_ineqs(left);
-    //auto filter_right = this->sys.tvpi_systemt::filter_ineqs(right);
-
-    //std::optional<std::shared_ptr<unary_inequality>> u_ineq_left = tvpi_systemt::cast_to_unary(filter_left[0]);
-    //std::optional<std::shared_ptr<unary_inequality>> u_ineq_right = tvpi_systemt::cast_to_unary(filter_right[0]);
-
     //Theorem 1
-    if(u_bound_left.has_value() && u_bound_right.has_value())
+    if(u_bound_right.has_value())
     {
       this->sys.add_inequality(
         -1,
@@ -210,6 +160,10 @@ tvpi_domaint::eval(exprt e)
         1,
         "d" + integer2string(sum_dim),
         u_bound_right.value());
+    }
+
+    if(u_bound_left.has_value())
+    {
       this->sys.add_inequality(
         -1,
         "d" + integer2string(right),
@@ -217,49 +171,65 @@ tvpi_domaint::eval(exprt e)
         "d" + integer2string(sum_dim),
         u_bound_left.value());
     }
+
     //Theorem 2
-    if(l_bound_left.has_value() && l_bound_right.has_value())
+    if(l_bound_right.has_value())
     {
       this->sys.add_inequality(
         1,
         "d" + integer2string(left),
         -1,
         "d" + integer2string(sum_dim),
-        -u_bound_right.value());
+        -l_bound_right.value());
+    }
+
+    if(l_bound_left.has_value())
+    {
       this->sys.add_inequality(
         1,
         "d" + integer2string(right),
         -1,
         "d" + integer2string(sum_dim),
-        -u_bound_left.value());
+        -l_bound_left.value());
     }
-    //Theorem 3
 
+    //Theorem 3
     //Theorem 4
     //Theorem N
 
-    */
-
     return sum_dim;
   }
-  else if(e.id()==ID_unary_minus){
-    std::cout<<"we are in unary minus"<<std::endl;
+  else if(e.id() == ID_unary_minus)
+  {
+    std::cout << "we are in unary minus" << std::endl;
     unary_minus_exprt u_min_e = to_unary_minus_expr(e);
 
+    tvpi_systemt::dimensiont left = eval(u_min_e.op());
+
     tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
-  
+    std::cout << "new dim is: " << c << " old dim is" << left << std::endl;
+
+    //new_dim - eval_result <= 0
+    //-new_dim  + eval_result <= 0
+
+    this->sys.add_inequality(
+      -1, "d" + integer2string(c), -1, "d" + integer2string(left), 0);
+    this->sys.add_inequality(
+      1, "d" + integer2string(c), 1, "d" + integer2string(left), 0);
+
+    /*
     mp_integer const_e;
     if(u_min_e.op().id()==ID_constant){
-    const_e = numeric_cast_v<mp_integer>(to_constant_expr(u_min_e.op()));
-    this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", -const_e);
-    this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", const_e);
-
+     const_e = numeric_cast_v<mp_integer>(to_constant_expr(u_min_e.op()));
+     std::cout<<"const_e now:"<<const_e<<std::endl;
+     this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", -const_e);
+     this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", const_e);
     }
     else if(u_min_e.op().id()==ID_symbol){
-    std::cout<<"we are in ID"<<std::endl;
-    symbol_exprt s = to_symbol_expr(u_min_e.op());
-    tvpi_systemt::dimensiont binded_dim = lookup_binding(s);
-    std::cout<<"the binded dimension we found is:"<<binded_dim<<std::endl;
+     std::cout<<"we are in ID"<<std::endl;
+     symbol_exprt s = to_symbol_expr(u_min_e.op());
+     tvpi_systemt::dimensiont binded_dim = lookup_binding(s);
+     std::cout<<"the binded dimension we found is:"<<binded_dim<<std::endl;
     
     if(binded_dim<0){
       binded_dim = c;
@@ -275,15 +245,15 @@ tvpi_domaint::eval(exprt e)
     }
   
     }
+    */
 
     return c;
   }
   else if(e.id() == ID_minus)
   {
-    std::cout<<"we are in ID minus"<<std::endl;
+    std::cout << "we are in ID minus" << std::endl;
     binary_exprt bin_exp = to_binary_expr(e);
-    return eval(
-      plus_exprt(bin_exp.lhs(), unary_minus_exprt(bin_exp.rhs())));
+    return eval(plus_exprt(bin_exp.lhs(), unary_minus_exprt(bin_exp.rhs())));
   }
   else
   {
@@ -331,9 +301,12 @@ tvpi_domaint::eval(exprt e)
 // Takes a bool expression and reduces the domain
 // to an overapproximation of when this condition holds
 void tvpi_domaint::assume(const exprt &e)
+
 {
-  std::cout<<"inside assume"<<std::endl;
+  std::cout << "inside assume" << std::endl;
+  std::cout << e.pretty() << std::endl;
   //PRECONDITION(e.id() == ID_bool);
+
   if(e.id() == ID_equal)
   {
     //turn to object and then recurse
@@ -347,25 +320,29 @@ void tvpi_domaint::assume(const exprt &e)
     label_l = "d" + integer2string(l);
     label_r = "d" + integer2string(r);
 
-    std::cout<<"ID equal -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
-    
+    std::cout << "ID equal -> label left: " << label_l
+              << " label right: " << label_r << std::endl;
+
     sys.add_inequality(1, label_l, -1, label_r, 0);
     sys.add_inequality(-1, label_l, 1, label_r, 0);
 
     return;
-    }
+  }
   if(e.id() == ID_le)
   {
+    std::cout << "and now this" << std::endl;
     auto bin = to_binary_expr(e);
     tvpi_systemt::dimensiont l = eval(bin.lhs());
+    //issue here?
     tvpi_systemt::dimensiont r = eval(bin.rhs());
 
     std::string label_l, label_r;
     label_l = "d" + integer2string(l);
     label_r = "d" + integer2string(r);
 
-   std::cout<<"less or equal -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
-   sys.add_inequality(1,label_l,-1,label_r,0);
+    std::cout << "less or equal -> label left: " << label_l
+              << " label right: " << label_r << std::endl;
+    sys.add_inequality(1, label_l, -1, label_r, 0);
 
     //auto &rel = to_binary_relation_expr(e);
     //tvpi_systemt::dimensiont l = eval(rel.lhs(), temporaries);
@@ -375,21 +352,23 @@ void tvpi_domaint::assume(const exprt &e)
     //label_r = "d" + integer2string(r);
     //this->sys.add_inequality(1, label_l, -1, label_r, 0);
   }
-  if(e.id() == ID_lt){
-    std::cout<<"we are in the less than"<<std::endl;
+  if(e.id() == ID_lt)
+  {
+    std::cout << "we are in the less than" << std::endl;
     auto bin = to_binary_expr(e);
-    std::cout<<"before left "<<this->sys.constraints.size()<<std::endl;
+    std::cout << "before left " << this->sys.constraints.size() << std::endl;
     tvpi_systemt::dimensiont l = eval(bin.lhs());
-    std::cout<<"my left label is: "<<l<<std::endl;
-    std::cout<<"before right "<<this->sys.constraints.size()<<std::endl;
+    std::cout << "my left label is: " << l << std::endl;
+    std::cout << "before right " << this->sys.constraints.size() << std::endl;
     tvpi_systemt::dimensiont r = eval(bin.rhs());
-    std::cout<<"final sys "<<this->sys.constraints.size()<<std::endl;
-       std::cout<<"my right label is: "<<r<<std::endl;
-    this->sys.add_inequality(1, "d"+integer2string(l),  -1, "d"+integer2string(r), -1);
+    std::cout << "final sys " << this->sys.constraints.size() << std::endl;
+    std::cout << "my right label is: " << r << std::endl;
+    this->sys.add_inequality(
+      1, "d" + integer2string(l), -1, "d" + integer2string(r), -1);
     return;
   }
   if(e.id() == ID_ge)
-  { 
+  {
     auto bin = to_binary_expr(e);
     tvpi_systemt::dimensiont l = eval(bin.lhs());
     tvpi_systemt::dimensiont r = eval(bin.rhs());
@@ -398,12 +377,14 @@ void tvpi_domaint::assume(const exprt &e)
     label_l = "d" + integer2string(l);
     label_r = "d" + integer2string(r);
 
-    std::cout<<"greater or equal -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
-    sys.add_inequality(-1,label_l,1,label_r,0);
+    std::cout << "greater or equal -> label left: " << label_l
+              << " label right: " << label_r << std::endl;
+    sys.add_inequality(-1, label_l, 1, label_r, 0);
     return;
   }
-  if(e.id() == ID_gt){
-        auto bin = to_binary_expr(e);
+  if(e.id() == ID_gt)
+  {
+    auto bin = to_binary_expr(e);
     tvpi_systemt::dimensiont l = eval(bin.lhs());
     tvpi_systemt::dimensiont r = eval(bin.rhs());
 
@@ -411,8 +392,9 @@ void tvpi_domaint::assume(const exprt &e)
     label_l = "d" + integer2string(l);
     label_r = "d" + integer2string(r);
 
-    std::cout<<"greater -> label left: "<<label_l<<" label right: "<<label_r<<std::endl;
-    sys.add_inequality(-1,label_l,1,label_r,-1);
+    std::cout << "greater -> label left: " << label_l
+              << " label right: " << label_r << std::endl;
+    sys.add_inequality(-1, label_l, 1, label_r, -1);
     return;
   }
   if(e.id() == ID_and)
@@ -426,39 +408,48 @@ void tvpi_domaint::assume(const exprt &e)
     // Don't worry about it for now.
   }
   if(e.id() == ID_not)
-  { 
-    std::cout<<"we are in not"<<std::endl;
-    std::cout<<e.pretty()<<std::endl;
+  {
+    std::cout << "we are in not" << std::endl;
+    std::cout << e.pretty() << std::endl;
 
     not_exprt tmp(to_not_expr(e));
-    if(tmp.op().id()==ID_not){
+    if(tmp.op().id() == ID_not)
+    {
       assume(to_not_expr(tmp.op()).op());
-      
     }
-    else if(tmp.op().id()==ID_lt){
+    else if(tmp.op().id() == ID_lt)
+    {
       auto rel = to_binary_relation_expr(tmp.op());
-      assume(greater_than_or_equal_exprt(rel.lhs(),rel.rhs()));
+      assume(greater_than_or_equal_exprt(rel.lhs(), rel.rhs()));
     }
-    else if(tmp.op().id()==ID_le){
-     auto rel = to_binary_relation_expr(tmp.op());
-     assume(greater_than_exprt(rel.lhs(),rel.rhs()));
+    else if(tmp.op().id() == ID_le)
+    {
+      auto rel = to_binary_relation_expr(tmp.op());
+      assume(greater_than_exprt(rel.lhs(), rel.rhs()));
     }
-    else if(tmp.op().id()==ID_gt){
-     auto rel = to_binary_relation_expr(tmp.op());
-     assume(less_than_or_equal_exprt(rel.lhs(),rel.rhs()));
+    else if(tmp.op().id() == ID_gt)
+    {
+      std::cout << "we hit this" << std::endl;
+      auto rel = to_binary_relation_expr(tmp.op());
+      assume(less_than_or_equal_exprt(rel.lhs(), rel.rhs()));
     }
-    else if(tmp.op().id()==ID_ge){
-     auto rel = to_binary_relation_expr(tmp.op());
-     assume(less_than_exprt(rel.lhs(),rel.rhs()));
-
+    else if(tmp.op().id() == ID_ge)
+    {
+      auto rel = to_binary_relation_expr(tmp.op());
+      assume(less_than_exprt(rel.lhs(), rel.rhs()));
+    }
+    else if(tmp.op().id() == ID_equal)
+    {
+      auto rel = to_binary_relation_expr(tmp.op());
+      assume(equal_exprt(rel.lhs(), rel.rhs()));
     }
 
     // These requires some magic
     // Don't worry about it for now.
   }
   std::cerr << "If only I knew how to assume a " << id2string(e.id())
-              << std::endl;
-
+            << std::endl;
+  std::cout << "end of assume" << std::endl;
   /*
 for (const auto &t : temporaries) {
 //sys.existential_projection(t);
@@ -470,7 +461,8 @@ for (const auto &t : temporaries) {
 // that over-approximates e
 void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 {
-  std::cerr << "We are in assign with: " << id2string(lhs.get_identifier()) << std::endl;
+  std::cerr << "We are in assign with: " << id2string(lhs.get_identifier())
+            << std::endl;
   tvpi_systemt::dimensiont ev = eval(e);
 
   //eval has an abstraction
@@ -501,29 +493,36 @@ void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
   //}
 }
 
-bool tvpi_domaint::ai_simplify(
-  exprt &condition,
-  const namespacet &ns) const
+bool tvpi_domaint::ai_simplify(exprt &condition, const namespacet &ns) const
 {
-  std::cout<<"ai_simplify for tvpi!"<<std::endl;
+  std::cout << "ai_simplify for tvpi!" << std::endl;
+  std::cout << "the condition is: " << condition.pretty() << std::endl;
   bool unchanged = true;
-  tvpi_domaint d(*this);
+  tvpi_domaint copy_a(*this);
+  tvpi_domaint copy_b(*this);
 
-  if(condition.id()==ID_symbol){
-
+  if(condition.id() == ID_symbol)
+  {
+    std::cout << "trying to simplify ID" << std::endl;
   }
-  else{
-
-  std::cout<<"trying to simplify"<<std::endl;
-  d.assume(not_exprt(condition));
-  
-  if(this->is_bottom()){
-    condition = true_exprt();
+  else
+  {
+    std::cout << "trying to simplify" << std::endl;
+    copy_a.assume(condition);
+    if(copy_a.is_bottom())
+    {
+      std::cout << "trying CASE A" << std::endl;
+      condition = false_exprt();
+    }
+    else
+    {
+      copy_b.assume(not_exprt(condition));
+      if(copy_b.is_bottom())
+        std::cout << "trying CASE B" << std::endl;
+      condition = true_exprt();
+      unchanged = false;
+    }
   }
-  
-
-  }
-
 
   return unchanged;
 }
@@ -542,6 +541,8 @@ void tvpi_domaint::transform(
   ai_baset &ai,
   const namespacet &ns)
 {
+  this->sys.print_system();
+
   std::cerr << "TVPI domain @ 0x" << this << " transform using instruction "
             << from->current_location()->location_number << '\n';
 
@@ -594,7 +595,7 @@ void tvpi_domaint::transform(
   {
     // Comparing iterators is safe as the target must be within the same list
     // of instructions because this is a GOTO.
-    std::cout<<"inside GOTO"<<std::endl;
+    std::cout << "inside GOTO" << std::endl;
     locationt next = from->current_location();
     next++;
     if(
@@ -604,14 +605,14 @@ void tvpi_domaint::transform(
       if(next == to->current_location())
       {
         // Branch is not taken
-        std::cout<<"branch not taken"<<std::endl;
+        std::cout << "branch not taken" << std::endl;
         assume(not_exprt(instruction.condition()));
       }
       else
       {
         // Branch is taken
-         std::cout<<"branch taken"<<std::endl;
-         assume(instruction.condition());
+        std::cout << "branch taken" << std::endl;
+        assume(instruction.condition());
       }
     }
     break;
@@ -620,23 +621,23 @@ void tvpi_domaint::transform(
   case FUNCTION_CALL:
   {
     // Function calls are a bit of a fiddle...
-   //const code_function_callt &code_function_call =
-   //to_code_function_call(instruction.code());
-   //std::cout<<"code_function_call"<<code_function_call.pretty()<<std::endl;
-   //code_function_call.
+    //const code_function_callt &code_function_call =
+    //to_code_function_call(instruction.code());
+    //std::cout<<"code_function_call"<<code_function_call.pretty()<<std::endl;
+    //code_function_call.
 
-   const exprt &function = instruction.call_function();
+    const exprt &function = instruction.call_function();
 
-
-   if(function.id()==ID_symbol)
+    if(function.id() == ID_symbol)
+    {
+      const irep_idt &identifier = to_symbol_expr(function).get_identifier();
+      if(identifier == "assume")
       {
-        const irep_idt &identifier=to_symbol_expr(function).get_identifier();
-        if(identifier=="assume"){
-          std::cout<<"yes yes yes"<<std::endl;        
-        }
+        std::cout << "yes yes yes" << std::endl;
       }
- 
-   break;
+    }
+
+    break;
   }
   /*  Removed from more recent versions
   case RETURN:  // Are transformed away into SET_RETURN_VALUE
@@ -693,8 +694,20 @@ void tvpi_domaint::transform(
 }
 
 //trace_ptrt can be seen as location, will be used for widening
-bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
+bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 {
+  auto widen_mode =
+    from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
+  switch(widen_mode)
+  {
+  case widen_modet::could_widen:
+    std::cout << "could_widen" << std::endl;
+  case widen_modet::no:
+    std::cout << "no widening possible" << std::endl;
+  default:
+    std::cout << "nothing is known" << std::endl;
+  }
+
   //std::cerr << "CASE 0: ENTRY" << std::endl;
 
   if(b.is_bottom())
@@ -741,19 +754,14 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
   tvpi_systemt copy_a = this->sys;
   tvpi_systemt copy_b = b.sys;
 
-  align_bindings(copy_left,copy_right,copy_a,copy_b);
-  std::set<std::string> existing_relations = find_relations(copy_a,copy_b);
-
-  //normalise so the hull works 
-  //copy_a.constraints = add_var(copy_a);
-  //copy_b.constraints = add_var(copy_b);
+  align_bindings(copy_left, copy_right, copy_a, copy_b);
+  std::set<std::string> existing_relations = find_relations(copy_a, copy_b);
 
   std::vector<std::shared_ptr<inequality>> interm_union;
   std::vector<std::shared_ptr<inequality>> convex_union;
 
   for(const auto &rel : existing_relations)
   {
-
     sweep_dimensions();
     std::vector<std::shared_ptr<inequality>> filter_left;
     std::vector<std::shared_ptr<inequality>> filter_right;
@@ -766,17 +774,17 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
     std::cout << first_var << " part2: " << second_var << std::endl;
     if(first_var != second_var)
     {
-      std::cout<<"first var: "<<first_var<<" second var: "<<second_var<<std::endl;
+      std::cout << "first var: " << first_var << " second var: " << second_var
+                << std::endl;
       target_vars = {first_var, second_var};
     }
     else
     {
       target_vars = {first_var};
     }
-    
-   std::cout<<"vars here::"<<std::endl;
-  print_ineq(copy_a.constraints[0]);
 
+    std::cout << "vars here::" << std::endl;
+    print_ineq(copy_a.constraints[0]);
 
     filter_left = filter(copy_a, target_vars);
     filter_right = filter(copy_b, target_vars);
@@ -787,14 +795,15 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt, trace_ptrt)
     extract_dimensions(filter_left);
     extract_dimensions(filter_right);
     interm_union = join::calc_hull(filter_left, filter_right);
-    convex_union.insert(convex_union.end(), interm_union.begin(), interm_union.end());
+    convex_union.insert(
+      convex_union.end(), interm_union.begin(), interm_union.end());
   }
 
   //check if the new system is different
 
   if(convex_union != this->sys.constraints)
   {
-    std::cout<<"the convex hull is:"<<std::endl;
+    std::cout << "the convex hull is:" << std::endl;
     print_cons(convex_union);
     is_modified = true;
     this->sys.constraints = convex_union;
@@ -902,7 +911,6 @@ find_relations(const tvpi_systemt &a, const tvpi_systemt &b)
       if(loc == found.end())
       {
         found.insert(var);
-
       }
     }
     else if(i->arity() == 2)
@@ -950,38 +958,19 @@ filter(const tvpi_systemt &sys, std::vector<std::string> &target_vars)
   std::vector<std::shared_ptr<inequality>> res;
   for(const std::shared_ptr<inequality> &i : sys.constraints)
   {
+    std::vector<std::string> found_vars = i->vars();
+    std::cout << "size vars: " << found_vars.size() << std::endl;
 
-      std::vector<std::string> found_vars = i->vars();
-      std::cout<<"size vars: "<<found_vars.size()<<std::endl;
-      std::cout<<found_vars[0]<<" "<<found_vars[1]<<std::endl;
-      std::cout<<"target vars: "<<target_vars.size()<<std::endl;
-      std::cout<<target_vars[0]<<std::endl;
+    if(found_vars.size() >= 1)
+    {
+      std::cout << found_vars[0] << " " << found_vars[1] << std::endl;
+      std::cout << "target vars: " << target_vars.size() << std::endl;
+      std::cout << target_vars[0] << std::endl;
 
       if(found_vars == target_vars)
       {
         res.push_back(i);
       }
-    
-  }
-  return res;
-}
-
-std::vector<std::shared_ptr<inequality>> add_var(tvpi_systemt sys)
-{
-  std::vector<std::shared_ptr<inequality>> res;
-  for(auto &c : sys.constraints)
-  {
-    if(cast_to_unary(c))
-    {
-      std::cout << "can cast this" << std::endl;
-      auto i = cast_to_unary(c);
-      std::shared_ptr<dyadic_inequality> d =
-        std::make_shared<dyadic_inequality>(i->x, "", i->a, 0, i->c);
-      res.push_back(d);
-    }
-    else
-    {
-      res.push_back(c);
     }
   }
   return res;

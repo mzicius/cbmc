@@ -1,7 +1,23 @@
 int main(void){
     int y = 3;
-    int x = 4;
-    int c = x - y; 
+    //bounds are left out for a reason
+    //int x = 4;
+    //boundless x seems to mess up the
+    
+    int x = 2;
+    int c;
+    
+    if(x<3){
+        //c = x + y;
+        //x = 9;
+        //int z;
+        c = 7;
+    }
+    else{
+        //x = 6;
+        //int f;
+        c = 9;
+    }
 
     return c;
 }

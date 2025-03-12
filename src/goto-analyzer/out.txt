@@ -1,0 +1,3536 @@
+History not specified, defaulting to --ahistorical
+Storage not specified, defaulting to --one-domain-per-history
+GOTO-ANALYZER version 6.0.0-preview (69ed3d3e7b-dirty) 64-bit arm64 macos
+Parsing ../../example_programs/minus_vars.c
+Converting
+Type-checking minus_vars
+Removing unused symbol __uint128_t
+Removing unused symbol __int128_t
+Removing unused symbol __tile
+Removing unused symbol tag-__gcc_atomic_memmodels
+Removing unused symbol __ATOMIC_SEQ_CST
+Removing unused symbol __ATOMIC_ACQ_REL
+Removing unused symbol __ATOMIC_RELEASE
+Removing unused symbol __ATOMIC_ACQUIRE
+Removing unused symbol __ATOMIC_CONSUME
+Removing unused symbol __ATOMIC_RELAXED
+Removing unused symbol __gcc_di
+Removing unused symbol __gcc_v8di
+Removing unused symbol __gcc_v4di
+Removing unused symbol __gcc_v2di
+Removing unused symbol __gcc_v1di
+Removing unused symbol __gcc_v8df
+Removing unused symbol __gcc_v4df
+Removing unused symbol __gcc_v16sf
+Removing unused symbol __gcc_v32hi
+Removing unused symbol __gcc_v4hi
+Removing unused symbol __gcc_v256si
+Removing unused symbol __builtin_va_list
+Removing unused symbol __gcc_v2df
+Removing unused symbol tag-__CPROVER_pipet
+Removing unused symbol __gcc_v8sf
+Removing unused symbol __PRETTY_FUNCTION__
+Removing unused symbol __gcc_v4sf
+Removing unused symbol __FUNCTION__
+Removing unused symbol __gcc_v2sf
+Removing unused symbol __func__
+Removing unused symbol __gcc_v16hi
+Removing unused symbol __gcc_v16si
+Removing unused symbol __CPROVER_allocate
+Removing unused symbol __gcc_v8si
+Removing unused symbol __gcc_v4si
+Removing unused symbol __gcc_v2si
+Removing unused symbol __gcc_v64qi
+Removing unused symbol __gcc_v32qi
+Removing unused symbol __CPROVER_rational
+Removing unused symbol __gcc_v16qi
+Removing unused symbol __CPROVER_integer
+Removing unused symbol __gcc_v8hi
+Removing unused symbol __CPROVER_deallocate
+Removing unused symbol __gcc_v8qi
+Removing unused symbol __gcc_m64
+Removing unused symbol __CPROVER_ssize_t
+Removing unused symbol __builtin_ms_va_list
+Generating GOTO Program
+Adding CPROVER library (arm64)
+Removal of function pointers and virtual functions
+Partial Inlining
+Generic Property Instrumentation
+Selecting abstract domain
+Computing abstract states
+ai_baset::visit 19 in __CPROVER__start
+no widening possible
+nothing is known
+ai_baset::visit_edge from 19 to 20... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 19
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 20
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 20 in __CPROVER__start
+ai_baset::visit_function_call at 20
+Calling __CPROVER_initialize
+ai_recursive_interproceduralt::visit_edge_function_call from 20 to 21
+no widening possible
+nothing is known
+ai_baset::visit_edge from 20 to 12... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 20
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 12
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+Handle __CPROVER_initialize recursively
+ai_baset::visit 12 in __CPROVER_initialize
+no widening possible
+nothing is known
+ai_baset::visit_edge from 12 to 13... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 12
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 13
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 13 in __CPROVER_initialize
+no widening possible
+nothing is known
+ai_baset::visit_edge from 13 to 14... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 13
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 14
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 14 in __CPROVER_initialize
+no widening possible
+nothing is known
+ai_baset::visit_edge from 14 to 15... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 14
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 15
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 15 in __CPROVER_initialize
+no widening possible
+nothing is known
+ai_baset::visit_edge from 15 to 16... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 15
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 16
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 16 in __CPROVER_initialize
+no widening possible
+nothing is known
+ai_baset::visit_edge from 16 to 17... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 16
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 17
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 17 in __CPROVER_initialize
+no widening possible
+nothing is known
+ai_baset::visit_edge from 17 to 18... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 17
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 18
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 18 in __CPROVER_initialize
+ai_baset::visit_end_function __CPROVER_initialize
+Handle return edges
+no widening possible
+nothing is known
+ai_baset::visit_edge from 18 to 21... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 18
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 21
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+ai_baset::visit 21 in __CPROVER__start
+ai_baset::visit_function_call at 21
+Calling main
+ai_recursive_interproceduralt::visit_edge_function_call from 21 to 22
+no widening possible
+nothing is known
+ai_baset::visit_edge from 21 to 0... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 21
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 0
+new_values = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+Handle main recursively
+ai_baset::visit 0 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 0 to 1... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 0
+current = Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+to_p = ahistorical : location 1
+new_values = Number of dimensions: 0
+Binding of size: 1 contains: 
+main::1::y-> 0
+number of cons: 0
+
+ai_baset::visit 1 in main
+we met a constant
+a: 1 b: 0 c: 3 x: d1 y: d
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+a: -1 b: 0 c: -3 x: d1 y: d
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+no widening possible
+nothing is known
+ai_baset::visit_edge from 1 to 2... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 1
+current = Number of dimensions: 0
+Binding of size: 1 contains: 
+main::1::y-> 0
+number of cons: 0
+
+to_p = ahistorical : location 2
+new_values = Number of dimensions: 1
+Binding of size: 1 contains: 
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+ai_baset::visit 2 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 2 to 3... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 2
+current = Number of dimensions: 1
+Binding of size: 1 contains: 
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+to_p = ahistorical : location 3
+new_values = Number of dimensions: 2
+Binding of size: 2 contains: 
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+ai_baset::visit 3 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 3 to 4... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 3
+current = Number of dimensions: 2
+Binding of size: 2 contains: 
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+to_p = ahistorical : location 4
+new_values = Number of dimensions: 3
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+ai_baset::visit 4 in main
+inside GOTO
+branch taken
+inside assume
+not
+  * type: bool
+  0: >
+      * type: bool
+      * #source_location: 
+        * file: ../../example_programs/minus_vars.c
+        * line: 11
+        * function: main
+        * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+      0: symbol
+          * type: signedbv
+              * width: 32
+              * #c_type: signed_int
+          * #source_location: 
+            * file: ../../example_programs/minus_vars.c
+            * line: 11
+            * function: main
+            * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+          * identifier: main::1::c
+          * #lvalue: 1
+      1: constant
+          * type: signedbv
+              * width: 32
+              * #c_type: signed_int
+          * #source_location: 
+            * file: ../../example_programs/minus_vars.c
+            * line: 11
+            * function: main
+            * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+          * value: 0
+          * #base: 10
+we are in not
+not
+  * type: bool
+  0: >
+      * type: bool
+      * #source_location: 
+        * file: ../../example_programs/minus_vars.c
+        * line: 11
+        * function: main
+        * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+      0: symbol
+          * type: signedbv
+              * width: 32
+              * #c_type: signed_int
+          * #source_location: 
+            * file: ../../example_programs/minus_vars.c
+            * line: 11
+            * function: main
+            * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+          * identifier: main::1::c
+          * #lvalue: 1
+      1: constant
+          * type: signedbv
+              * width: 32
+              * #c_type: signed_int
+          * #source_location: 
+            * file: ../../example_programs/minus_vars.c
+            * line: 11
+            * function: main
+            * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+          * value: 0
+          * #base: 10
+we hit this
+inside assume
+<=
+  * type: bool
+  0: symbol
+      * type: signedbv
+          * width: 32
+          * #c_type: signed_int
+      * #source_location: 
+        * file: ../../example_programs/minus_vars.c
+        * line: 11
+        * function: main
+        * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+      * identifier: main::1::c
+      * #lvalue: 1
+  1: constant
+      * type: signedbv
+          * width: 32
+          * #c_type: signed_int
+      * #source_location: 
+        * file: ../../example_programs/minus_vars.c
+        * line: 11
+        * function: main
+        * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+      * value: 0
+      * #base: 10
+and now this
+the refrence count for this dimension is: 1
+we met a constant
+a: 1 b: 0 c: 0 x: d4 y: d
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+a: -1 b: 0 c: 0 x: d4 y: d
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+result of: -d4≤0 d1≤3
+Low level res: []
+result of: -d4≤0 -d1≤-3
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+-1d4≤0
+less or equal -> label left: d3 label right: d4
+a: 1 b: -1 c: 0 x: d3 y: d4
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+result of: -d4≤0 d1≤3
+Low level res: []
+result of: -d4≤0 -d1≤-3
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+-1d4≤0
+result of: d3-d4≤0 d1≤3
+Low level res: []
+result of: d3-d4≤0 -d1≤-3
+Low level res: []
+result of: d3-d4≤0 d4≤0
+Low level res: 1d3≤0
+result of: d3≤0 d1≤3
+Low level res: []
+result of: d3≤0 -d1≤-3
+Low level res: []
+result of: d3≤0 d4≤0
+Low level res: []
+result of: d3≤0 -d4≤0
+Low level res: []
+result of: d3-d4≤0 -d4≤0
+Low level res: []
+projected out
+1d3≤0
+projected out
+1d3-1d4≤0
+1d3≤0
+ds to be removed after entailment
+[]
+projected out
+[]
+in redundant unary
+[]
+1d3-1d4≤0
+1d1≤3
+-1d1≤-3
+1d3≤0
+1d4≤0
+-1d4≤0
+no widening possible
+nothing is known
+ai_baset::visit_edge from 4 to 7... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 4
+current = Number of dimensions: 3
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+to_p = ahistorical : location 7
+new_values = Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+d3-d4≤0
+d1≤3
+-d1≤-3
+d3≤0
+d4≤0
+-d4≤0
+
+inside GOTO
+branch not taken
+inside assume
+not
+  * type: bool
+  0: not
+      * type: bool
+      0: >
+          * type: bool
+          * #source_location: 
+            * file: ../../example_programs/minus_vars.c
+            * line: 11
+            * function: main
+            * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+          0: symbol
+              * type: signedbv
+                  * width: 32
+                  * #c_type: signed_int
+              * #source_location: 
+                * file: ../../example_programs/minus_vars.c
+                * line: 11
+                * function: main
+                * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+              * identifier: main::1::c
+              * #lvalue: 1
+          1: constant
+              * type: signedbv
+                  * width: 32
+                  * #c_type: signed_int
+              * #source_location: 
+                * file: ../../example_programs/minus_vars.c
+                * line: 11
+                * function: main
+                * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+              * value: 0
+              * #base: 10
+we are in not
+not
+  * type: bool
+  0: not
+      * type: bool
+      0: >
+          * type: bool
+          * #source_location: 
+            * file: ../../example_programs/minus_vars.c
+            * line: 11
+            * function: main
+            * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+          0: symbol
+              * type: signedbv
+                  * width: 32
+                  * #c_type: signed_int
+              * #source_location: 
+                * file: ../../example_programs/minus_vars.c
+                * line: 11
+                * function: main
+                * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+              * identifier: main::1::c
+              * #lvalue: 1
+          1: constant
+              * type: signedbv
+                  * width: 32
+                  * #c_type: signed_int
+              * #source_location: 
+                * file: ../../example_programs/minus_vars.c
+                * line: 11
+                * function: main
+                * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+              * value: 0
+              * #base: 10
+inside assume
+>
+  * type: bool
+  * #source_location: 
+    * file: ../../example_programs/minus_vars.c
+    * line: 11
+    * function: main
+    * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+  0: symbol
+      * type: signedbv
+          * width: 32
+          * #c_type: signed_int
+      * #source_location: 
+        * file: ../../example_programs/minus_vars.c
+        * line: 11
+        * function: main
+        * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+      * identifier: main::1::c
+      * #lvalue: 1
+  1: constant
+      * type: signedbv
+          * width: 32
+          * #c_type: signed_int
+      * #source_location: 
+        * file: ../../example_programs/minus_vars.c
+        * line: 11
+        * function: main
+        * working_directory: /Users/mariuszicius/Documents/Uni/cbmc/src/goto-analyzer
+      * value: 0
+      * #base: 10
+the refrence count for this dimension is: 1
+we met a constant
+a: 1 b: 0 c: 0 x: d4 y: d
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+a: -1 b: 0 c: 0 x: d4 y: d
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+result of: -d4≤0 d1≤3
+Low level res: []
+result of: -d4≤0 -d1≤-3
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+-1d4≤0
+greater -> label left: d3 label right: d4
+a: -1 b: 1 c: -1 x: d3 y: d4
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1≤3
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+result of: -d4≤0 d1≤3
+Low level res: []
+result of: -d4≤0 -d1≤-3
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1≤3
+-1d1≤-3
+1d4≤0
+-1d4≤0
+result of: -d3+d4≤-1 d1≤3
+Low level res: []
+result of: -d3+d4≤-1 -d1≤-3
+Low level res: []
+result of: -d3+d4≤-1 d4≤0
+Low level res: []
+result of: -d3+d4≤-1 -d4≤0
+Low level res: -1d3≤-1
+result of: -d3≤-1 d1≤3
+Low level res: []
+result of: -d3≤-1 -d1≤-3
+Low level res: []
+result of: -d3≤-1 d4≤0
+Low level res: []
+result of: -d3≤-1 -d4≤0
+Low level res: []
+projected out
+-1d3≤-1
+projected out
+-1d3+1d4≤-1
+-1d3≤-1
+ds to be removed after entailment
+[]
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1≤3
+-1d1≤-3
+-1d3≤-1
+1d4≤0
+-1d4≤0
+no widening possible
+nothing is known
+ai_baset::visit_edge from 4 to 5... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 4
+current = Number of dimensions: 3
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+to_p = ahistorical : location 5
+new_values = Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+-d3+d4≤-1
+d1≤3
+-d1≤-3
+-d3≤-1
+d4≤0
+-d4≤0
+
+ai_baset::visit 5 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 5 to 6... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 5
+current = Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+-d3+d4≤-1
+d1≤3
+-d1≤-3
+-d3≤-1
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 6
+new_values = Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+-d3+d4≤-1
+d1≤3
+-d1≤-3
+-d3≤-1
+d4≤0
+-d4≤0
+
+ai_baset::visit 6 in main
+we are in ID minus
+we are in plus
+the refrence count for this dimension is: 1
+we are in unary minus
+the refrence count for this dimension is: 1
+new dim is: 6 old dim is1
+a: -1 b: -1 c: 0 x: d6 y: d1
+projected out
+[]
+projected out
+-1d3+1d4≤-1
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+projected out
+1d1≤3
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1≤3
+result of: -d1≤-3 -d3+d4≤-1
+Low level res: []
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1≤3
+-1d1≤-3
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 d1≤3
+Low level res: []
+result of: -d3≤-1 -d1≤-3
+Low level res: []
+projected out
+-1d3≤-1
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1≤3
+-1d1≤-3
+-1d3≤-1
+result of: d4≤0 -d3+d4≤-1
+Low level res: []
+result of: d4≤0 d1≤3
+Low level res: []
+result of: d4≤0 -d1≤-3
+Low level res: []
+result of: d4≤0 -d3≤-1
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1≤3
+-1d1≤-3
+-1d3≤-1
+1d4≤0
+result of: -d4≤0 -d3+d4≤-1
+Low level res: -1d3≤-1
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 d1≤3
+Low level res: []
+result of: -d3≤-1 -d1≤-3
+Low level res: []
+result of: -d3≤-1 -d3≤-1
+Low level res: []
+result of: -d3≤-1 d4≤0
+Low level res: []
+result of: -d4≤0 d1≤3
+Low level res: []
+result of: -d4≤0 -d1≤-3
+Low level res: []
+result of: -d4≤0 -d3≤-1
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d3≤-1
+projected out
+-1d4≤0
+-1d3≤-1
+ds to be removed after entailment
+-1d3≤-1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1≤3
+-1d1≤-3
+-1d3≤-1
+1d4≤0
+-1d4≤0
+result of: -d1-d6≤0 -d3+d4≤-1
+Low level res: []
+result of: -d1-d6≤0 d1≤3
+Low level res: -1d6≤3
+result of: -d6≤3 -d3+d4≤-1
+Low level res: []
+result of: -d6≤3 d1≤3
+Low level res: []
+result of: -d6≤3 -d1≤-3
+Low level res: []
+result of: -d6≤3 -d3≤-1
+Low level res: []
+result of: -d6≤3 d4≤0
+Low level res: []
+result of: -d6≤3 -d4≤0
+Low level res: []
+result of: -d1-d6≤0 -d1≤-3
+Low level res: []
+result of: -d1-d6≤0 -d3≤-1
+Low level res: []
+result of: -d1-d6≤0 d4≤0
+Low level res: []
+result of: -d1-d6≤0 -d4≤0
+Low level res: []
+projected out
+[]
+projected out
+-1d1-1d6≤0
+-1d6≤3
+ds to be removed after entailment
+[]
+projected out
+-1d6≤3
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+-1d6≤3
+a: 1 b: 1 c: 0 x: d6 y: d1
+projected out
+[]
+projected out
+-1d3+1d4≤-1
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+result of: -d1-d6≤0 -d3+d4≤-1
+Low level res: []
+projected out
+[]
+projected out
+-1d1-1d6≤0
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 -d1-d6≤0
+Low level res: []
+projected out
+-1d3≤-1
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+-1d3≤-1
+result of: d4≤0 -d3+d4≤-1
+Low level res: []
+result of: d4≤0 -d1-d6≤0
+Low level res: []
+result of: d4≤0 -d3≤-1
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+result of: -d4≤0 -d3+d4≤-1
+Low level res: -1d3≤-1
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 -d1-d6≤0
+Low level res: []
+result of: -d3≤-1 -d3≤-1
+Low level res: []
+result of: -d3≤-1 d4≤0
+Low level res: []
+result of: -d4≤0 -d1-d6≤0
+Low level res: []
+result of: -d4≤0 -d3≤-1
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d3≤-1
+projected out
+-1d4≤0
+-1d3≤-1
+ds to be removed after entailment
+-1d3≤-1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d1-1d6≤0
+-1d3+1d4≤-1
+-1d3≤-1
+1d4≤0
+-1d4≤0
+result of: d1≤3 -d1-d6≤0
+Low level res: -1d6≤3
+result of: -d6≤3 -d1-d6≤0
+Low level res: []
+result of: -d6≤3 -d3+d4≤-1
+Low level res: []
+result of: -d6≤3 -d3≤-1
+Low level res: []
+result of: -d6≤3 d4≤0
+Low level res: []
+result of: -d6≤3 -d4≤0
+Low level res: []
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+result of: d1≤3 -d3≤-1
+Low level res: []
+result of: d1≤3 d4≤0
+Low level res: []
+result of: d1≤3 -d4≤0
+Low level res: []
+projected out
+1d1≤3
+projected out
+1d1≤3
+-1d6≤3
+ds to be removed after entailment
+[]
+projected out
+-1d6≤3
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d6≤3
+result of: -d1≤-3 -d3+d4≤-1
+Low level res: []
+result of: -d1≤-3 -d1-d6≤0
+Low level res: []
+result of: -d1≤-3 -d3≤-1
+Low level res: []
+result of: -d1≤-3 d4≤0
+Low level res: []
+result of: -d1≤-3 -d4≤0
+Low level res: []
+result of: -d1≤-3 d1≤3
+Low level res: 1
+result of: -d1≤-3 -d6≤3
+Low level res: []
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+-1d6≤3
+1d1≤3
+-1d1≤-3
+result of: -d6≤3 -d3+d4≤-1
+Low level res: []
+result of: -d6≤3 -d1-d6≤0
+Low level res: []
+result of: -d6≤3 -d3≤-1
+Low level res: []
+result of: -d6≤3 d4≤0
+Low level res: []
+result of: -d6≤3 -d4≤0
+Low level res: []
+result of: -d6≤3 -d6≤3
+Low level res: []
+result of: -d6≤3 d1≤3
+Low level res: []
+result of: -d6≤3 -d1≤-3
+Low level res: []
+projected out
+-1d6≤3
+in redundant unary
+[]
+-1d3+1d4≤-1
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+-1d6≤3
+result of: d1+d6≤0 -d3+d4≤-1
+Low level res: []
+result of: d1+d6≤0 -d1-d6≤0
+Low level res: 1
+1
+result of: d1+d6≤0 -d3≤-1
+Low level res: []
+result of: d1+d6≤0 d4≤0
+Low level res: []
+result of: d1+d6≤0 -d4≤0
+Low level res: []
+result of: d1+d6≤0 d1≤3
+Low level res: []
+result of: d1+d6≤0 -d1≤-3
+Low level res: 1d6≤-3
+result of: d6≤-3 -d3+d4≤-1
+Low level res: []
+result of: d6≤-3 -d1-d6≤0
+Low level res: -1d1≤-3
+result of: d6≤-3 -d3≤-1
+Low level res: []
+result of: d6≤-3 d4≤0
+Low level res: []
+result of: d6≤-3 -d4≤0
+Low level res: []
+result of: d6≤-3 d1≤3
+Low level res: []
+result of: d6≤-3 -d1≤-3
+Low level res: []
+result of: d6≤-3 -d6≤3
+Low level res: 1
+result of: d1+d6≤0 -d6≤3
+Low level res: 1d1≤3
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+result of: d1≤3 -d1-d6≤0
+Low level res: -1d6≤3
+result of: d1≤3 -d3≤-1
+Low level res: []
+result of: d1≤3 d4≤0
+Low level res: []
+result of: d1≤3 -d4≤0
+Low level res: []
+result of: d1≤3 d1≤3
+Low level res: []
+result of: d1≤3 -d1≤-3
+Low level res: 1
+result of: d1≤3 -d6≤3
+Low level res: []
+projected out
+-1d1≤-3
+1d1≤3
+projected out
+1d1+1d6≤0
+1d6≤-3
+-1d1≤-3
+1d1≤3
+-1d6≤3
+ds to be removed after entailment
+1d1≤3
+projected out
+1d6≤-3
+-1d6≤3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+a: -1 b: 1 c: 3 x: d2 y: d5
+projected out
+[]
+projected out
+-1d3+1d4≤-1
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+result of: d1+d6≤0 -d3+d4≤-1
+Low level res: []
+projected out
+[]
+projected out
+1d1+1d6≤0
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+result of: -d1-d6≤0 -d3+d4≤-1
+Low level res: []
+result of: -d1-d6≤0 d1+d6≤0
+Low level res: 1
+1
+projected out
+[]
+projected out
+-1d1-1d6≤0
+ds to be removed after entailment
+[]
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d1-1d6≤0
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 d1+d6≤0
+Low level res: []
+result of: -d3≤-1 -d1-d6≤0
+Low level res: []
+projected out
+-1d3≤-1
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d1-1d6≤0
+-1d3≤-1
+result of: d4≤0 -d3+d4≤-1
+Low level res: []
+result of: d4≤0 d1+d6≤0
+Low level res: []
+result of: d4≤0 -d1-d6≤0
+Low level res: []
+result of: d4≤0 -d3≤-1
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+result of: -d4≤0 -d3+d4≤-1
+Low level res: -1d3≤-1
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 d1+d6≤0
+Low level res: []
+result of: -d3≤-1 -d1-d6≤0
+Low level res: []
+result of: -d3≤-1 -d3≤-1
+Low level res: []
+result of: -d3≤-1 d4≤0
+Low level res: []
+result of: -d4≤0 d1+d6≤0
+Low level res: []
+result of: -d4≤0 -d1-d6≤0
+Low level res: []
+result of: -d4≤0 -d3≤-1
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d3≤-1
+projected out
+-1d4≤0
+-1d3≤-1
+ds to be removed after entailment
+-1d3≤-1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1+1d6≤0
+-1d1-1d6≤0
+-1d3+1d4≤-1
+-1d3≤-1
+1d4≤0
+-1d4≤0
+result of: d1≤3 d1+d6≤0
+Low level res: []
+result of: d1≤3 -d1-d6≤0
+Low level res: -1d6≤3
+result of: -d6≤3 d1+d6≤0
+Low level res: 1d1≤3
+result of: -d6≤3 -d1-d6≤0
+Low level res: []
+result of: -d6≤3 -d3+d4≤-1
+Low level res: []
+result of: -d6≤3 -d3≤-1
+Low level res: []
+result of: -d6≤3 d4≤0
+Low level res: []
+result of: -d6≤3 -d4≤0
+Low level res: []
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+result of: d1≤3 -d3≤-1
+Low level res: []
+result of: d1≤3 d4≤0
+Low level res: []
+result of: d1≤3 -d4≤0
+Low level res: []
+projected out
+1d1≤3
+1d1≤3
+projected out
+1d1≤3
+-1d6≤3
+1d1≤3
+ds to be removed after entailment
+[]
+projected out
+-1d6≤3
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d1-1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d6≤3
+result of: -d1≤-3 -d3+d4≤-1
+Low level res: []
+result of: -d1≤-3 d1+d6≤0
+Low level res: 1d6≤-3
+result of: d6≤-3 -d3+d4≤-1
+Low level res: []
+result of: d6≤-3 d1+d6≤0
+Low level res: []
+result of: d6≤-3 -d1-d6≤0
+Low level res: -1d1≤-3
+result of: d6≤-3 -d3≤-1
+Low level res: []
+result of: d6≤-3 d4≤0
+Low level res: []
+result of: d6≤-3 -d4≤0
+Low level res: []
+result of: d6≤-3 d1≤3
+Low level res: []
+result of: d6≤-3 -d6≤3
+Low level res: 1
+result of: -d1≤-3 -d1-d6≤0
+Low level res: []
+result of: -d1≤-3 -d3≤-1
+Low level res: []
+result of: -d1≤-3 d4≤0
+Low level res: []
+result of: -d1≤-3 -d4≤0
+Low level res: []
+result of: -d1≤-3 d1≤3
+Low level res: 1
+result of: -d1≤-3 -d6≤3
+Low level res: []
+projected out
+-1d1≤-3
+-1d1≤-3
+ds to be removed after entailment
+[]
+projected out
+-1d1≤-3
+1d6≤-3
+-1d1≤-3
+ds to be removed after entailment
+-1d1-1d6≤0
+projected out
+1d6≤-3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+result of: d6≤-3 -d3+d4≤-1
+Low level res: []
+result of: d6≤-3 d1+d6≤0
+Low level res: []
+result of: d6≤-3 -d3≤-1
+Low level res: []
+result of: d6≤-3 d4≤0
+Low level res: []
+result of: d6≤-3 -d4≤0
+Low level res: []
+result of: d6≤-3 d1≤3
+Low level res: []
+result of: d6≤-3 -d1≤-3
+Low level res: []
+result of: d6≤-3 d6≤-3
+Low level res: []
+result of: d6≤-3 -d6≤3
+Low level res: 1
+projected out
+1d6≤-3
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+result of: -d6≤3 -d3+d4≤-1
+Low level res: []
+result of: -d6≤3 d1+d6≤0
+Low level res: 1d1≤3
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+result of: d1≤3 d1+d6≤0
+Low level res: []
+result of: d1≤3 -d3≤-1
+Low level res: []
+result of: d1≤3 d4≤0
+Low level res: []
+result of: d1≤3 -d4≤0
+Low level res: []
+result of: d1≤3 d1≤3
+Low level res: []
+result of: d1≤3 -d1≤-3
+Low level res: 1
+result of: d1≤3 d6≤-3
+Low level res: []
+result of: d1≤3 -d6≤3
+Low level res: []
+result of: -d6≤3 -d3≤-1
+Low level res: []
+result of: -d6≤3 d4≤0
+Low level res: []
+result of: -d6≤3 -d4≤0
+Low level res: []
+result of: -d6≤3 d1≤3
+Low level res: []
+result of: -d6≤3 -d1≤-3
+Low level res: []
+result of: -d6≤3 d6≤-3
+Low level res: 1
+result of: -d6≤3 -d6≤3
+Low level res: []
+projected out
+1d1≤3
+projected out
+-1d6≤3
+1d1≤3
+projected out
+-1d6≤3
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+result of: -d2+d5≤3 -d3+d4≤-1
+Low level res: []
+result of: -d2+d5≤3 d1+d6≤0
+Low level res: []
+result of: -d2+d5≤3 -d3≤-1
+Low level res: []
+result of: -d2+d5≤3 d4≤0
+Low level res: []
+result of: -d2+d5≤3 -d4≤0
+Low level res: []
+result of: -d2+d5≤3 d1≤3
+Low level res: []
+result of: -d2+d5≤3 -d1≤-3
+Low level res: []
+result of: -d2+d5≤3 d6≤-3
+Low level res: []
+result of: -d2+d5≤3 -d6≤3
+Low level res: []
+projected out
+[]
+projected out
+-1d2+1d5≤3
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d5≤3
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+a: 1 b: -1 c: 3 x: d2 y: d5
+projected out
+[]
+projected out
+-1d3+1d4≤-1
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+result of: d1+d6≤0 -d3+d4≤-1
+Low level res: []
+projected out
+[]
+projected out
+1d1+1d6≤0
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+result of: -d2+d5≤3 -d3+d4≤-1
+Low level res: []
+result of: -d2+d5≤3 d1+d6≤0
+Low level res: []
+projected out
+[]
+projected out
+-1d2+1d5≤3
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d5≤3
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 d1+d6≤0
+Low level res: []
+result of: -d3≤-1 -d2+d5≤3
+Low level res: []
+projected out
+-1d3≤-1
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d5≤3
+-1d3≤-1
+result of: d4≤0 -d3+d4≤-1
+Low level res: []
+result of: d4≤0 d1+d6≤0
+Low level res: []
+result of: d4≤0 -d2+d5≤3
+Low level res: []
+result of: d4≤0 -d3≤-1
+Low level res: []
+projected out
+1d4≤0
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d5≤3
+-1d3≤-1
+1d4≤0
+result of: -d4≤0 -d3+d4≤-1
+Low level res: -1d3≤-1
+result of: -d3≤-1 -d3+d4≤-1
+Low level res: []
+result of: -d3≤-1 d1+d6≤0
+Low level res: []
+result of: -d3≤-1 -d2+d5≤3
+Low level res: []
+result of: -d3≤-1 -d3≤-1
+Low level res: []
+result of: -d3≤-1 d4≤0
+Low level res: []
+result of: -d4≤0 d1+d6≤0
+Low level res: []
+result of: -d4≤0 -d2+d5≤3
+Low level res: []
+result of: -d4≤0 -d3≤-1
+Low level res: []
+result of: -d4≤0 d4≤0
+Low level res: 1
+projected out
+-1d3≤-1
+projected out
+-1d4≤0
+-1d3≤-1
+ds to be removed after entailment
+-1d3≤-1
+projected out
+-1d4≤0
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+1d1+1d6≤0
+-1d2+1d5≤3
+-1d3+1d4≤-1
+-1d3≤-1
+1d4≤0
+-1d4≤0
+result of: d1≤3 d1+d6≤0
+Low level res: []
+result of: d1≤3 -d2+d5≤3
+Low level res: []
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+result of: d1≤3 -d3≤-1
+Low level res: []
+result of: d1≤3 d4≤0
+Low level res: []
+result of: d1≤3 -d4≤0
+Low level res: []
+projected out
+1d1≤3
+in redundant unary
+[]
+1d1+1d6≤0
+-1d2+1d5≤3
+-1d3+1d4≤-1
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+result of: -d1≤-3 d1+d6≤0
+Low level res: 1d6≤-3
+result of: d6≤-3 d1+d6≤0
+Low level res: []
+result of: d6≤-3 -d2+d5≤3
+Low level res: []
+result of: d6≤-3 -d3+d4≤-1
+Low level res: []
+result of: d6≤-3 -d3≤-1
+Low level res: []
+result of: d6≤-3 d4≤0
+Low level res: []
+result of: d6≤-3 -d4≤0
+Low level res: []
+result of: d6≤-3 d1≤3
+Low level res: []
+result of: -d1≤-3 -d2+d5≤3
+Low level res: []
+result of: -d1≤-3 -d3+d4≤-1
+Low level res: []
+result of: -d1≤-3 -d3≤-1
+Low level res: []
+result of: -d1≤-3 d4≤0
+Low level res: []
+result of: -d1≤-3 -d4≤0
+Low level res: []
+result of: -d1≤-3 d1≤3
+Low level res: 1
+projected out
+-1d1≤-3
+ds to be removed after entailment
+[]
+projected out
+-1d1≤-3
+1d6≤-3
+ds to be removed after entailment
+[]
+projected out
+1d6≤-3
+in redundant unary
+[]
+-1d2+1d5≤3
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+result of: d6≤-3 -d2+d5≤3
+Low level res: []
+result of: d6≤-3 -d3+d4≤-1
+Low level res: []
+result of: d6≤-3 d1+d6≤0
+Low level res: []
+result of: d6≤-3 -d3≤-1
+Low level res: []
+result of: d6≤-3 d4≤0
+Low level res: []
+result of: d6≤-3 -d4≤0
+Low level res: []
+result of: d6≤-3 d1≤3
+Low level res: []
+result of: d6≤-3 -d1≤-3
+Low level res: []
+result of: d6≤-3 d6≤-3
+Low level res: []
+projected out
+1d6≤-3
+in redundant unary
+[]
+-1d2+1d5≤3
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+result of: -d6≤3 -d2+d5≤3
+Low level res: []
+result of: -d6≤3 -d3+d4≤-1
+Low level res: []
+result of: -d6≤3 d1+d6≤0
+Low level res: 1d1≤3
+result of: d1≤3 -d2+d5≤3
+Low level res: []
+result of: d1≤3 -d3+d4≤-1
+Low level res: []
+result of: d1≤3 d1+d6≤0
+Low level res: []
+result of: d1≤3 -d3≤-1
+Low level res: []
+result of: d1≤3 d4≤0
+Low level res: []
+result of: d1≤3 -d4≤0
+Low level res: []
+result of: d1≤3 d1≤3
+Low level res: []
+result of: d1≤3 -d1≤-3
+Low level res: 1
+result of: d1≤3 d6≤-3
+Low level res: []
+result of: -d6≤3 -d3≤-1
+Low level res: []
+result of: -d6≤3 d4≤0
+Low level res: []
+result of: -d6≤3 -d4≤0
+Low level res: []
+result of: -d6≤3 d1≤3
+Low level res: []
+result of: -d6≤3 -d1≤-3
+Low level res: []
+result of: -d6≤3 d6≤-3
+Low level res: 1
+projected out
+1d1≤3
+projected out
+-1d6≤3
+1d1≤3
+ds to be removed after entailment
+1d1≤3
+projected out
+-1d6≤3
+ds to be removed after entailment
+[]
+in redundant unary
+[]
+-1d2+1d5≤3
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+result of: d2-d5≤3 -d2+d5≤3
+Low level res: 1
+1
+result of: d2-d5≤3 -d3+d4≤-1
+Low level res: []
+result of: d2-d5≤3 d1+d6≤0
+Low level res: []
+result of: d2-d5≤3 -d3≤-1
+Low level res: []
+result of: d2-d5≤3 d4≤0
+Low level res: []
+result of: d2-d5≤3 -d4≤0
+Low level res: []
+result of: d2-d5≤3 d1≤3
+Low level res: []
+result of: d2-d5≤3 -d1≤-3
+Low level res: []
+result of: d2-d5≤3 d6≤-3
+Low level res: []
+result of: d2-d5≤3 -d6≤3
+Low level res: []
+projected out
+[]
+projected out
+1d2-1d5≤3
+ds to be removed after entailment
+[]
+projected out
+[]
+in redundant unary
+[]
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d5≤3
+1d2-1d5≤3
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+no widening possible
+nothing is known
+1d3-1d4≤0
+1d1≤3
+-1d1≤-3
+1d3≤0
+1d4≤0
+-1d4≤0
+main::1::c -> 3
+main::1::x -> 2
+main::1::y -> 1
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d5≤3
+1d2-1d5≤3
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+main::1::c -> 5
+main::1::x -> 2
+main::1::y -> 1
+1d3-1d4≤0
+1d1≤3
+-1d1≤-3
+1d3≤0
+1d4≤0
+-1d4≤0
+main::1::c -> 3
+main::1::x -> 2
+main::1::y -> 1
+-1d3+1d4≤-1
+1d1+1d6≤0
+-1d2+1d3≤3
+1d2-1d3≤3
+-1d3≤-1
+1d4≤0
+-1d4≤0
+1d1≤3
+-1d1≤-3
+1d6≤-3
+-1d6≤3
+main::1::c -> 3
+main::1::x -> 2
+main::1::y -> 1
+the target vars for filter are: :
+d1
+left filter
+1d1≤3
+-1d1≤-3
+right filter
+1d1≤3
+-1d1≤-3
+hull start function
+Case Unary Monolithic
+Case Unary Monolithic
+Entry 2
+outer: iP: -d1≤-3 oC: d1≤3 iC: d1≤3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: -1d1≤-3
+iC: 1d1≤3
+oP: -1d1≤-3
+oC: 1d1≤3
+retained edge is:
+1d1≤3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: -1d1≤-3
+iC: 1d1≤3
+oP: 1d1≤3
+oC: -1d1≤-3
+inside gen delta:  oC: d1≤3 iP d1≤3
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+new edge is:
+1d1≤3
+outer: iP: d1≤3 oC: d1≤3 iC: -d1≤-3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: 1d1≤3
+iC: -1d1≤-3
+oP: -1d1≤-3
+oC: 1d1≤3
+retained edge is:
+1d1≤3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: 1d1≤3
+iC: -1d1≤-3
+oP: 1d1≤3
+oC: -1d1≤-3
+inside gen delta:  oC: -d1≤-3 iP d1≤3
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+inside delta combination
+we are here
+x is
+we hit a
+we hit c
+the y is: 
+new edge is:
+1d1≤3
+outer: iP: d1≤3 oC: -d1≤-3 iC: -d1≤-3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: 1d1≤3
+iC: -1d1≤-3
+oP: 1d1≤3
+oC: -1d1≤-3
+retained edge is:
+-1d1≤-3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: 1d1≤3
+iC: -1d1≤-3
+oP: -1d1≤-3
+oC: 1d1≤3
+inside gen delta:  oC: -d1≤-3 iP -d1≤-3
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+new edge is:
+-1d1≤-3
+outer: iP: -d1≤-3 oC: -d1≤-3 iC: d1≤3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: -1d1≤-3
+iC: 1d1≤3
+oP: 1d1≤3
+oC: -1d1≤-3
+retained edge is:
+-1d1≤-3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: -1d1≤-3
+iC: 1d1≤3
+oP: -1d1≤-3
+oC: 1d1≤3
+inside gen delta:  oC: d1≤3 iP -d1≤-3
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+inside delta combination
+we are here
+x is
+we hit a
+we hit c
+the y is: 
+new edge is:
+-1d1≤-3
+outer: iP: -d1≤-3 oC: d1≤3 iC: d1≤3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: -1d1≤-3
+iC: 1d1≤3
+oP: -1d1≤-3
+oC: 1d1≤3
+retained edge is:
+1d1≤3
+ref: d1≤3
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+prev: 1 cur: 0 x: 1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+prev: 0 cur: 1 x: 0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+final res
+1d1≤3
+-1d1≤-3
+inter convex hull is: 
+1d1≤3
+-1d1≤-3
+the target vars for filter are: :
+d1
+d6
+left filter
+[]
+right filter
+1d1+1d6≤0
+hull start function
+inter convex hull is: 
+[]
+the target vars for filter are: :
+d2
+d3
+left filter
+[]
+right filter
+-1d2+1d3≤3
+1d2-1d3≤3
+hull start function
+inter convex hull is: 
+[]
+the target vars for filter are: :
+d3
+left filter
+1d3≤0
+right filter
+-1d3≤-1
+hull start function
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Entry 4
+outer: iP: d3≤0 oC: -d3≤-1 iC: d3≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT3 
+iP: 1d3≤0
+iC: 1d3≤0
+oP: -1d3≤-1
+oC: -1d3≤-1
+mDOuter does not exist
+mDInner does not exist
+inside gen delta:  oC: -d3≤-1 iP d3≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN2 
+iP: -1d3≤-1
+iC: -1d3≤-1
+oP: 1d3≤0
+oC: 1d3≤0
+outer: iP: -d3≤-1 oC: d3≤0 iC: -d3≤-1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT3 
+iP: -1d3≤-1
+iC: -1d3≤-1
+oP: 1d3≤0
+oC: 1d3≤0
+mDOuter does not exist
+mDInner does not exist
+inside gen delta:  oC: d3≤0 iP -d3≤-1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN2 
+iP: 1d3≤0
+iC: 1d3≤0
+oP: -1d3≤-1
+oC: -1d3≤-1
+outer: iP: d3≤0 oC: -d3≤-1 iC: d3≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT3 
+iP: 1d3≤0
+iC: 1d3≤0
+oP: -1d3≤-1
+oC: -1d3≤-1
+mDOuter does not exist
+mDInner does not exist
+inside gen delta:  oC: -d3≤-1 iP d3≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN2 
+iP: -1d3≤-1
+iC: -1d3≤-1
+oP: 1d3≤0
+oC: 1d3≤0
+ref: d3≤0
+final res
+[]
+inter convex hull is: 
+[]
+the target vars for filter are: :
+d3
+d4
+left filter
+1d3-1d4≤0
+right filter
+-1d3+1d4≤-1
+hull start function
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Entry 6
+outer: iP: -d3+d4≤-1 oC: d3-d4≤0 iC: -d3+d4≤-1
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+
+OUT3 
+iP: -1d3+1d4≤-1
+iC: -1d3+1d4≤-1
+oP: 1d3-1d4≤0
+oC: 1d3-1d4≤0
+mDOuter does not exist
+mDInner does not exist
+inside gen delta:  oC: d3-d4≤0 iP -d3+d4≤-1
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+
+IN2 
+iP: 1d3-1d4≤0
+iC: 1d3-1d4≤0
+oP: -1d3+1d4≤-1
+oC: -1d3+1d4≤-1
+outer: iP: d3-d4≤0 oC: -d3+d4≤-1 iC: d3-d4≤0
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+
+OUT3 
+iP: 1d3-1d4≤0
+iC: 1d3-1d4≤0
+oP: -1d3+1d4≤-1
+oC: -1d3+1d4≤-1
+mDOuter does not exist
+mDInner does not exist
+inside gen delta:  oC: -d3+d4≤-1 iP d3-d4≤0
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+
+IN2 
+iP: -1d3+1d4≤-1
+iC: -1d3+1d4≤-1
+oP: 1d3-1d4≤0
+oC: 1d3-1d4≤0
+outer: iP: -d3+d4≤-1 oC: d3-d4≤0 iC: -d3+d4≤-1
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+
+OUT3 
+iP: -1d3+1d4≤-1
+iC: -1d3+1d4≤-1
+oP: 1d3-1d4≤0
+oC: 1d3-1d4≤0
+mDOuter does not exist
+mDInner does not exist
+inside gen delta:  oC: d3-d4≤0 iP -d3+d4≤-1
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+Case Dyadic
+
+IN2 
+iP: 1d3-1d4≤0
+iC: 1d3-1d4≤0
+oP: -1d3+1d4≤-1
+oC: -1d3+1d4≤-1
+ref: -d3+d4≤-1
+final res
+[]
+inter convex hull is: 
+[]
+the target vars for filter are: :
+d4
+left filter
+1d4≤0
+-1d4≤0
+right filter
+1d4≤0
+-1d4≤0
+hull start function
+Case Unary Monolithic
+Case Unary Monolithic
+Entry 2
+outer: iP: -d4≤0 oC: d4≤0 iC: d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: -1d4≤0
+iC: 1d4≤0
+oP: -1d4≤0
+oC: 1d4≤0
+retained edge is:
+1d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: -1d4≤0
+iC: 1d4≤0
+oP: 1d4≤0
+oC: -1d4≤0
+inside gen delta:  oC: d4≤0 iP d4≤0
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+new edge is:
+1d4≤0
+outer: iP: d4≤0 oC: d4≤0 iC: -d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: 1d4≤0
+iC: -1d4≤0
+oP: -1d4≤0
+oC: 1d4≤0
+retained edge is:
+1d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: 1d4≤0
+iC: -1d4≤0
+oP: 1d4≤0
+oC: -1d4≤0
+inside gen delta:  oC: -d4≤0 iP d4≤0
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+inside delta combination
+we are here
+x is
+we hit a
+we hit c
+the y is: 
+new edge is:
+1d4≤0
+outer: iP: d4≤0 oC: -d4≤0 iC: -d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: 1d4≤0
+iC: -1d4≤0
+oP: 1d4≤0
+oC: -1d4≤0
+retained edge is:
+-1d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: 1d4≤0
+iC: -1d4≤0
+oP: -1d4≤0
+oC: 1d4≤0
+inside gen delta:  oC: -d4≤0 iP -d4≤0
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+new edge is:
+-1d4≤0
+outer: iP: -d4≤0 oC: -d4≤0 iC: d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: -1d4≤0
+iC: 1d4≤0
+oP: 1d4≤0
+oC: -1d4≤0
+retained edge is:
+-1d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+mdOuter here:0
+greater or equalnumerator here: 0
+denominator here: 1
+product :0
+1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+IN3 
+iP: -1d4≤0
+iC: 1d4≤0
+oP: -1d4≤0
+oC: 1d4≤0
+inside gen delta:  oC: d4≤0 iP -d4≤0
+ mDInner: 0 mDOuter: 0
+Case Unary Monolithic
+Case Unary Monolithic
+inside delta combination
+we are here
+x is
+we hit a
+we hit c
+the y is: 
+new edge is:
+-1d4≤0
+outer: iP: -d4≤0 oC: d4≤0 iC: d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+
+OUT2 
+iP: -1d4≤0
+iC: 1d4≤0
+oP: -1d4≤0
+oC: 1d4≤0
+retained edge is:
+1d4≤0
+ref: d4≤0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+prev: 1 cur: 0 x: 1
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+prev: 0 cur: 1 x: 0
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+Case Unary Monolithic
+final res
+1d4≤0
+-1d4≤0
+inter convex hull is: 
+1d4≤0
+-1d4≤0
+the target vars for filter are: :
+d6
+left filter
+[]
+right filter
+1d6≤-3
+-1d6≤3
+hull start function
+inter convex hull is: 
+[]
+the convex hull is:
+1d1≤3
+-1d1≤-3
+1d4≤0
+-1d4≤0
+ai_baset::visit_edge from 6 to 7... merges with existing history... applying transformer... merging... result queued.
+p = ahistorical : location 6
+current = Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+-d3+d4≤-1
+d1≤3
+-d1≤-3
+-d3≤-1
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 7
+new_values = Number of dimensions: 6
+Binding of size: 3 contains: 
+main::1::c-> 5
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 11
+-d3+d4≤-1
+d1+d6≤0
+-d2+d5≤3
+d2-d5≤3
+-d3≤-1
+d4≤0
+-d4≤0
+d1≤3
+-d1≤-3
+d6≤-3
+-d6≤3
+
+ai_baset::visit 7 in main
+the refrence count for this dimension is: 1
+no widening possible
+nothing is known
+ai_baset::visit_edge from 7 to 8... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 7
+current = Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 8
+new_values = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 8 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 8 to 9... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 8
+current = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 9
+new_values = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 9 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 9 to 10... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 9
+current = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 10
+new_values = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 10 in main
+no widening possible
+nothing is known
+ai_baset::visit_edge from 10 to 11... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 10
+current = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 11
+new_values = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 11 in main
+ai_baset::visit_end_function main
+Handle return edges
+no widening possible
+nothing is known
+ai_baset::visit_edge from 11 to 22... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 11
+current = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 22
+new_values = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 22 in __CPROVER__start
+the refrence count for this dimension is: 1
+no widening possible
+nothing is known
+ai_baset::visit_edge from 22 to 23... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 22
+current = Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 23
+new_values = Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 23 in __CPROVER__start
+no widening possible
+nothing is known
+ai_baset::visit_edge from 23 to 24... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 23
+current = Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 24
+new_values = Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 24 in __CPROVER__start
+no widening possible
+nothing is known
+ai_baset::visit_edge from 24 to 25... gives a new history... applying transformer... merging... result queued.
+p = ahistorical : location 24
+current = Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+to_p = ahistorical : location 25
+new_values = Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+ai_baset::visit 25 in __CPROVER__start
+ai_baset::visit_end_function __CPROVER__start
+Performing task
+////
+//// Function: main
+////
+
+**** 0 file ../../example_programs/minus_vars.c line 2 function main
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 0 file ../../example_programs/minus_vars.c line 2 function main
+        DECL main::1::y : signedbv[32]
+
+**** 1 file ../../example_programs/minus_vars.c line 2 function main
+Number of dimensions: 0
+Binding of size: 1 contains: 
+main::1::y-> 0
+number of cons: 0
+
+        // 1 file ../../example_programs/minus_vars.c line 2 function main
+        ASSIGN main::1::y := 3
+
+**** 2 file ../../example_programs/minus_vars.c line 7 function main
+Number of dimensions: 1
+Binding of size: 1 contains: 
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+        // 2 file ../../example_programs/minus_vars.c line 7 function main
+        DECL main::1::x : signedbv[32]
+
+**** 3 file ../../example_programs/minus_vars.c line 8 function main
+Number of dimensions: 2
+Binding of size: 2 contains: 
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+        // 3 file ../../example_programs/minus_vars.c line 8 function main
+        DECL main::1::c : signedbv[32]
+
+**** 4 file ../../example_programs/minus_vars.c line 11 function main
+Number of dimensions: 3
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 2
+d1≤3
+-d1≤-3
+
+        // 4 file ../../example_programs/minus_vars.c line 11 function main
+        IF ¬(main::1::c > 0) THEN GOTO 1
+
+**** 5 file ../../example_programs/minus_vars.c line 12 function main
+Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+-d3+d4≤-1
+d1≤3
+-d1≤-3
+-d3≤-1
+d4≤0
+-d4≤0
+
+        // 5 file ../../example_programs/minus_vars.c line 12 function main
+        ASSERT ¬(overflow--(main::1::x, main::1::y)) // arithmetic overflow on signed - in x - y
+
+**** 6 file ../../example_programs/minus_vars.c line 12 function main
+Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 6
+-d3+d4≤-1
+d1≤3
+-d1≤-3
+-d3≤-1
+d4≤0
+-d4≤0
+
+        // 6 file ../../example_programs/minus_vars.c line 12 function main
+        ASSIGN main::1::c := main::1::x - main::1::y
+
+**** 7 file ../../example_programs/minus_vars.c line 15 function main
+Number of dimensions: 4
+Binding of size: 3 contains: 
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 7 file ../../example_programs/minus_vars.c line 15 function main
+     1: ASSIGN main#return_value := main::1::c
+
+**** 8 file ../../example_programs/minus_vars.c line 15 function main
+Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 8 file ../../example_programs/minus_vars.c line 15 function main
+        DEAD main::1::c
+
+**** 9 file ../../example_programs/minus_vars.c line 15 function main
+Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 9 file ../../example_programs/minus_vars.c line 15 function main
+        DEAD main::1::x
+
+**** 10 file ../../example_programs/minus_vars.c line 15 function main
+Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 10 file ../../example_programs/minus_vars.c line 15 function main
+        DEAD main::1::y
+
+**** 11 file ../../example_programs/minus_vars.c line 16 function main
+Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 11 file ../../example_programs/minus_vars.c line 16 function main
+        END_FUNCTION
+
+////
+//// Function: __CPROVER_initialize
+////
+
+**** 12 
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 12 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+
+**** 13 file <built-in-additions> line 8
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 13 file <built-in-additions> line 8
+        ASSIGN __CPROVER_dead_object := NULL
+
+**** 14 file <built-in-additions> line 7
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 14 file <built-in-additions> line 7
+        ASSIGN __CPROVER_deallocated := NULL
+
+**** 15 file <built-in-additions> line 12
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 15 file <built-in-additions> line 12
+        ASSIGN __CPROVER_max_malloc_size := 36028797018963968
+
+**** 16 file <built-in-additions> line 9
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 16 file <built-in-additions> line 9
+        ASSIGN __CPROVER_memory_leak := NULL
+
+**** 17 file <built-in-additions> line 16
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 17 file <built-in-additions> line 16
+        ASSIGN __CPROVER_rounding_mode := 0
+
+**** 18 
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 18 no location
+        END_FUNCTION
+
+////
+//// Function: __CPROVER__start
+////
+
+**** 19 
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 19 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+
+**** 20 file <built-in-additions> line 24
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 20 file <built-in-additions> line 24
+        CALL __CPROVER_initialize()
+
+**** 21 file ../../example_programs/minus_vars.c line 1
+Number of dimensions: -1
+Binding of size: 0 contains: 
+number of cons: 0
+
+        // 21 file ../../example_programs/minus_vars.c line 1
+        CALL main()
+
+**** 22 file ../../example_programs/minus_vars.c line 1
+Number of dimensions: 5
+Binding of size: 4 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 22 file ../../example_programs/minus_vars.c line 1
+        ASSIGN return' := main#return_value
+
+**** 23 file ../../example_programs/minus_vars.c line 1
+Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 23 file ../../example_programs/minus_vars.c line 1
+        DEAD main#return_value
+
+**** 24 file ../../example_programs/minus_vars.c line 1
+Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 24 file ../../example_programs/minus_vars.c line 1
+        OUTPUT address_of("return'"[0])
+
+**** 25 
+Number of dimensions: 6
+Binding of size: 5 contains: 
+main#return_value-> 3
+main::1::c-> 3
+main::1::x-> 2
+main::1::y-> 1
+return'-> 3
+number of cons: 4
+d1≤3
+-d1≤-3
+d4≤0
+-d4≤0
+
+        // 25 no location
+        END_FUNCTION
+

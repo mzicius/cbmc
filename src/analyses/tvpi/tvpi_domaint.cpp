@@ -434,6 +434,9 @@ void tvpi_domaint::assume(const exprt &e)
     }
     else if(tmp.op().id() == ID_equal)
     {
+      std::cerr << "We are def checking this" << std::endl;
+      //fix this
+      //because this is the wrong theorem
       auto rel = to_binary_relation_expr(tmp.op());
       assume(equal_exprt(rel.lhs(), rel.rhs()));
     }
@@ -494,24 +497,33 @@ bool tvpi_domaint::ai_simplify(exprt &condition, const namespacet &ns) const
 
   if(condition.id() == ID_symbol)
   {
-    std::cout << "trying to simplify ID" << std::endl;
+    std::cerr << "trying to simplify ID_symbol" << std::endl;
+  }
+  else if(condition.id() == ID_and)
+  {
+    std::cerr << "trying to simplify ID_and" << std::endl;
   }
   else
   {
-    std::cout << "trying to simplify" << std::endl;
+    std::cerr << "trying to simplify" << std::endl;
+
     copy_a.assume(condition);
+    std::cerr << "trying CASE A" << std::endl;
     if(copy_a.is_bottom())
     {
-      std::cout << "trying CASE A" << std::endl;
+      std::cerr << "bottom in CASE A" << std::endl;
       condition = false_exprt();
     }
     else
     {
+      std::cerr << "trying CASE B" << std::endl;
       copy_b.assume(not_exprt(condition));
       if(copy_b.is_bottom())
-        std::cout << "trying CASE B" << std::endl;
-      condition = true_exprt();
-      unchanged = false;
+      {
+        std::cerr << "bottom in CASE B" << std::endl;
+        condition = true_exprt();
+        unchanged = false;
+      }
     }
   }
 
@@ -699,17 +711,16 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cout << "nothing is known" << std::endl;
   }
 
-  //std::cerr << "CASE 0: ENTRY" << std::endl;
-
   if(b.is_bottom())
   {
+    std::cerr << "MERGE CASE 1: B IS BOTTOM" << std::endl;
     return false;
-    std::cerr << "CASE 1: B IS BOTTOM" << std::endl;
   }
 
   if(this->is_bottom())
   {
     INVARIANT(!b.is_bottom(), "CASE HANDLED");
+    std::cerr << "MERGE CASE 2: A IS BOTTOM" << std::endl;
     // copy
     std::cerr << "a size: " << this->sys.constraints.size()
               << " b size: " << b.sys.constraints.size() << std::endl;
@@ -718,7 +729,6 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     this->sys.dimension_counter = b.sys.dimension_counter;
     std::cerr << "a: " << this->sys.dimension_counter
               << " b: " << b.sys.dimension_counter << std::endl;
-    std::cerr << "CASE 2: A is BOTTOM" << std::endl;
     return true;
   }
 
@@ -728,16 +738,15 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   // handle top
   if(b.is_top())
   {
+    std::cerr << "MERGE CASE 3: B IS TOP" << std::endl;
     // change if it was not top
     is_modified = !this->is_top();
 
     make_top();
-    std::cerr << "CASE 3: B IS TOP" << std::endl;
     return is_modified;
   }
 
-  //CASE HULL ENTRY
-  std::cerr << "CASE 4: CALL TO CONVEX UNION" << std::endl;
+  std::cerr << "MERGE CASE 4: CONVEX UNION" << std::endl;
 
   binding_map copy_left = this->binding;
   binding_map copy_right = b.binding;
@@ -745,7 +754,49 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   tvpi_systemt copy_a = this->sys;
   tvpi_systemt copy_b = b.sys;
 
+  std::cerr << "the left system for CONVEX UNION:" << std::endl;
+  print_cons(copy_a.constraints);
+
+  std::cerr << "the left binding for CONVEX UNION:" << std::endl;
+  for(const auto &bind_pair : copy_left)
+  {
+    std::cout << id2string(bind_pair.first.get_identifier()) << " -> " << bind_pair.second
+    << std::endl;
+  }
+
+  std::cerr << "the right system for CONVEX UNION:" << std::endl;
+  print_cons(copy_b.constraints);
+
+  std::cerr << "the right binding for CONVEX UNION:" << std::endl;
+  for(const auto &bind_pair : copy_right)
+  {
+    std::cout << id2string(bind_pair.first.get_identifier())<< " -> " << bind_pair.second
+              << std::endl;
+  }
+
   align_bindings(copy_left, copy_right, copy_a, copy_b);
+
+  std::cerr << "after align: left system for CONVEX UNION:" << std::endl;
+  print_cons(copy_a.constraints);
+
+  std::cerr << "after align: left binding for CONVEX UNION:" << std::endl;
+  for(const auto &bind_pair : copy_left)
+  {
+    std::cout << id2string(bind_pair.first.get_identifier()) << " -> " << bind_pair.second
+    << std::endl;
+  }
+
+  std::cerr << "after align: right system for CONVEX UNION:" << std::endl;
+  print_cons(copy_b.constraints);
+
+  std::cerr << "after align: right binding for CONVEX UNION:" << std::endl;
+  for(const auto &bind_pair : copy_right)
+  {
+    std::cout << id2string(bind_pair.first.get_identifier())<< " -> " << bind_pair.second
+              << std::endl;
+  }
+
+
   std::set<std::string> existing_relations = find_relations(copy_a, copy_b);
 
   std::vector<std::shared_ptr<inequality>> interm_union;
@@ -762,11 +813,11 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::string first_var = rel.substr(0, dash);
     std::string second_var = rel.substr(dash + 1);
 
-    std::cout << first_var << " part2: " << second_var << std::endl;
+   //std::cout << first_var << " part2: " << second_var << std::endl;
     if(first_var != second_var)
     {
-      std::cout << "first var: " << first_var << " second var: " << second_var
-                << std::endl;
+      //std::cout << "first var: " << first_var << " second var: " << second_var
+      //          << std::endl;
       target_vars = {first_var, second_var};
     }
     else
@@ -774,18 +825,25 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       target_vars = {first_var};
     }
 
-    std::cout << "vars here::" << std::endl;
-    print_ineq(copy_a.constraints[0]);
+    //std::cout << "vars here::" << std::endl;
+    //print_ineq(copy_a.constraints[0]);
 
     filter_left = filter(copy_a, target_vars);
     filter_right = filter(copy_b, target_vars);
-    std::cout << "left filter dy" << std::endl;
+    std::cout<<"the target vars for filter are: :"<<std::endl;
+    for (const auto& var : target_vars) {
+      std::cout << var << std::endl;
+  }
+
+    std::cout << "left filter" << std::endl;
     print_cons(filter_left);
-    std::cout << "right filter dy" << std::endl;
+    std::cout << "right filter" << std::endl;
     print_cons(filter_right);
     extract_dimensions(filter_left);
     extract_dimensions(filter_right);
     interm_union = join::calc_hull(filter_left, filter_right);
+    std::cout<<"inter convex hull is: "<<std::endl;
+    print_cons(interm_union);
     convex_union.insert(
       convex_union.end(), interm_union.begin(), interm_union.end());
   }
@@ -876,6 +934,9 @@ void align_bindings(
   for(const auto &binding_pair : left)
   {
     auto loc = right.find(binding_pair.first);
+    if(loc != right.end()){
+
+    }
     if(loc != right.end() && binding_pair.second != loc->second)
     {
       b.constraints = relabel_ineqs(b, loc->second, binding_pair.second);
@@ -950,13 +1011,13 @@ filter(const tvpi_systemt &sys, std::vector<std::string> &target_vars)
   for(const std::shared_ptr<inequality> &i : sys.constraints)
   {
     std::vector<std::string> found_vars = i->vars();
-    std::cout << "size vars: " << found_vars.size() << std::endl;
+    //std::cout << "size vars: " << found_vars.size() << std::endl;
 
     if(found_vars.size() >= 1)
     {
-      std::cout << found_vars[0] << " " << found_vars[1] << std::endl;
-      std::cout << "target vars: " << target_vars.size() << std::endl;
-      std::cout << target_vars[0] << std::endl;
+      //std::cout << found_vars[0] << " " << found_vars[1] << std::endl;
+      //std::cout << "target vars: " << target_vars.size() << std::endl;
+      //std::cout << target_vars[0] << std::endl;
 
       if(found_vars == target_vars)
       {

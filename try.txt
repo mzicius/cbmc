@@ -4,10 +4,8 @@
 ./goto-analyzer ../../example_programs/add_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 ./goto-analyzer ../../example_programs/less.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 
-
  ./goto-analyzer ../../example_programs/less.c   --show-goto-functions 
 ./goto-analyzer ../../example_programs/less.c  --verify --tvpi
-
 
 ./goto-analyzer ../../example_programs/first_assert.c  --verify --tvpi
 ./cbmc ../../example_programs/first_assert.c 
@@ -62,7 +60,56 @@ x = 6000, y = -1000, assume(x,y) fails only works with same sign
 
 ./goto-analyzer ../../example_programs/assume_greater_cons.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 assume(0>-40)
-
 ./goto-analyzer ../../example_programs/assume_and.c  --show --tvpi --verbosity 10 --recursive-interprocedural
-
 ./goto-analyzer ../../example_programs/verify.c  --verify --tvpi --verbosity 10 --recursive-interprocedural
+
+--new 
+
+./goto-analyzer ../../example_programs/minus.c   --show-goto-functions 
+
+./goto-analyzer ../../example_programs/minus.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/minus_var.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/minus_overflow.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/minus_overflow_true.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/minus_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/while_one.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+
+
+./goto-analyzer ../../example_programs/minus_overflow_true.c  --show-goto-functions
+
+./goto-analyzer ../../example_programs/minus_vars.c  --show-goto-functions
+./goto-analyzer ../../example_programs/minus_vars.c  --verify --tvpi
+./goto-analyzer ../../example_programs/fault_one.c  --verify --tvpi
+./goto-analyzer ../../example_programs/while_one.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+./goto-analyzer ../../example_programs/while_one.c  --show-goto-functions
+./goto-analyzer ../../example_programs/fault_one.c  --show-goto-functions
+./goto-analyzer ../../example_programs/minus_vars.c  --show-goto-functions
+
+./goto-analyzer ../../example_programs/while_one.c  --show --tvpi --verbosity 10 --recursive-interprocedural --loop-unwind 3 --one-domain-per-history
+ 
+./goto-analyzer ../../example_programs/minus_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+
+-- new things
+./goto-analyzer ../../example_programs/goto_one.c  --show --tvpi --verbosity 10 --recursive-interprocedural > out.txt
+./goto-analyzer ../../example_programs/goto_one.c  --show-goto-functions 
+./goto-analyzer ../../example_programs/goto_one.c  --show --tvpi --verbosity 10 --recursive-interprocedural > out.txt
+-- problematic
+./goto-analyzer ../../example_programs/minus_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural > out.txt 
+./goto-analyzer ../../example_programs/minus_vars.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+remember:
+command > file
+less file 
+shift > 
+shift <
+shift + format + F on Mac
+cat out.txt | grep "visit_edge"
+
+./goto-analyzer ../../example_programs/goto_one.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/goto_two.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/goto_three.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/goto_four.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+./goto-analyzer ../../example_programs/goto_five.c  --show --tvpi --verbosity 10 --recursive-interprocedural

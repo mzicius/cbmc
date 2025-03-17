@@ -699,164 +699,175 @@ void tvpi_domaint::transform(
 //trace_ptrt can be seen as location, will be used for widening
 bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 {
-  auto widen_mode =
-    from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
-  switch(widen_mode)
-  {
-  case widen_modet::could_widen:
-    std::cout << "could_widen" << std::endl;
-  case widen_modet::no:
-    std::cout << "no widening possible" << std::endl;
-  default:
-    std::cout << "nothing is known" << std::endl;
-  }
-
+  // nothing to do
   if(b.is_bottom())
   {
     std::cerr << "MERGE CASE 1: B IS BOTTOM" << std::endl;
     return false;
   }
 
+  // copy of constrains, binding, ref_counter, dim_counter of system b
   if(this->is_bottom())
   {
     INVARIANT(!b.is_bottom(), "CASE HANDLED");
     std::cerr << "MERGE CASE 2: A IS BOTTOM" << std::endl;
-    // copy
-    std::cerr << "a size: " << this->sys.constraints.size()
-              << " b size: " << b.sys.constraints.size() << std::endl;
     this->sys.constraints = b.sys.constraints;
     this->binding = b.binding;
+    this->references = b.references;
     this->sys.dimension_counter = b.sys.dimension_counter;
-    std::cerr << "a: " << this->sys.dimension_counter
-              << " b: " << b.sys.dimension_counter << std::endl;
     return true;
   }
 
-  INVARIANT(!this->is_bottom() && !b.is_bottom(), "Case handled");
+  INVARIANT(!this->is_bottom() && !b.is_bottom(), "CASE HANDLED");
 
   bool is_modified = false;
+
   // handle top
   if(b.is_top())
   {
     std::cerr << "MERGE CASE 3: B IS TOP" << std::endl;
+
     // change if it was not top
     is_modified = !this->is_top();
 
     make_top();
+
     return is_modified;
   }
 
-  std::cerr << "MERGE CASE 4: CONVEX UNION" << std::endl;
+  std::cerr << "MERGE CASE 4: WIDEN OR CONVEX UNION" << std::endl;
 
-  binding_map copy_left = this->binding;
-  binding_map copy_right = b.binding;
+  auto widen_mode = from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
-  tvpi_systemt copy_a = this->sys;
-  tvpi_systemt copy_b = b.sys;
-
-  std::cerr << "the left system for CONVEX UNION:" << std::endl;
-  print_cons(copy_a.constraints);
-
-  std::cerr << "the left binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_left)
+  switch(widen_mode)
   {
-    std::cout << id2string(bind_pair.first.get_identifier()) << " -> " << bind_pair.second
-    << std::endl;
+  case widen_modet::could_widen:
+  {
+    std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
+    auto copy_a = this->sys.constraints;
+    auto copy_b = b.sys.constraints;
+    std::sort(copy_a.begin(),copy_a.end());
+    std::sort(copy_b.begin(),copy_b.end());
+    std::vector<std::shared_ptr<inequality>> intersection;
+    std::set_intersection(copy_a.begin(), copy_a.end(), copy_b.begin(), copy_b.end(),
+    std::back_inserter(intersection));
+    this->sys.constraints = intersection;
   }
-
-  std::cerr << "the right system for CONVEX UNION:" << std::endl;
-  print_cons(copy_b.constraints);
-
-  std::cerr << "the right binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_right)
+  case widen_modet::no:
   {
-    std::cout << id2string(bind_pair.first.get_identifier())<< " -> " << bind_pair.second
-              << std::endl;
-  }
+    std::cerr << "MERGE CASE 4: CONVEX UNION" << std::endl;
+    binding_map copy_left = this->binding;
+    binding_map copy_right = b.binding;
 
-  align_bindings(copy_left, copy_right, copy_a, copy_b);
+    tvpi_systemt copy_a = this->sys;
+    tvpi_systemt copy_b = b.sys;
 
-  std::cerr << "after align: left system for CONVEX UNION:" << std::endl;
-  print_cons(copy_a.constraints);
+    std::cerr << "the left system for CONVEX UNION:" << std::endl;
+    print_cons(copy_a.constraints);
 
-  std::cerr << "after align: left binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_left)
-  {
-    std::cout << id2string(bind_pair.first.get_identifier()) << " -> " << bind_pair.second
-    << std::endl;
-  }
-
-  std::cerr << "after align: right system for CONVEX UNION:" << std::endl;
-  print_cons(copy_b.constraints);
-
-  std::cerr << "after align: right binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_right)
-  {
-    std::cout << id2string(bind_pair.first.get_identifier())<< " -> " << bind_pair.second
-              << std::endl;
-  }
-
-
-  std::set<std::string> existing_relations = find_relations(copy_a, copy_b);
-
-  std::vector<std::shared_ptr<inequality>> interm_union;
-  std::vector<std::shared_ptr<inequality>> convex_union;
-
-  for(const auto &rel : existing_relations)
-  {
-    sweep_dimensions();
-    std::vector<std::shared_ptr<inequality>> filter_left;
-    std::vector<std::shared_ptr<inequality>> filter_right;
-    std::string label;
-    std::vector<std::string> target_vars;
-    auto dash = rel.find("-");
-    std::string first_var = rel.substr(0, dash);
-    std::string second_var = rel.substr(dash + 1);
-
-   //std::cout << first_var << " part2: " << second_var << std::endl;
-    if(first_var != second_var)
+    std::cerr << "the left binding for CONVEX UNION:" << std::endl;
+    for(const auto &bind_pair : copy_left)
     {
-      //std::cout << "first var: " << first_var << " second var: " << second_var
-      //          << std::endl;
-      target_vars = {first_var, second_var};
-    }
-    else
-    {
-      target_vars = {first_var};
+      std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
+                << bind_pair.second << std::endl;
     }
 
-    //std::cout << "vars here::" << std::endl;
-    //print_ineq(copy_a.constraints[0]);
+    std::cerr << "the right system for CONVEX UNION:" << std::endl;
+    print_cons(copy_b.constraints);
 
-    filter_left = filter(copy_a, target_vars);
-    filter_right = filter(copy_b, target_vars);
-    std::cout<<"the target vars for filter are: :"<<std::endl;
-    for (const auto& var : target_vars) {
-      std::cout << var << std::endl;
+    std::cerr << "the right binding for CONVEX UNION:" << std::endl;
+    for(const auto &bind_pair : copy_right)
+    {
+      std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
+                << bind_pair.second << std::endl;
+    }
+
+    align_bindings(copy_left, copy_right, copy_a, copy_b);
+
+    std::cerr << "after align: left system for CONVEX UNION:" << std::endl;
+    print_cons(copy_a.constraints);
+
+    std::cerr << "after align: left binding for CONVEX UNION:" << std::endl;
+    for(const auto &bind_pair : copy_left)
+    {
+      std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
+                << bind_pair.second << std::endl;
+    }
+
+    std::cerr << "after align: right system for CONVEX UNION:" << std::endl;
+    print_cons(copy_b.constraints);
+
+    std::cerr << "after align: right binding for CONVEX UNION:" << std::endl;
+    for(const auto &bind_pair : copy_right)
+    {
+      std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
+                << bind_pair.second << std::endl;
+    }
+
+    std::set<std::string> existing_relations = find_relations(copy_a, copy_b);
+
+    std::vector<std::shared_ptr<inequality>> interm_union;
+    std::vector<std::shared_ptr<inequality>> convex_union;
+
+    for(const auto &rel : existing_relations)
+    {
+      sweep_dimensions();
+      std::vector<std::shared_ptr<inequality>> filter_left;
+      std::vector<std::shared_ptr<inequality>> filter_right;
+      std::string label;
+      std::vector<std::string> target_vars;
+      auto dash = rel.find("-");
+      std::string first_var = rel.substr(0, dash);
+      std::string second_var = rel.substr(dash + 1);
+
+      //std::cout << first_var << " part2: " << second_var << std::endl;
+      if(first_var != second_var)
+      {
+        //std::cout << "first var: " << first_var << " second var: " << second_var
+        //          << std::endl;
+        target_vars = {first_var, second_var};
+      }
+      else
+      {
+        target_vars = {first_var};
+      }
+
+      //std::cout << "vars here::" << std::endl;
+      //print_ineq(copy_a.constraints[0]);
+
+      filter_left = filter(copy_a, target_vars);
+      filter_right = filter(copy_b, target_vars);
+      std::cout << "the target vars for filter are: :" << std::endl;
+      for(const auto &var : target_vars)
+      {
+        std::cout << var << std::endl;
+      }
+
+      std::cout << "left filter" << std::endl;
+      print_cons(filter_left);
+      std::cout << "right filter" << std::endl;
+      print_cons(filter_right);
+      extract_dimensions(filter_left);
+      extract_dimensions(filter_right);
+      interm_union = join::calc_hull(filter_left, filter_right);
+      std::cout << "inter convex hull is: " << std::endl;
+      print_cons(interm_union);
+      convex_union.insert(
+        convex_union.end(), interm_union.begin(), interm_union.end());
+    }
+
+    //check if the new system is different
+
+    if(convex_union != this->sys.constraints)
+    {
+      std::cout << "the convex hull is:" << std::endl;
+      print_cons(convex_union);
+      is_modified = true;
+      this->sys.constraints = convex_union;
+    }
   }
-
-    std::cout << "left filter" << std::endl;
-    print_cons(filter_left);
-    std::cout << "right filter" << std::endl;
-    print_cons(filter_right);
-    extract_dimensions(filter_left);
-    extract_dimensions(filter_right);
-    interm_union = join::calc_hull(filter_left, filter_right);
-    std::cout<<"inter convex hull is: "<<std::endl;
-    print_cons(interm_union);
-    convex_union.insert(
-      convex_union.end(), interm_union.begin(), interm_union.end());
-  }
-
-  //check if the new system is different
-
-  if(convex_union != this->sys.constraints)
-  {
-    std::cout << "the convex hull is:" << std::endl;
-    print_cons(convex_union);
-    is_modified = true;
-    this->sys.constraints = convex_union;
-    return is_modified;
+  default:
+    std::cout << "MERGE CASE 4: DEFAULTED" << std::endl;
   }
 
   return is_modified;
@@ -934,8 +945,8 @@ void align_bindings(
   for(const auto &binding_pair : left)
   {
     auto loc = right.find(binding_pair.first);
-    if(loc != right.end()){
-
+    if(loc != right.end())
+    {
     }
     if(loc != right.end() && binding_pair.second != loc->second)
     {

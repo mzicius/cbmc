@@ -113,3 +113,12 @@ cat out.txt | grep "visit_edge"
 ./goto-analyzer ../../example_programs/goto_three.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 ./goto-analyzer ../../example_programs/goto_four.c  --show --tvpi --verbosity 10 --recursive-interprocedural
 ./goto-analyzer ../../example_programs/goto_five.c  --show --tvpi --verbosity 10 --recursive-interprocedural
+
+
+./goto-analyzer ../../example_programs/widen.c  --show --tvpi --verbosity 10 --recursive-interprocedural --loop-unwind 4 --one-domain-per-history
+
+Widening
+garbage_collection
+ai_simplify
+canon
+example_programs from real people

@@ -35,8 +35,10 @@ void tvpi_systemt::make_unsat_system()
 
 //if the TVPI domaint hold the binding why is this function inside the TVPI system class
 tvpi_systemt::dimensiont tvpi_systemt::add_new_dimension()
-{
-  return ++dimension_counter;
+{ 
+  dimensiont new_dim = ++dimension_counter;
+  references[new_dim] = 0;
+  return new_dim;
 }
 
 std::vector<std::shared_ptr<inequality>>
@@ -99,10 +101,9 @@ void tvpi_systemt::add_inequality(
   std::string y,
   mp_integer c)
 {
-  std::cout<<"a: "<<a<<" b: "<<b<<" c: "<<c<<" x: "<<x<<" y:"<<" "<<y<<std::endl;
   auto i = inequality_factory::make_inequality(x, y, a, b, c);
   constraints.push_back(i);
-  std::cerr<<"new_ineq is:"<<i->to_string()<<std::endl;
+  std::cerr<<"new_ineq: "<<i->to_string()<<std::endl;
   constraints = complete::closure(constraints);
 }
 

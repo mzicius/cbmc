@@ -81,7 +81,6 @@ protected:
   tvpi_systemt sys;
   binding_map binding;
   mp_integer dimension_counter;
-  std::map<symbol_exprt, mp_integer> references;
 };
 
 extern symbol_exprt str2symex(const std::string &label);

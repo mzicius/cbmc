@@ -2,6 +2,7 @@
 #define TVPI_SYSTEMT_H
 
 #include <util/mp_arith.h>
+#include <map>
 #include "complete.h"
 #include "inequality.h"
 #include "unary_inequality.h"
@@ -13,6 +14,7 @@ public:
   typedef mp_integer dimensiont;
   mp_integer dimension_counter;
   std::vector<std::shared_ptr<inequality>> constraints;
+  std::map<dimensiont, mp_integer> references;
 
   void make_unsat_system();
 

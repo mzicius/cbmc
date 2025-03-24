@@ -75,23 +75,44 @@ void tvpi_domaint::output(
   std::ostream &out,
   const ai_baset &ai,
   const namespacet &ns) const
-{
-  out << "Number of dimensions: " << this->sys.dimension_counter << std::endl;
-  out << "Binding of size: " << this->binding.size()
-      << " contains: " << std::endl;
-  for(const auto &[symbol, dimension] : binding)
+{ 
+  out<<std::endl;
+  out<<"dimension counter: "<<this->sys.dimension_counter<<std::endl;
+  out<<std::endl;
+
+  out << "binding: "<< std::endl;
+  for(const auto &[symbol, dimension] : binding){
     out << id2string(symbol.get_identifier()) << "-> " << dimension
         << std::endl;
-  out << "number of cons: " << this->sys.constraints.size() << std::endl;
+  }
+  out << std::endl;
+  out << "TVPI system:"<< std::endl;
   for(auto i : this->sys.constraints)
+  {
     out << i->to_string() << std::endl;
+  }
+  out << std::endl;
+  out << "the references are: " << std::endl;
+  for(const auto &ref : this->sys.references)
+  {
+    if(ref.first >= 0)
+    {
+      out << "d" << ref.first << " -> " << ref.second << std::endl;
+    }
+    else
+    {
+      out << "-d" << abs(ref.first) << " -> " << ref.second << std::endl;
+    }
+  }
 }
 
 //Create a dimension in the TVPI-system that over-approximates
 //the value of an expression.
 tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 {
-  std::cerr << "in eval with e: " << e.pretty() << std::endl;
+  std::cerr << "inside the eval function" << std::endl;
+  std::cerr << "evaluating expression: " << e.pretty() << std::endl;
+
   if(e.id() == ID_constant)
   {
     std::cout << "we met a constant" << std::endl;
@@ -103,26 +124,9 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
   }
   else if(e.id() == ID_symbol)
   {
-    std::cerr << "in ID:" << std::endl;
-    std::cerr << e.pretty() << std::endl;
-    symbol_exprt symbol = to_symbol_expr(e);
-    tvpi_systemt::dimensiont result = lookup_binding(symbol);
-    tvpi_systemt::dimensiont tmp;
-    if(result > 0)
-    {
-      std::cerr << "the variable assigment was found! " << std::endl;
-      references[symbol] = references[symbol] + 1;
-      std::cout << "the refrence count for this dimension is: "
-                << references[symbol] << std::endl;
-      tmp = result;
-    }
-    else
-    {
-      tmp = this->sys.add_new_dimension();
-      std::cerr << "a tmp was generated for the assignemnt" << tmp << std::endl;
-    }
-
-    return tmp;
+    std::cout << "we looked up" << lookup_binding(to_symbol_expr(e))
+              << std::endl;
+    return lookup_binding(to_symbol_expr(e));
   }
   else if(e.id() == ID_plus)
   {
@@ -303,10 +307,8 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 void tvpi_domaint::assume(const exprt &e)
 
 {
-  std::cout << "inside assume" << std::endl;
-  std::cout << e.pretty() << std::endl;
-  //PRECONDITION(e.id() == ID_bool);
-
+  std::cout << "inside the assume function" << std::endl;
+  std::cout << "assuming expression: " << e.pretty() << std::endl;
   if(e.id() == ID_equal)
   {
     //turn to object and then recurse
@@ -444,11 +446,6 @@ void tvpi_domaint::assume(const exprt &e)
   }
   std::cerr << "If only I knew how to assume a " << id2string(e.id())
             << std::endl;
-  /*
-for (const auto &t : temporaries) {
-//sys.existential_projection(t);
-}
-*/
 }
 
 // Updates the binding of the symbol to point to a dimension
@@ -457,34 +454,22 @@ void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 {
   std::cerr << "We are in assign with: " << id2string(lhs.get_identifier())
             << std::endl;
-  tvpi_systemt::dimensiont ev = eval(e);
 
-  //eval has an abstraction
-  //std::cerr<<"Ev for "<<e.pretty()<<"is: "<<ev<<std::endl;
+  tvpi_systemt::dimensiont evaluated_dim = eval(e);
 
-  if(ev >= 0)
+  std::cout << "assigned dim: " << binding[lhs]
+            << " evaluated dim: " << evaluated_dim << std::endl;
+
+  //decrease the number of references if not dealing with return
+  if(id2string(lhs.get_identifier()).find("return") == std::string::npos)
   {
-    if(lookup_binding(lhs) >= 0)
-    {
-      //old dimension
-      tvpi_systemt::dimensiont tmp = this->binding[lhs];
-      std::cerr << "On " << lhs.pretty() << "I found" << std::endl;
-      this->binding[lhs] = ev;
-      //this->sys.existential_project(tmp);
-    }
-    else
-    {
-      std::cerr << "Binding was not" << lhs.pretty()
-                << "found, new binding pair was created" << std::endl;
-      this->sys.add_new_dimension();
-      this->binding.insert(std::make_pair(lhs, ev));
-    }
+    this->sys.references[binding[lhs]] = this->sys.references[binding[lhs]] - 1;
   }
 
-  //for(const mp_integer &t : temporaries)
-  //{
-  //this->sys.existential_project(t);
-  //}
+  binding[lhs] = evaluated_dim;
+
+  //increase the number of references
+  this->sys.references[binding[lhs]] = this->sys.references[binding[lhs]] + 1;
 }
 
 bool tvpi_domaint::ai_simplify(exprt &condition, const namespacet &ns) const
@@ -553,35 +538,30 @@ void tvpi_domaint::transform(
   std::cerr << "The instruction type is: " << instruction.to_string()
             << std::endl;
 
-  // If e is an exprt (an expression) then
-  //   std::cerr << e.pretty()
-  // prints it out
-
-  // Normally how the state of the domain is updated would depend on
-  // what the instruction was (see below).  However the state we are
-  // storing is so simple that we can just...
-
   switch(instruction.type())
   {
-    /** These are the instructions you actually need to implement **/
   case DECL:
-    //Add new dimension, binding
     this->sys.add_new_dimension();
     this->binding.insert(std::make_pair(
       to_code_decl(instruction.code()).symbol(), this->sys.dimension_counter));
+    this->sys.references[binding[to_code_decl(instruction.code()).symbol()]] =
+      this->sys.references[binding[to_code_decl(instruction.code()).symbol()]] +
+      1;
     break;
 
   case DEAD:
-    //Project out the var, remove from binding and decrease the dimension_counter
-    //if(
-    //  id2string(to_code_dead(instruction.code()).symbol().get_identifier())
-    //    .find("return_value") == std::string::npos)
-    //{
-    //this->sys.existential_project(
-    //  this->binding[to_code_dead(instruction.code()).symbol()]);
-    //this->binding.erase(to_code_dead(instruction.code()).symbol());
-    //this->sys.dimension_counter -= 1;
-    //}
+    /*
+    Project out the var, remove from binding and decrease the dimension_counter
+    if(
+      id2string(to_code_dead(instruction.code()).symbol().get_identifier())
+        .find("return_value") == std::string::npos)
+    {
+    this->sys.existential_project(
+      this->binding[to_code_dead(instruction.code()).symbol()]);
+    this->binding.erase(to_code_dead(instruction.code()).symbol());
+    this->sys.dimension_counter -= 1;
+    }
+    */
     break;
 
   case ASSIGN:
@@ -693,6 +673,19 @@ void tvpi_domaint::transform(
     break;
   }
 
+  for (auto it = this->sys.references.begin(); it != this->sys.references.end();)
+  { 
+    const auto &ref = *it;
+    if(ref.second == 0)
+    {
+      sys.existential_project(ref.first);
+      it = this->sys.references.erase(it);
+    }
+    else{
+      ++it;
+    }
+  }
+
   return;
 }
 
@@ -713,7 +706,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cerr << "MERGE CASE 2: A IS BOTTOM" << std::endl;
     this->sys.constraints = b.sys.constraints;
     this->binding = b.binding;
-    this->references = b.references;
+    this->sys.references = b.sys.references;
     this->sys.dimension_counter = b.sys.dimension_counter;
     return true;
   }
@@ -737,7 +730,8 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
   std::cerr << "MERGE CASE 4: WIDEN OR CONVEX UNION" << std::endl;
 
-  auto widen_mode = from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
+  auto widen_mode =
+    from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
   switch(widen_mode)
   {
@@ -746,12 +740,25 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
     auto copy_a = this->sys.constraints;
     auto copy_b = b.sys.constraints;
-    std::sort(copy_a.begin(),copy_a.end());
-    std::sort(copy_b.begin(),copy_b.end());
+    std::cerr << "system a " << std::endl;
+    print_cons(copy_a);
+    std::cerr << "system b " << std::endl;
+    print_cons(copy_b);
+
+    std::sort(copy_a.begin(), copy_a.end());
+    std::sort(copy_b.begin(), copy_b.end());
     std::vector<std::shared_ptr<inequality>> intersection;
-    std::set_intersection(copy_a.begin(), copy_a.end(), copy_b.begin(), copy_b.end(),
-    std::back_inserter(intersection));
+    std::set_intersection(
+      copy_a.begin(),
+      copy_a.end(),
+      copy_b.begin(),
+      copy_b.end(),
+      std::back_inserter(intersection));
     this->sys.constraints = intersection;
+
+    std::cerr << "intersection " << std::endl;
+    print_cons(intersection);
+    break;
   }
   case widen_modet::no:
   {
@@ -865,6 +872,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       is_modified = true;
       this->sys.constraints = convex_union;
     }
+    break;
   }
   default:
     std::cout << "MERGE CASE 4: DEFAULTED" << std::endl;
@@ -873,15 +881,14 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   return is_modified;
 }
 
-tvpi_systemt::dimensiont tvpi_domaint::lookup_binding(symbol_exprt sym)
+tvpi_systemt::dimensiont tvpi_domaint::lookup_binding(symbol_exprt symbol)
 {
   tvpi_systemt::dimensiont result_dim = -1;
-  std::__map_iterator mapping_it = binding.find(sym);
+  std::__map_iterator mapping_it = binding.find(symbol);
   if(mapping_it != binding.end())
   {
-    result_dim = binding[sym];
+    result_dim = binding[symbol];
   }
-  std::cerr << "result dim is: " << result_dim << std::endl;
   return result_dim;
 }
 

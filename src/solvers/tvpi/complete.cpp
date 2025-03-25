@@ -632,8 +632,6 @@ std::vector<std::shared_ptr<inequality>> complete::inc_complete(std::vector<std:
 		    std::vector<std::string> Y ={x,y};
 		    std::vector<std::shared_ptr<inequality>> project_cs = project(change_cs, Y);
 		    std::vector<std::shared_ptr<inequality>> project_as = project(as, Y);
-		   //  System.out.println("project_cs = " + project_cs); 
-		    // System.out.println("project_as = " + project_as); 
 
 			std::cout<<"projected out"<<std::endl;
 			print_cons(project_as);

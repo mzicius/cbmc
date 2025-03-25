@@ -24,8 +24,6 @@ public:
   void existential_project(mp_integer dimensiont);
 
   std::vector<std::shared_ptr<inequality>> filter_ineqs(mp_integer dimensiont);
-  std::vector<std::shared_ptr<inequality>> filter_unary(std::vector<std::string> vars);
-  std::vector<std::shared_ptr<inequality>> filter_dyadic(std::vector<std::string> vars); 
 
   //strings are d0 - dn where n is the dimentiont
   void add_inequality(

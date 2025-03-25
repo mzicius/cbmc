@@ -60,40 +60,6 @@ tvpi_systemt::filter_ineqs(mp_integer dimensiont)
   return filtered;
 }
 
-std::vector<std::shared_ptr<inequality>> tvpi_systemt::filter_unary(std::vector<std::string> vars){
-  std::vector<std::shared_ptr<inequality>> filtered;
-  for(std::shared_ptr<inequality> c : constraints)
-  {
-    if(c->arity()==1){
-    std::vector<std::string> contents = c->vars();
-    auto loc = find(contents.begin(), contents.end(),vars[0]);
-    if(loc != contents.end())
-    {
-      filtered.push_back(c);
-    }
-    }
-  }
-
-  return filtered;
-}
-std::vector<std::shared_ptr<inequality>> tvpi_systemt::filter_dyadic(std::vector<std::string> vars){
-  std::vector<std::shared_ptr<inequality>> filtered;
-    for(std::shared_ptr<inequality> c : constraints)
-  {
-    if(c->arity()==2){
-    std::vector<std::string> contents = c->vars();
-    auto loc = find(contents.begin(), contents.end(), vars[0]);
-    auto lc = find(contents.begin(), contents.end(), vars[1]);
-    if(loc != contents.end() && lc != contents.end())
-    {
-      filtered.push_back(c);
-    }
-  }
-  }
-
-  return filtered;
-}
-
 void tvpi_systemt::add_inequality(
   mp_integer a,
   std::string x,

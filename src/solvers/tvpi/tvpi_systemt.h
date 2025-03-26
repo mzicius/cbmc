@@ -2,10 +2,12 @@
 #define TVPI_SYSTEMT_H
 
 #include <util/mp_arith.h>
-#include <map>
+
 #include "complete.h"
 #include "inequality.h"
 #include "unary_inequality.h"
+
+#include <map>
 
 class tvpi_systemt
 {
@@ -20,7 +22,7 @@ public:
 
   dimensiont add_new_dimension();
 
-  //take dimension
+  //project out a dimension from the current system
   void existential_project(mp_integer dimensiont);
 
   std::vector<std::shared_ptr<inequality>> filter_ineqs(mp_integer dimensiont);
@@ -33,11 +35,14 @@ public:
     std::string y,
     mp_integer c);
 
-  std::optional<mp_integer> get_ub(mp_integer dimensiont);
-  std::optional<mp_integer> get_lb(mp_integer dimensiont);
-  std::vector<std::shared_ptr<inequality>> relabel(mp_integer old_d, mp_integer new_d);
   void print_system();
 
+  std::vector<std::string> extract_vars();
+
+  std::optional<mp_integer> get_ub(mp_integer dimensiont);
+
+  std::optional<mp_integer> get_lb(mp_integer dimensiont);
+  
 };
 
 #endif

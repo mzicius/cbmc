@@ -1,8 +1,11 @@
 #include <util/mp_arith.h>
+
 #include <analyses/tvpi/tvpi_domaint.h>
+
+#include "inequality_factory.h"
+
 #include <algorithm>
 #include <fstream>
-#include "inequality_factory.h"
 
 tvpi_systemt::tvpi_systemt()
 {
@@ -33,9 +36,8 @@ void tvpi_systemt::make_unsat_system()
   constraints = {std::make_shared<constant_inequality>(false)};
 }
 
-//if the TVPI domaint hold the binding why is this function inside the TVPI system class
 tvpi_systemt::dimensiont tvpi_systemt::add_new_dimension()
-{ 
+{
   dimensiont new_dim = ++dimension_counter;
   references[new_dim] = 0;
   return new_dim;
@@ -69,13 +71,42 @@ void tvpi_systemt::add_inequality(
 {
   auto i = inequality_factory::make_inequality(x, y, a, b, c);
   constraints.push_back(i);
-  std::cerr<<"new_ineq: "<<i->to_string()<<std::endl;
+  std::cerr << "new_ineq: " << i->to_string() << std::endl;
   constraints = complete::closure(constraints);
+}
+
+void tvpi_systemt::print_system()
+{
+  std::ofstream system_trace;
+  system_trace.open("../../logs/system_trace.txt");
+  for(const std::shared_ptr<inequality> &i : constraints)
+  {
+    system_trace << i->to_string() << "\n";
+  }
+  system_trace.close();
+}
+
+std::vector<std::string> tvpi_systemt::extract_vars()
+{
+  std::set<std::string> unique_vars;
+
+  for(auto it = constraints.begin(); it != constraints.end(); ++it)
+  {
+    auto &con = *it;
+    std::vector<std::string> current_vars = con->vars();
+    unique_vars.insert(current_vars.begin(), current_vars.end());
+  }
+
+  return std::vector<std::string>(unique_vars.begin(), unique_vars.end());
 }
 
 std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
 {
   std::vector<std::shared_ptr<inequality>> all_ineqs = filter_ineqs(dimensiont);
+
+  print_cons(all_ineqs);
+
+  /*
   std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
   for(std::shared_ptr<inequality> i : all_ineqs)
   {
@@ -102,8 +133,10 @@ std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
       u_bound = unary_ineqs[0]->c;
     }
 
+  
+
     return u_bound;
-  }
+  }*/
 
   return std::nullopt;
 }
@@ -111,6 +144,8 @@ std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
 std::optional<mp_integer> tvpi_systemt::get_lb(mp_integer dimensiont)
 {
   std::vector<std::shared_ptr<inequality>> all_ineqs = filter_ineqs(dimensiont);
+
+
   std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
   for(std::shared_ptr<inequality> i : all_ineqs)
   {
@@ -142,46 +177,3 @@ std::optional<mp_integer> tvpi_systemt::get_lb(mp_integer dimensiont)
   return std::nullopt;
 }
 
-std::vector<std::shared_ptr<inequality>>
-tvpi_systemt::relabel(mp_integer old_d, mp_integer new_d)
-{
-  std::vector<std::shared_ptr<inequality>> old_labels = filter_ineqs(old_d);
-  std::vector<std::shared_ptr<inequality>> new_labels;
-
-  for(auto i : old_labels)
-  {
-    if(cast_to_unary(i))
-    {
-      auto u = cast_to_unary(i);
-      new_labels.push_back(inequality_factory::make_inequality(
-        "d" + integer2string(new_d), u->a, u->c));
-    }
-    else if(cast_to_dyadic(i))
-    {
-      auto d = cast_to_dyadic(i);
-      std::shared_ptr<inequality> new_ineq;
-      if(d->x == "d" + integer2string(old_d))
-      {
-        new_ineq = inequality_factory::make_inequality(
-          "d" + integer2string(new_d), d->y, d->a, d->b, d->c);
-      }
-      else
-      {
-        new_ineq = inequality_factory::make_inequality(
-          d->x, "d" + integer2string(new_d), d->a, d->b, d->c);
-      }
-      new_labels.push_back(new_ineq);
-    }
-  }
-
-  return new_labels;
-}
-
-void tvpi_systemt::print_system(){
-  std::ofstream system_trace;
-  system_trace.open("../../logs/system_trace.txt");
-  for(const std::shared_ptr<inequality> &i : constraints){
-      system_trace<<i->to_string()<< "\n";
-  }
-  system_trace.close();
-}

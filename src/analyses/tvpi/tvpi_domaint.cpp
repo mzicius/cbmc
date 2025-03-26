@@ -156,6 +156,26 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
     std::optional<mp_integer> u_bound_right = this->sys.get_ub(right);
     std::optional<mp_integer> l_bound_right = this->sys.get_lb(right);
 
+    if(u_bound_right.has_value())
+    {
+      std::cout << "u_bound_right: " << u_bound_right.value() << std::endl;
+    }
+
+    if(u_bound_left.has_value())
+    {
+      std::cout << "u_bound_left: " << u_bound_left.value() << std::endl;
+    }
+
+    if(l_bound_right.has_value())
+    {
+      std::cout << "l_bound_right: " << l_bound_right.value() << std::endl;
+    }
+
+    if(l_bound_left.has_value())
+    {
+      std::cout << "l_bound_left: " << l_bound_left.value() << std::endl;
+    }
+
     //Theorem 1
     if(u_bound_right.has_value())
     {
@@ -566,13 +586,13 @@ void tvpi_domaint::transform(
     break;
 
   case ASSIGN:
-    if(
-      id2string(to_symbol_expr(instruction.assign_lhs()).get_identifier())
-        .find("__CPROVER") == std::string::npos)
-    {
+    //if(
+      //id2string(to_symbol_expr(instruction.assign_lhs()).get_identifier())
+        //.find("__CPROVER") == std::string::npos)
+    //{
       assign(
         to_symbol_expr(instruction.assign_lhs()), instruction.assign_rhs());
-    }
+    //}
     break;
 
   case GOTO:
@@ -745,19 +765,22 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cerr << "system b " << std::endl;
     print_cons(copy_b);
 
-    std::sort(copy_a.begin(), copy_a.end());
-    std::sort(copy_b.begin(), copy_b.end());
     std::vector<std::shared_ptr<inequality>> intersection;
-    std::set_intersection(
-      copy_a.begin(),
-      copy_a.end(),
-      copy_b.begin(),
-      copy_b.end(),
-      std::back_inserter(intersection));
-    this->sys.constraints = intersection;
+
+    for(auto con_a : copy_a)
+    {
+      for(auto con_b : copy_b)
+      {
+        if(con_a->to_string() == con_b->to_string())
+        {
+          intersection.push_back(con_a);
+        }
+      }
+    }
 
     std::cerr << "intersection " << std::endl;
     print_cons(intersection);
+    this->sys.constraints = intersection;
   }
 
   std::cerr << "MERGE CASE 4: CONVEX UNION" << std::endl;

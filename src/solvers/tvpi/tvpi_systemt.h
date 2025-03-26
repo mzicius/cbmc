@@ -25,8 +25,6 @@ public:
   //project out a dimension from the current system
   void existential_project(mp_integer dimensiont);
 
-  std::vector<std::shared_ptr<inequality>> filter_ineqs(mp_integer dimensiont);
-
   //strings are d0 - dn where n is the dimentiont
   void add_inequality(
     mp_integer a,

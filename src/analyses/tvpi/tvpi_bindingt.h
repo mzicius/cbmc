@@ -3,7 +3,6 @@
 
 #include <util/mp_arith.h>
 #include <solvers/tvpi/tvpi_systemt.h>
-#include "tvpi_bindingt.h"
 #include <vector>
 #include "../variable-sensitivity/abstract_environment.h"
 #include "../ai_domain.h"
@@ -13,7 +12,7 @@ class tvpi_bindingt
 
   public:
   
-  //tvpi_systemt::dimensiont l;
+  tvpi_systemt::dimensiont l;
 
 
   //void set_binding(symbol_exprt symbol,tvpi_systemt::dimensiont dim);

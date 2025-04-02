@@ -3,6 +3,7 @@
 
 #include <util/mp_arith.h>
 #include <solvers/tvpi/tvpi_systemt.h>
+#include "tvpi_bindingt.h"
 #include <vector>
 #include "../variable-sensitivity/abstract_environment.h"
 #include "../ai_domain.h"
@@ -79,13 +80,13 @@ public:
 
 protected:
   tvpi_systemt sys;
+  tvpi_bindingt bind;
   binding_map binding;
-  mp_integer dimension_counter;
 };
 
 extern symbol_exprt str2symex(const std::string &label);
 extern std::vector<std::shared_ptr<inequality>> relabel_ineqs(tvpi_systemt &sys, tvpi_systemt::dimensiont &old_dim, const tvpi_systemt::dimensiont &new_dim);
 extern void align_bindings(const tvpi_domaint::binding_map &left, tvpi_domaint::binding_map &right,const tvpi_systemt &a, tvpi_systemt &b);
 extern std::set<std::string> find_relations(const tvpi_systemt &a, const tvpi_systemt &b);
-extern std::vector<std::shared_ptr<inequality>> filter(const tvpi_systemt &sys,std::vector<std::string> &target_vars);
+
 #endif

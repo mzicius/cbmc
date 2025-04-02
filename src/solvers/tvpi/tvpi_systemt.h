@@ -2,7 +2,7 @@
 #define TVPI_SYSTEMT_H
 
 #include <util/mp_arith.h>
-
+#include "../../analyses/tvpi/tvpi_bindingt.h"
 #include "complete.h"
 #include "inequality.h"
 #include "unary_inequality.h"
@@ -17,6 +17,7 @@ public:
   mp_integer dimension_counter;
   std::vector<std::shared_ptr<inequality>> constraints;
   std::map<dimensiont, mp_integer> references;
+  //tvpi_bindingt bt;
 
   void make_unsat_system();
 
@@ -35,12 +36,12 @@ public:
 
   void print_system();
 
-  std::vector<std::string> extract_vars();
+  std::vector<std::shared_ptr<inequality>>
+  filter(const std::vector<std::string> &target_vars);
 
   std::optional<mp_integer> get_ub(mp_integer dimensiont);
 
   std::optional<mp_integer> get_lb(mp_integer dimensiont);
-  
 };
 
 #endif

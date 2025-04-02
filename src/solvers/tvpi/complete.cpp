@@ -630,6 +630,7 @@ std::vector<std::shared_ptr<inequality>> complete::inc_complete(std::vector<std:
 		if (x.compare(y) <= 0)
 		{
 		    std::vector<std::string> Y ={x,y};
+			std::cout<<"Y: x: "<<x<<" ,y: "<<y<<std::endl;
 		    std::vector<std::shared_ptr<inequality>> project_cs = project(change_cs, Y);
 		    std::vector<std::shared_ptr<inequality>> project_as = project(as, Y);
 

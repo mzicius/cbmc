@@ -530,7 +530,7 @@ void print_ineq(std::shared_ptr<inequality> i)
   else if(cast_to_const(i))
   {
     std::shared_ptr<constant_inequality> c = cast_to_const(i);
-    std::cout << c->sat << std::endl;
+    std::cout << (c->sat ? "true" : "false") << std::endl;
   }
 }
 

@@ -1,9 +1,6 @@
-#include <util/mp_arith.h>
 
-#include <analyses/tvpi/tvpi_domaint.h>
-
+#include "tvpi_systemt.h"
 #include "inequality_factory.h"
-
 #include <algorithm>
 #include <fstream>
 
@@ -67,37 +64,35 @@ void tvpi_systemt::print_system()
   system_trace.close();
 }
 
-std::vector<std::string> tvpi_systemt::extract_vars()
+std::vector<std::shared_ptr<inequality>>
+tvpi_systemt::filter(const std::vector<std::string> &target_vars)
 {
-  std::set<std::string> unique_vars;
-
-  for(auto it = constraints.begin(); it != constraints.end(); ++it)
+  std::vector<std::shared_ptr<inequality>> result;
+  for(const std::shared_ptr<inequality> &c : constraints)
   {
-    auto &con = *it;
-    std::vector<std::string> current_vars = con->vars();
-    unique_vars.insert(current_vars.begin(), current_vars.end());
+    if(c->vars() == target_vars)
+    {
+      result.push_back(c);
+    }
   }
-
-  return std::vector<std::string>(unique_vars.begin(), unique_vars.end());
+  return result;
 }
 
 std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
 {
+  std::vector<std::shared_ptr<inequality>> ineqs =
+  this->filter({"d"+integer2string(dimensiont)});
 
-  /*
-  print_cons(all_ineqs);
-
-  
   std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
-  for(std::shared_ptr<inequality> i : all_ineqs)
-  {
-    if(std::dynamic_pointer_cast<unary_inequality>(i) != nullptr)
-    {
-      std::shared_ptr<unary_inequality> u =
-        std::dynamic_pointer_cast<unary_inequality>(i);
-      unary_ineqs.push_back(u);
-    }
+
+  for(auto c:ineqs){
+
+    auto new_in = cast_to_unary(c);
+
+    unary_ineqs.push_back(new_in);
   }
+
+
 
   if(!unary_ineqs.empty())
   {
@@ -105,38 +100,37 @@ std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
 
     if(unary_ineqs.size() > 1)
     {
-      mp_integer a = unary_ineqs[0]->c;
-      mp_integer b = unary_ineqs[1]->c;
+      mp_integer a = unary_ineqs[0]->a * unary_ineqs[0]->c;
+      mp_integer b = unary_ineqs[1]->a * unary_ineqs[1]->c;
       u_bound = (a > b) ? a : b;
     }
     else
     {
-      u_bound = unary_ineqs[0]->c;
+      u_bound = unary_ineqs[0]->a * unary_ineqs[0]->c;
     }
 
-  
-
     return u_bound;
-  }*/
+  }
 
   return std::nullopt;
 }
 
 std::optional<mp_integer> tvpi_systemt::get_lb(mp_integer dimensiont)
 {
+  std::vector<std::shared_ptr<inequality>> ineqs =
+    this->filter({"d"+integer2string(dimensiont)});
 
-  /*
+    std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
 
-  std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
-  for(std::shared_ptr<inequality> i : all_ineqs)
-  {
-    if(std::dynamic_pointer_cast<unary_inequality>(i) != nullptr)
-    {
-      std::shared_ptr<unary_inequality> u =
-        std::dynamic_pointer_cast<unary_inequality>(i);
-      unary_ineqs.push_back(u);
+    for(auto c:ineqs){
+
+      auto new_in = cast_to_unary(c);
+  
+      unary_ineqs.push_back(new_in);
     }
-  }
+  
+  
+
 
   if(!unary_ineqs.empty())
   {
@@ -144,20 +138,17 @@ std::optional<mp_integer> tvpi_systemt::get_lb(mp_integer dimensiont)
 
     if(unary_ineqs.size() > 1)
     {
-      mp_integer a = unary_ineqs[0]->c;
-      mp_integer b = unary_ineqs[1]->c;
+      mp_integer a = unary_ineqs[0]->a * unary_ineqs[0]->c;
+      mp_integer b = unary_ineqs[1]->a * unary_ineqs[1]->c;
       l_bound = (a < b) ? a : b;
     }
     else
     {
-      l_bound = unary_ineqs[0]->c;
+      l_bound = unary_ineqs[0]->a * unary_ineqs[0]->c;
     }
 
     return l_bound;
   }
-  */
-
 
   return std::nullopt;
 }
-

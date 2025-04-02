@@ -1,5 +1,4 @@
 #include "tvpi_domaint.h"
-
 #include <util/arith_tools.h>
 #include <util/mp_arith.h>
 
@@ -39,6 +38,7 @@ void tvpi_domaint::make_top()
   //this->may_reach = true;
   //describes everything
   sys = tvpi_systemt();
+  bind = tvpi_bindingt();
 }
 
 void tvpi_domaint::make_entry()
@@ -125,9 +125,20 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
   }
   else if(e.id() == ID_symbol)
   {
-    std::cout << "we looked up" << lookup_binding(to_symbol_expr(e))
-              << std::endl;
-    return lookup_binding(to_symbol_expr(e));
+    symbol_exprt symbol = to_symbol_expr(e);
+    if(binding.find(symbol) != binding.end())
+    {
+      std::cout << "binded in dimension: " << lookup_binding(to_symbol_expr(e))
+                << std::endl;
+      return lookup_binding(symbol);
+    }
+    else
+    {
+      tvpi_systemt::dimensiont new_dim = this->sys.add_new_dimension();
+      binding[symbol] = new_dim;
+      this->sys.references[new_dim] = this->sys.references[new_dim] + 1;
+      return new_dim;
+    }
   }
   else if(e.id() == ID_plus)
   {
@@ -473,16 +484,11 @@ void tvpi_domaint::assume(const exprt &e)
 // that over-approximates e
 void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 {
-  std::cerr << "We are in assign with: " << id2string(lhs.get_identifier())
-            << std::endl;
+  std::cerr << "in asign with: " << lhs.get_identifier() << std::endl;
 
   tvpi_systemt::dimensiont evaluated_dim = eval(e);
 
-  std::cout << "assigned dim: " << binding[lhs]
-            << " evaluated dim: " << evaluated_dim << std::endl;
-
-  //decrease the number of references if not dealing with return
-  if(id2string(lhs.get_identifier()).find("return") == std::string::npos)
+  if(binding.find(lhs) != binding.end())
   {
     this->sys.references[binding[lhs]] = this->sys.references[binding[lhs]] - 1;
   }
@@ -587,11 +593,10 @@ void tvpi_domaint::transform(
 
   case ASSIGN:
     //if(
-      //id2string(to_symbol_expr(instruction.assign_lhs()).get_identifier())
-        //.find("__CPROVER") == std::string::npos)
+    //id2string(to_symbol_expr(instruction.assign_lhs()).get_identifier())
+    //.find("__CPROVER") == std::string::npos)
     //{
-      assign(
-        to_symbol_expr(instruction.assign_lhs()), instruction.assign_rhs());
+    assign(to_symbol_expr(instruction.assign_lhs()), instruction.assign_rhs());
     //}
     break;
 
@@ -860,11 +865,9 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       target_vars = {first_var};
     }
 
-    //std::cout << "vars here::" << std::endl;
-    //print_ineq(copy_a.constraints[0]);
+    filter_left = copy_a.filter(target_vars);
+    filter_right = copy_b.filter(target_vars);
 
-    filter_left = filter(copy_a, target_vars);
-    filter_right = filter(copy_b, target_vars);
     std::cout << "the target vars for filter are: :" << std::endl;
     for(const auto &var : target_vars)
     {
@@ -970,6 +973,7 @@ void align_bindings(
     auto loc = right.find(binding_pair.first);
     if(loc != right.end())
     {
+      right[binding_pair.first] = a.dimension_counter + 1;
     }
     if(loc != right.end() && binding_pair.second != loc->second)
     {
@@ -1036,28 +1040,4 @@ find_relations(const tvpi_systemt &a, const tvpi_systemt &b)
     }
   }
   return found;
-}
-
-std::vector<std::shared_ptr<inequality>>
-filter(const tvpi_systemt &sys, std::vector<std::string> &target_vars)
-{
-  std::vector<std::shared_ptr<inequality>> res;
-  for(const std::shared_ptr<inequality> &i : sys.constraints)
-  {
-    std::vector<std::string> found_vars = i->vars();
-    //std::cout << "size vars: " << found_vars.size() << std::endl;
-
-    if(found_vars.size() >= 1)
-    {
-      //std::cout << found_vars[0] << " " << found_vars[1] << std::endl;
-      //std::cout << "target vars: " << target_vars.size() << std::endl;
-      //std::cout << target_vars[0] << std::endl;
-
-      if(found_vars == target_vars)
-      {
-        res.push_back(i);
-      }
-    }
-  }
-  return res;
 }

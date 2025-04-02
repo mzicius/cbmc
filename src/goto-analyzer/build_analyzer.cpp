@@ -22,6 +22,8 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 #include <analyses/variable-sensitivity/variable_sensitivity_domain.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_object_factory.h>
 #include <analyses/tvpi/tvpi_domaint.h>
+#include <analyses/tvpi/tvpi_bindingt.h>
+
 
 /// Ideally this should be a pure function of options.
 /// However at the moment some domains require the goto_model or parts of it

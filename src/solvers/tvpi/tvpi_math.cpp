@@ -10,8 +10,8 @@
 #include "../../analyses/tvpi/tvpi_domaint.h"
 
 int main(int argc, char *argv[])
-{ 
-  /*
+{
+  
   tvpi_systemt a;
   tvpi_systemt b;
 
@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
   left.insert(std::make_pair(str2symex("y"), 3));
   left.insert(std::make_pair(str2symex("z"), 7));
   left.insert(std::make_pair(str2symex("l"), 9));
+  left.insert(std::make_pair(str2symex("r"), 11));
 
   b.add_inequality(1, "d1", 1, "d5", 5);
   b.add_inequality(1, "d1", 1, "d8", 8);
@@ -37,12 +38,15 @@ int main(int argc, char *argv[])
   right.insert(std::make_pair(str2symex("y"), 5));
   right.insert(std::make_pair(str2symex("z"), 8));
   right.insert(std::make_pair(str2symex("l"), 4));
+  left.insert(std::make_pair(str2symex("o"), 3));
 
+  /*
   std::vector<std::string> vk;
   vk.push_back("d4");
   auto fil = filter(b, vk);
   std::cout << "filter is" << std::endl;
   print_cons(fil);
+  */
 
   std::cout << "before align left" << std::endl;
   for(auto item : left)
@@ -73,6 +77,7 @@ int main(int argc, char *argv[])
     std::cout << item.first.get_identifier() << " " << item.second << std::endl;
   }
 
+  /*
   std::cout << "cons after relabel" << std::endl;
 
   print_cons(b.constraints);
@@ -101,9 +106,6 @@ int main(int argc, char *argv[])
   for(const auto &ineq: a.constraints){
     std::cout<<ineq->to_string()<<" has arity of: "<<ineq->arity()<<std::endl;
   }
-
-
-
 
   std::cout << "relations" << std::endl;
   for(const auto &rel : existing_relations)
@@ -185,10 +187,83 @@ cross = join::calc_hull(left,right);
 return 0;
   */
 
+  /*
+  tvpi_systemt a;
+  a.add_inequality(1, "d1", 0, "d", 6);
+  a.add_inequality(1, "d2", 0, "d", -1);
+  a.add_inequality(-1, "d4", 0, "d", 1);
+  a.add_inequality(-1,"d4",1,"d5",3);
+  
+  //std::shared_ptr<inequality> i1 = inequality_factory::make_inequality()
 
-tvpi_systemt a;
-a.add_inequality(1,"d1",0,"d",6);
-a.add_inequality(-1,"d1",0,"d",-6);
-a.add_inequality(1,"d2",0,"d",-1);
-a.add_inequality(-1,"d2",0,"d",1);
+  tvpi_systemt b;
+  b.add_inequality(1, "d1", 0, "d", 6);
+  b.add_inequality(-1, "d7", 0, "d", 1);
+  b.add_inequality(-1, "d4", 0, "d", 1);
+
+  std::cout << std::endl;
+  std::cout << "system a once created" << std::endl;
+  print_cons(a.constraints);
+
+  std::cout << "system b once created" << std::endl;
+  print_cons(b.constraints);
+
+ 
+
+  
+  std::vector<std::shared_ptr<inequality>> intersection;
+
+  for(auto con_a : a.constraints){
+    for(auto con_b : b.constraints){
+      std::cout<<"con_a: "<<con_a->to_string()<<" con_b: "<<con_b->to_string()<<std::endl;
+      if(con_a->to_string() == con_b->to_string()){
+        std::cout<<"same"<<std::endl;
+        intersection.push_back(con_a);
+      }
+    }
+  }
+  
+
+  tvpi_systemt a;
+  a.add_inequality(1, "d1", 0, "d", 6);
+  a.add_inequality(1, "d2", 0, "d", -1);
+  a.add_inequality(-1, "d4", 0, "d", 1);
+  a.add_inequality(-1,"d4",1,"d5",3);
+  a.add_inequality(-1,"d1",1,"d5",3);
+  
+  //std::shared_ptr<inequality> i1 = inequality_factory::make_inequality()
+
+  tvpi_systemt b;
+  b.add_inequality(1, "d1", 0, "d", 6);
+  b.add_inequality(-1, "d1", 0, "d", -6);
+  b.add_inequality(-1, "d4", 0, "d", 1);
+
+
+  std::shared_ptr<inequality> ia = inequality_factory::make_inequality("x","y",1,2,3);
+  std::shared_ptr<inequality> ib = inequality_factory::make_inequality("y","x",2,3,4);
+
+  std::vector<std::string> vars_a = ia->vars();
+  std::vector<std::string> vars_b = ib->vars();
+
+
+  if(vars_a == vars_b){
+    std::cout<<"equal vectors"<<std::endl;
+  }
+  
+  std::vector<std::shared_ptr<inequality>> left;
+  std::vector<std::shared_ptr<inequality>> right;
+
+  left = a.filter({"d1","d5"});
+  right = a.filter({"d4","d5"});
+
+  print_cons(left);
+  std::cout<<std::endl;
+  print_cons(right);
+
+  std::cout<<a.get_ub(1).value()<<std::endl;
+  std::cout<<a.get_lb(1).value()<<std::endl;
+
+  //print_cons(intersection);
+ */
+  
 }

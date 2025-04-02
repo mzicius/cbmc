@@ -57,7 +57,8 @@ SRC = ai.cpp \
       variable-sensitivity/write_stack.cpp \
       variable-sensitivity/write_stack_entry.cpp \
       example_domain.cpp \
-      tvpi/tvpi_domaint.cpp\
+      tvpi/tvpi_domaint.cpp \
+      tvpi/tvpi_bindingt.cpp \
       # Empty last line
 
 INCLUDES= -I .. -I ../solvers

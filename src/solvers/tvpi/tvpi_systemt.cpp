@@ -1,14 +1,22 @@
 
 #include "tvpi_systemt.h"
+
 #include "inequality_factory.h"
+
 #include <algorithm>
 #include <fstream>
+
+tvpi_systemt::dimensiont tvpi_systemt::dim_counter = -1;
+
+tvpi_systemt::dimensiont tvpi_systemt::get_current_dim() const
+{
+  return dim_counter;
+}
 
 tvpi_systemt::tvpi_systemt()
 {
   std::cerr << "Initialize TVPI system" << std::endl;
   constraints = {};
-  dimension_counter = -1;
 }
 
 void tvpi_systemt::existential_project(mp_integer dimensiont)
@@ -35,8 +43,7 @@ void tvpi_systemt::make_unsat_system()
 
 tvpi_systemt::dimensiont tvpi_systemt::add_new_dimension()
 {
-  dimensiont new_dim = ++dimension_counter;
-  references[new_dim] = 0;
+  dimensiont new_dim = ++dim_counter;
   return new_dim;
 }
 
@@ -46,6 +53,19 @@ void tvpi_systemt::add_inequality(
   mp_integer b,
   std::string y,
   mp_integer c)
+{
+  auto i = inequality_factory::make_inequality(x, y, a, b, c);
+  constraints.push_back(i);
+  std::cerr << "new_ineq: " << i->to_string() << std::endl;
+  constraints = complete::closure(constraints);
+}
+
+void tvpi_systemt::add_inequality(
+  rationalt a,
+  std::string x,
+  rationalt b,
+  std::string y,
+  rationalt c)
 {
   auto i = inequality_factory::make_inequality(x, y, a, b, c);
   constraints.push_back(i);
@@ -78,35 +98,46 @@ tvpi_systemt::filter(const std::vector<std::string> &target_vars)
   return result;
 }
 
-std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
+//x<=3
+//upper bound is when the coeff is positive and the sign is <=
+std::optional<rationalt> tvpi_systemt::get_ub(mp_integer dimensiont)
 {
   std::vector<std::shared_ptr<inequality>> ineqs =
-  this->filter({"d"+integer2string(dimensiont)});
+    this->filter({"d" + integer2string(dimensiont)});
 
   std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
 
-  for(auto c:ineqs){
-
-    auto new_in = cast_to_unary(c);
+  for(auto c : ineqs)
+  {
+    std::shared_ptr<unary_inequality> new_in = cast_to_unary(c);
 
     unary_ineqs.push_back(new_in);
   }
 
-
-
   if(!unary_ineqs.empty())
   {
-    mp_integer u_bound;
+    rationalt u_bound;
+ 
+    mp_integer a1,c1;
+    std::shared_ptr<unary_inequality> u1 = unary_ineqs[0];
+    a1 = u1->a;
+    c1 = u1->c;
 
+    if((a1 > 0 && c1 > 0) || (a1 > 0 && c1 < 0)){
+      u_bound = rationalt(c1)/rationalt(a1);
+    }
+    
     if(unary_ineqs.size() > 1)
     {
-      mp_integer a = unary_ineqs[0]->a * unary_ineqs[0]->c;
-      mp_integer b = unary_ineqs[1]->a * unary_ineqs[1]->c;
-      u_bound = (a > b) ? a : b;
-    }
-    else
-    {
-      u_bound = unary_ineqs[0]->a * unary_ineqs[0]->c;
+      mp_integer a2, c2;
+      std::shared_ptr<unary_inequality> u2 = unary_ineqs[1];
+      a2 = u2->a;
+      c2 = u2->c;
+
+      if((a2 > 0 && c2 > 0) || (a2 > 0 && c2 < 0)){
+        u_bound = rationalt(c2)/rationalt(a2);
+      }
+
     }
 
     return u_bound;
@@ -115,36 +146,47 @@ std::optional<mp_integer> tvpi_systemt::get_ub(mp_integer dimensiont)
   return std::nullopt;
 }
 
-std::optional<mp_integer> tvpi_systemt::get_lb(mp_integer dimensiont)
+//-x<=3
+//-x<=-3
+//lower bound is when the coeff is negative or the sign is >=
+std::optional<rationalt> tvpi_systemt::get_lb(mp_integer dimensiont)
 {
   std::vector<std::shared_ptr<inequality>> ineqs =
-    this->filter({"d"+integer2string(dimensiont)});
+    this->filter({"d" + integer2string(dimensiont)});
 
-    std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
+  std::vector<std::shared_ptr<unary_inequality>> unary_ineqs;
 
-    for(auto c:ineqs){
+  for(auto c : ineqs)
+  {
+    std::shared_ptr<unary_inequality> new_in = cast_to_unary(c);
 
-      auto new_in = cast_to_unary(c);
-  
-      unary_ineqs.push_back(new_in);
-    }
-  
-  
-
+    unary_ineqs.push_back(new_in);
+  }
 
   if(!unary_ineqs.empty())
   {
-    mp_integer l_bound;
+    rationalt l_bound;
+ 
+    mp_integer a1,c1;
+    std::shared_ptr<unary_inequality> u1 = unary_ineqs[0];
+    a1 = u1->a;
+    c1 = u1->c;
 
+    if((a1 < 0 && c1 > 0) || (a1 < 0 && c1 < 0)){
+      l_bound = rationalt(c1)/rationalt(a1);
+    }
+    
     if(unary_ineqs.size() > 1)
     {
-      mp_integer a = unary_ineqs[0]->a * unary_ineqs[0]->c;
-      mp_integer b = unary_ineqs[1]->a * unary_ineqs[1]->c;
-      l_bound = (a < b) ? a : b;
-    }
-    else
-    {
-      l_bound = unary_ineqs[0]->a * unary_ineqs[0]->c;
+      mp_integer a2, c2;
+      std::shared_ptr<unary_inequality> u2 = unary_ineqs[1];
+      a2 = u2->a;
+      c2 = u2->c;
+
+      if((a2 < 0 && c2 > 0) || (a2 < 0 && c2 < 0)){
+        l_bound = rationalt(c2)/rationalt(a2);
+      }
+
     }
 
     return l_bound;

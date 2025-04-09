@@ -2,7 +2,7 @@
 #define TVPI_SYSTEMT_H
 
 #include <util/mp_arith.h>
-#include "../../analyses/tvpi/tvpi_bindingt.h"
+
 #include "complete.h"
 #include "inequality.h"
 #include "unary_inequality.h"
@@ -14,10 +14,8 @@ class tvpi_systemt
 public:
   tvpi_systemt();
   typedef mp_integer dimensiont;
-  mp_integer dimension_counter;
   std::vector<std::shared_ptr<inequality>> constraints;
-  std::map<dimensiont, mp_integer> references;
-  //tvpi_bindingt bt;
+  dimensiont get_current_dim() const;
 
   void make_unsat_system();
 
@@ -34,14 +32,24 @@ public:
     std::string y,
     mp_integer c);
 
+  void add_inequality(
+    rationalt a,
+    std::string x,
+    rationalt b,
+    std::string y,
+    rationalt c);
+
   void print_system();
 
   std::vector<std::shared_ptr<inequality>>
   filter(const std::vector<std::string> &target_vars);
 
-  std::optional<mp_integer> get_ub(mp_integer dimensiont);
+  std::optional<rationalt> get_ub(mp_integer dimensiont);
 
-  std::optional<mp_integer> get_lb(mp_integer dimensiont);
+  std::optional<rationalt> get_lb(mp_integer dimensiont);
+
+private:
+  static dimensiont dim_counter;
 };
 
 #endif

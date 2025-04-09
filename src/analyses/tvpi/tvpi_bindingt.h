@@ -2,35 +2,32 @@
 #define TVPI_BINDINGT_H
 
 #include <util/mp_arith.h>
+
 #include <solvers/tvpi/tvpi_systemt.h>
+
 #include <vector>
-#include "../variable-sensitivity/abstract_environment.h"
+
 #include "../ai_domain.h"
+#include "../variable-sensitivity/abstract_environment.h"
 
 class tvpi_bindingt
 {
+public:
+  typedef std::map<tvpi_systemt::dimensiont, mp_integer> reference_map;
+  reference_map references;
 
-  public:
-  
-  tvpi_systemt::dimensiont l;
-
-
-  //void set_binding(symbol_exprt symbol,tvpi_systemt::dimensiont dim);
-  //bool wipe_binding(symbol_exprt symbol);
-  //tvpi_systemt::dimensiont lookup_binding(symbol_exprt symbol);
+  typedef std::map<symbol_exprt, tvpi_systemt::dimensiont> binding_map;
+  void set_binding(symbol_exprt symbol, tvpi_systemt::dimensiont dim);
+  void print_binding() const;
+  void print_references() const;
+  void add_tmp_ref(tvpi_systemt::dimensiont dim);
+  binding_map copy_map() const;
+  tvpi_systemt::dimensiont lookup_binding(symbol_exprt symbol);
+  bool wipe_binding(tvpi_systemt &sys);
   //void align(binding_mp b);
-  //void print_binding();
-  //void insert_reference(tvpi_systemt::dimensiont dim);
-  //void print_references();
 
-  private:
-  //binding_mp bind;
-  //std::map<tvpi_systemt::dimensiont, mp_integer> references;
-
-
-
-
-
+private:
+  binding_map binding;
 };
 
 #endif

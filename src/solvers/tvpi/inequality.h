@@ -138,7 +138,7 @@ extern void print_ins(const std::vector<std::shared_ptr<inequality>> ins);
 
 extern void print_ineq(std::shared_ptr<inequality> i);
 
-extern void print_cons(std::vector<std::shared_ptr<inequality>> &xs);
+extern void print_cons(const std::vector<std::shared_ptr<inequality>> &xs);
 
 extern void normalize_coeff(std::vector<std::shared_ptr<inequality>> &xs);
 

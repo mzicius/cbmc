@@ -12,8 +12,6 @@ class tvpi_domaint : public ai_domain_baset
 {
 public:
 
-  typedef std::map<symbol_exprt, tvpi_systemt::dimensiont> binding_map;
-
   tvpi_domaint();
 
   //static int result_call;
@@ -76,17 +74,14 @@ public:
     exprt &condition,
     const namespacet &ns) const override;
 
-  tvpi_systemt::dimensiont lookup_binding(symbol_exprt sym);
-
 protected:
   tvpi_systemt sys;
   tvpi_bindingt bind;
-  binding_map binding;
 };
 
 extern symbol_exprt str2symex(const std::string &label);
 extern std::vector<std::shared_ptr<inequality>> relabel_ineqs(tvpi_systemt &sys, tvpi_systemt::dimensiont &old_dim, const tvpi_systemt::dimensiont &new_dim);
-extern void align_bindings(const tvpi_domaint::binding_map &left, tvpi_domaint::binding_map &right,const tvpi_systemt &a, tvpi_systemt &b);
+extern void align_bindings(const tvpi_bindingt::binding_map &left, tvpi_bindingt::binding_map &right,const tvpi_systemt &a, tvpi_systemt &b);
 extern std::set<std::string> find_relations(const tvpi_systemt &a, const tvpi_systemt &b);
 
 #endif

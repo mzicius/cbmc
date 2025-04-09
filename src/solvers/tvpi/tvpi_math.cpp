@@ -12,11 +12,12 @@
 int main(int argc, char *argv[])
 {
   
+  /*
   tvpi_systemt a;
   tvpi_systemt b;
 
-  tvpi_domaint::binding_map left;
-  tvpi_domaint::binding_map right;
+  tvpi_bindingt::binding_map left;
+  tvpi_bindingt::binding_map right;
 
   a.add_inequality(1, "d1", 1, "d3", 4);
   a.add_inequality(1, "d1", 1, "d7", 8);
@@ -40,13 +41,6 @@ int main(int argc, char *argv[])
   right.insert(std::make_pair(str2symex("l"), 4));
   left.insert(std::make_pair(str2symex("o"), 3));
 
-  /*
-  std::vector<std::string> vk;
-  vk.push_back("d4");
-  auto fil = filter(b, vk);
-  std::cout << "filter is" << std::endl;
-  print_cons(fil);
-  */
 
   std::cout << "before align left" << std::endl;
   for(auto item : left)
@@ -76,6 +70,8 @@ int main(int argc, char *argv[])
   {
     std::cout << item.first.get_identifier() << " " << item.second << std::endl;
   }
+
+  */
 
   /*
   std::cout << "cons after relabel" << std::endl;
@@ -265,5 +261,70 @@ return 0;
 
   //print_cons(intersection);
  */
+
+
+  //rational factory start
+
+
+  std::shared_ptr<inequality> ri1 = inequality_factory::make_inequality("x","y",rationalt(0),rationalt(7)/rationalt(3),rationalt(9)/rationalt(3));
+  print_ineq(ri1);
+  std::shared_ptr<inequality> ri2 = inequality_factory::make_inequality("x","y",rationalt(7)/rationalt(3),rationalt(0),rationalt(9)/rationalt(4));
+  print_ineq(ri2);
+  std::shared_ptr<inequality> ri3 = inequality_factory::make_inequality("x","x",rationalt(9)/rationalt(8),rationalt(7)/rationalt(3),rationalt(9)/rationalt(3));
+  print_ineq(ri3);
+  std::shared_ptr<inequality> ri4 = inequality_factory::make_inequality("x","y",rationalt(5)/rationalt(2),rationalt(7)/rationalt(3),rationalt(9)/rationalt(3));
+  print_ineq(ri4);
+  std::shared_ptr<inequality> ri5 = inequality_factory::make_inequality("y","x",rationalt(5)/rationalt(2),rationalt(7)/rationalt(3),rationalt(9)/rationalt(3));
+  print_ineq(ri5);
+  std::shared_ptr<inequality> ri6 = inequality_factory::make_inequality("x",rationalt(0),rationalt(7)/rationalt(3));
+  print_ineq(ri6);
+  std::shared_ptr<inequality> ri7 = inequality_factory::make_inequality("x",rationalt(1)/rationalt(3),rationalt(7)/rationalt(3));
+  print_ineq(ri7);
+  std::shared_ptr<inequality> ri8 = inequality_factory::make_inequality("x",rationalt(2)/rationalt(9),rationalt(6)/rationalt(7));
+  print_ineq(ri8);
+
+
+  //rational factory end
+
+  //bounds start
+
+  tvpi_systemt a;
+  tvpi_systemt b;
+
+  //a.add_inequality(2,"d1",0,"d2",3);
+  //a.add_inequality(-2,"d1",0,"d2",-3);
+  //a.add_inequality(rationalt(1),"d1",rationalt(0),"d2",rationalt(3)/rationalt(2));
+  //a.add_inequality(rationalt(-1),"d1",rationalt(0),"d2",rationalt(1)/rationalt(2));
+
+  //a.add_inequality(rationalt(1),"d1",rationalt(2),"d2",rationalt(3)/rationalt(2));
+  //a.add_inequality(rationalt(-1),"d1",rationalt(-2),"d2",rationalt(1)/rationalt(2));
+
+  //b.add_inequality(2,"d1",0,"d2",-3);
+  //b.add_inequality(-2,"d1",0,"d2",3);
+
+ 
+
+
+  if(a.get_ub(1).has_value()){
+    std::cout<<"ub in a on dim 1 in sys a is: "<<a.get_ub(1).value()<<std::endl;
+  }
+
+  if(a.get_lb(1).has_value()){
+    std::cout<<"lb in a on dim 1 in sys a is: "<<a.get_lb(1).value()<<std::endl;
+  }
+
+  if(b.get_ub(1).has_value()){
+    std::cout<<"ub in a on dim 1 in sys b is: "<<b.get_ub(1).value()<<std::endl;
+  }
+
+  if(b.get_lb(1).has_value()){
+    std::cout<<"lb in a on dim 1 in sys b is: "<<b.get_lb(1).value()<<std::endl;
+  }
+
+
+  //bounds end
+
+
+
   
 }

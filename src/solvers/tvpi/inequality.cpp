@@ -536,7 +536,7 @@ void print_ineq(std::shared_ptr<inequality> i)
 
 /// @brief fully prints vector of tvpi inequalities
 /// @param xs vector of tvpi inequalities
-void print_cons(std::vector<std::shared_ptr<inequality>> &xs)
+void print_cons(const std::vector<std::shared_ptr<inequality>> &xs)
 {
   for(size_t i = 0; i < xs.size(); i++)
   {

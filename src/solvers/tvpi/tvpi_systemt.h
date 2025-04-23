@@ -42,7 +42,7 @@ public:
   void print_system();
 
   std::vector<std::shared_ptr<inequality>>
-  filter(const std::vector<std::string> &target_vars);
+  filter(const std::vector<std::string> &target_vars) const;
 
   std::optional<rationalt> get_ub(mp_integer dimensiont);
 

@@ -1315,21 +1315,17 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
   mp_integer c2;
 
   if(cast_to_unary(a)){
-    std::cout<<"we are here"<<std::endl;
     std::shared_ptr<unary_inequality> i1;
     i1 = cast_to_unary(a);
-    std::cout<<"x is"<<x<<std::endl;
     c1 = i1->c;
     auto dim_target = dimensions.find(i1->x);
     if(dim_target==dimensions.begin()){
-      std::cout<<"we hit a"<<std::endl;
       a1 = i1->a;
       b1 = 0;
       std::advance(dim_target,1);
 
      }
      else{
-       std::cout<<"we hit b"<<std::endl;
       a1 = 0;
       b1 = i1->a;
 

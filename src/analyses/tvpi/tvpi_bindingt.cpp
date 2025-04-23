@@ -83,3 +83,7 @@ bool tvpi_bindingt::wipe_binding(tvpi_systemt &sys)
 
   return changed;
 }
+
+void tvpi_bindingt::override_binding(const binding_map &new_binding){
+      binding = new_binding;
+}

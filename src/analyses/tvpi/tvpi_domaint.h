@@ -81,7 +81,7 @@ protected:
 
 extern symbol_exprt str2symex(const std::string &label);
 extern std::vector<std::shared_ptr<inequality>> relabel_ineqs(tvpi_systemt &sys, tvpi_systemt::dimensiont &old_dim, const tvpi_systemt::dimensiont &new_dim);
-extern void align_bindings(const tvpi_bindingt::binding_map &left, tvpi_bindingt::binding_map &right,const tvpi_systemt &a, tvpi_systemt &b);
+extern void align_bindings(tvpi_bindingt::binding_map &left,const tvpi_bindingt::binding_map &right,tvpi_systemt &a,const tvpi_systemt &b);
 extern std::set<std::string> find_relations(const tvpi_systemt &a, const tvpi_systemt &b);
 
 #endif

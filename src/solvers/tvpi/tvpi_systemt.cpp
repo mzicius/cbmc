@@ -85,7 +85,7 @@ void tvpi_systemt::print_system()
 }
 
 std::vector<std::shared_ptr<inequality>>
-tvpi_systemt::filter(const std::vector<std::string> &target_vars)
+tvpi_systemt::filter(const std::vector<std::string> &target_vars) const
 {
   std::vector<std::shared_ptr<inequality>> result;
   for(const std::shared_ptr<inequality> &c : constraints)

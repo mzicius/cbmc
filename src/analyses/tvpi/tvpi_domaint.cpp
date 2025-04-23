@@ -78,7 +78,7 @@ void tvpi_domaint::output(
   const namespacet &ns) const
 {
   out << std::endl;
-  out << "dimension counter: " << this->sys.get_current_dim()+1 << std::endl;
+  out << "dimension counter: " << this->sys.get_current_dim() << std::endl;
   out << std::endl;
   out << "TVPI system:" << std::endl;
   print_cons(this->sys.constraints);
@@ -412,7 +412,6 @@ void tvpi_domaint::assume(const exprt &e)
     }
     else if(tmp.op().id() == ID_gt)
     {
-      std::cout << "we hit this" << std::endl;
       auto rel = to_binary_relation_expr(tmp.op());
       assume(less_than_or_equal_exprt(rel.lhs(), rel.rhs()));
     }
@@ -630,7 +629,7 @@ void tvpi_domaint::transform(
     break;
   }
 
-  this->bind.wipe_binding(this->sys);
+  //this->bind.wipe_binding(this->sys);
 
   return;
 }
@@ -674,88 +673,59 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
   std::cerr << "MERGE CASE 4: WIDEN OR CONVEX UNION" << std::endl;
 
-  auto widen_mode =
-    from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
-
-  if(widen_mode == widen_modet::could_widen)
-  {
-    std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
-    auto copy_a = this->sys.constraints;
-    auto copy_b = b.sys.constraints;
-    std::cerr << "system a " << std::endl;
-    print_cons(copy_a);
-    std::cerr << "system b " << std::endl;
-    print_cons(copy_b);
-
-    std::vector<std::shared_ptr<inequality>> intersection;
-
-    for(auto con_a : copy_a)
-    {
-      for(auto con_b : copy_b)
-      {
-        if(con_a->to_string() == con_b->to_string())
-        {
-          intersection.push_back(con_a);
-        }
-      }
-    }
-
-    std::cerr << "intersection " << std::endl;
-    print_cons(intersection);
-    this->sys.constraints = intersection;
-  }
-
   std::cerr << "MERGE CASE 4: CONVEX UNION" << std::endl;
 
+  //copy binding of systems a and b
   tvpi_bindingt::binding_map copy_left = this->bind.copy_map();
   tvpi_bindingt::binding_map copy_right = b.bind.copy_map();
 
+  //copy systems a and b
   tvpi_systemt copy_a = this->sys;
   tvpi_systemt copy_b = b.sys;
 
   std::cerr << "the left system for CONVEX UNION:" << std::endl;
-  print_cons(copy_a.constraints);
+  print_cons(this->sys.constraints);
 
   std::cerr << "the left binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_left)
+  for(const auto &bind_pair : this->bind.binding)
   {
     std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
               << bind_pair.second << std::endl;
   }
 
   std::cerr << "the right system for CONVEX UNION:" << std::endl;
-  print_cons(copy_b.constraints);
+  print_cons(b.sys.constraints);
 
   std::cerr << "the right binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_right)
+  for(const auto &bind_pair : b.bind.binding)
   {
     std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
               << bind_pair.second << std::endl;
   }
 
-  align_bindings(copy_left, copy_right, copy_a, copy_b);
+  align_bindings(this->bind.binding, b.bind.binding, this->sys, b.sys);
 
   std::cerr << "after align: left system for CONVEX UNION:" << std::endl;
-  print_cons(copy_a.constraints);
+  print_cons(this->sys.constraints);
 
   std::cerr << "after align: left binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_left)
+  for(const auto &bind_pair : this->bind.binding)
   {
     std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
               << bind_pair.second << std::endl;
   }
 
   std::cerr << "after align: right system for CONVEX UNION:" << std::endl;
-  print_cons(copy_b.constraints);
+  print_cons(b.sys.constraints);
 
   std::cerr << "after align: right binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : copy_right)
+  for(const auto &bind_pair : b.bind.binding)
   {
     std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
               << bind_pair.second << std::endl;
   }
 
-  std::set<std::string> existing_relations = find_relations(copy_a, copy_b);
+  std::set<std::string> existing_relations = find_relations(this->sys, b.sys);
 
   std::vector<std::shared_ptr<inequality>> interm_union;
   std::vector<std::shared_ptr<inequality>> convex_union;
@@ -783,8 +753,8 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       target_vars = {first_var};
     }
 
-    filter_left = copy_a.filter(target_vars);
-    filter_right = copy_b.filter(target_vars);
+    filter_left = this->sys.filter(target_vars);
+    filter_right = b.sys.filter(target_vars);
 
     std::cout << "the target vars for filter are: :" << std::endl;
     for(const auto &var : target_vars)
@@ -814,6 +784,35 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     is_modified = true;
     this->sys.constraints = convex_union;
   }
+
+  
+  auto widen_mode =
+  from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
+
+if(widen_mode == widen_modet::could_widen)
+{
+  std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
+  auto copy_a = this->sys.constraints;
+  auto copy_b = b.sys.constraints;
+
+  std::vector<std::shared_ptr<inequality>> intersection;
+
+  for(auto con_a : copy_a)
+  {
+    for(auto con_b : copy_b)
+    {
+      if(con_a->to_string() == con_b->to_string())
+      {
+        intersection.push_back(con_a);
+      }
+    }
+  }
+
+  std::cerr << "intersection is:" << std::endl;
+  print_cons(intersection);
+  this->sys.constraints = intersection;
+}
+
 
   return is_modified;
 }
@@ -870,22 +869,22 @@ std::vector<std::shared_ptr<inequality>> relabel_ineqs(
 }
 
 void align_bindings(
-  const tvpi_bindingt::binding_map &left,
-  tvpi_bindingt::binding_map &right,
-  const tvpi_systemt &a,
-  tvpi_systemt &b)
+  tvpi_bindingt::binding_map &left,
+  const tvpi_bindingt::binding_map &right,
+  tvpi_systemt &a,
+  const tvpi_systemt &b)
 {
-  for(const auto &binding_pair : left)
+  for(const auto &right_bind_pair : right)
   {
-    auto loc = right.find(binding_pair.first);
-    if(loc != right.end())
+    auto loc_in_left = left.find(right_bind_pair.first);
+
+    if(loc_in_left!=left.end()&& loc_in_left->second != right_bind_pair.second)
     {
+      a.constraints = relabel_ineqs(a,loc_in_left->second,right_bind_pair.second);
+      left[right_bind_pair.first] = right_bind_pair.second;
     }
-    if(loc != right.end() && binding_pair.second != loc->second)
-    {
-      b.constraints = relabel_ineqs(b, loc->second, binding_pair.second);
-      right[binding_pair.first] = binding_pair.second;
-    }
+    //fix the refrences in here
+    //think about the location
   }
 }
 

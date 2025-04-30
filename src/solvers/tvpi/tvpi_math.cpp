@@ -376,5 +376,15 @@ return 0;
   std::cout<<"final convex union is: "<<std::endl;
   print_cons(convex_union);
 
+
+  tvpi_systemt c;
+  tvpi_systemt d;
+
+  c.add_inequality(1,"d17",0,"",11);
+  d.add_inequality(-1,"d17",0,"",-4);
+
+  auto in = join::calc_hull(c.constraints,d.constraints);
+  std::cout<<"in is:"<<std::endl;
+  print_cons(in);
   
 }

@@ -25,6 +25,8 @@ public:
     
     std::string to_ltx_label() override;
 
+    bool operator== (const std::shared_ptr<inequality> i1) const override;
+
 };
 
 extern int bool_compare(const bool a, const bool b);

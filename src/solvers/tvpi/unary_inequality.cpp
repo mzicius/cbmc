@@ -1,99 +1,134 @@
 #include "unary_inequality.h"
+
 #include <iostream>
 
 unary_inequality::unary_inequality(std::string _x, mp_integer _a, mp_integer _c)
-: x(_x)
+  : x(_x)
 {
-    mp_integer common_factor = gcd(abs(_a),abs(_c));
-    common_factor = (common_factor == 0) ? 1 : common_factor;
-    a = _a/common_factor;
-    c = _c/common_factor;
+  mp_integer common_factor = gcd(abs(_a), abs(_c));
+  common_factor = (common_factor == 0) ? 1 : common_factor;
+  a = _a / common_factor;
+  c = _c / common_factor;
 }
 
-std::vector<std::string> unary_inequality::vars(){
-    return {x};
+std::vector<std::string> unary_inequality::vars()
+{
+  return {x};
 }
 
-int unary_inequality::sign_a(){
-    return sign(a);
+int unary_inequality::sign_a()
+{
+  return sign(a);
 }
 
-std::vector<coordinate> unary_inequality::intercepts(std::string x, std::string y, int x_min, int y_min, int x_max, int y_max){
-   
-    std::shared_ptr<dyadic_inequality> d = std::dynamic_pointer_cast<dyadic_inequality>(widen({x,y}));
-	return d->intercepts(x, y, x_min, y_min, x_max, y_max);
-
+std::vector<coordinate> unary_inequality::intercepts(
+  std::string x,
+  std::string y,
+  int x_min,
+  int y_min,
+  int x_max,
+  int y_max)
+{
+  std::shared_ptr<dyadic_inequality> d =
+    std::dynamic_pointer_cast<dyadic_inequality>(widen({x, y}));
+  return d->intercepts(x, y, x_min, y_min, x_max, y_max);
 }
 
-std::vector<coordinate> unary_inequality::halfspace(std::string x, std::string y, int x_min, int y_min, int x_max, int y_max){
-
-    std::shared_ptr<dyadic_inequality> d = std::dynamic_pointer_cast<dyadic_inequality>(widen({x,y}));
-	return d->halfspace(x, y, x_min, y_min, x_max, y_max);
-
+std::vector<coordinate> unary_inequality::halfspace(
+  std::string x,
+  std::string y,
+  int x_min,
+  int y_min,
+  int x_max,
+  int y_max)
+{
+  std::shared_ptr<dyadic_inequality> d =
+    std::dynamic_pointer_cast<dyadic_inequality>(widen({x, y}));
+  return d->halfspace(x, y, x_min, y_min, x_max, y_max);
 }
 
-std::shared_ptr<inequality> unary_inequality::widen(std::vector<std::string> vars){
+std::shared_ptr<inequality>
+unary_inequality::widen(std::vector<std::string> vars)
+{
+  if(vars.size() > 2)
+  {
+    return nullptr;
+  }
 
-    
-    if (vars.size() > 2){
-	    return nullptr;
-	}
-        
-    else if (vars.size() == 2 && x==vars[0]){
-	    return  std::make_shared<dyadic_inequality>(vars[0], vars[1], a, 0, c);  
-        
-    }
-	else if (vars.size() == 2 && x==vars[1]){
-	    return std::make_shared<dyadic_inequality>(vars[0], vars[1], 0, a, c);  
-    }
-    else if (vars.size() == 1 && x==vars[0]){
-        
-        return std::make_shared<unary_inequality>(vars[0],a,c);
-        
-    }
-    else
-    {
-	    return nullptr;
-    }
-  
+  else if(vars.size() == 2 && x == vars[0])
+  {
+    return std::make_shared<dyadic_inequality>(vars[0], vars[1], a, 0, c);
+  }
+  else if(vars.size() == 2 && x == vars[1])
+  {
+    return std::make_shared<dyadic_inequality>(vars[0], vars[1], 0, a, c);
+  }
+  else if(vars.size() == 1 && x == vars[0])
+  {
+    return std::make_shared<unary_inequality>(vars[0], a, c);
+  }
+  else
+  {
+    return nullptr;
+  }
 }
 
-std::string unary_inequality::to_string(){
+std::string unary_inequality::to_string()
+{
+  int a_sign = sign(a);
+  int a_abs_one = compare_to(abs(a), 1);
 
-    int a_sign = sign(a);
-    int a_abs_one = compare_to(abs(a),1);
+  std::string sb;
 
-    std::string sb;
-   
-	if (a_abs_one == 0 && a_sign < 0) sb.append("-" + x);
-	else if (a_abs_one == 0 && a_sign > 0) sb.append(x);
-	else if (a_sign < 0) sb.append(integer2string(a,10) + x);
-	else if (a_sign > 0) sb.append(integer2string(a,10) + x);
+  if(a_abs_one == 0 && a_sign < 0)
+    sb.append("-" + x);
+  else if(a_abs_one == 0 && a_sign > 0)
+    sb.append(x);
+  else if(a_sign < 0)
+    sb.append(integer2string(a, 10) + x);
+  else if(a_sign > 0)
+    sb.append(integer2string(a, 10) + x);
 
-	sb.append("\u2264" + integer2string(c,10));
+  sb.append("\u2264" + integer2string(c, 10));
 
-    return sb;
-  
+  return sb;
 }
 
-std::string unary_inequality::to_ltx_label(){
-    
-    int a_sign = sign(a);
-    int a_abs_one = compare_to(abs(a),1);
+std::string unary_inequality::to_ltx_label()
+{
+  int a_sign = sign(a);
+  int a_abs_one = compare_to(abs(a), 1);
 
-    std::string sb;
-   
-	if (a_abs_one == 0 && a_sign < 0) sb.append("-" + x);
-	else if (a_abs_one == 0 && a_sign > 0) sb.append(x);
-	else if (a_sign < 0) sb.append(integer2string(a,10) + x);
-	else if (a_sign > 0) sb.append(integer2string(a,10) + x);
+  std::string sb;
 
-	sb.append("\\leq" + integer2string(c,10));
+  if(a_abs_one == 0 && a_sign < 0)
+    sb.append("-" + x);
+  else if(a_abs_one == 0 && a_sign > 0)
+    sb.append(x);
+  else if(a_sign < 0)
+    sb.append(integer2string(a, 10) + x);
+  else if(a_sign > 0)
+    sb.append(integer2string(a, 10) + x);
 
-    return sb;
+  sb.append("\\leq" + integer2string(c, 10));
 
+  return sb;
 }
 
-std::shared_ptr<unary_inequality> cast_to_unary(std::shared_ptr<inequality> i){
+std::shared_ptr<unary_inequality> cast_to_unary(std::shared_ptr<inequality> i)
+{
   return std::dynamic_pointer_cast<unary_inequality>(i);
+}
+
+bool unary_inequality::operator==(const std::shared_ptr<inequality> i1) const
+{
+  if(cast_to_unary(i1))
+  {
+    std::shared_ptr<unary_inequality> u1 = cast_to_unary(i1);
+    return (u1->x == this->x && u1->a == this->a && u1->c == this->c);
+  }
+  else
+  {
+    return false;
+  }
 }

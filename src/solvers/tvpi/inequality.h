@@ -14,6 +14,9 @@
 class inequality
 {
 public:
+
+  virtual bool operator== (const std::shared_ptr<inequality> i1) const = 0;
+
   //haskell extension
   enum direction
   {

@@ -27,6 +27,8 @@ std::string to_string() override;
 
 std::string to_ltx_label() override;
 
+bool operator== (const std::shared_ptr<inequality> i1) const override;
+
 };
 
 extern std::shared_ptr<unary_inequality> cast_to_unary(std::shared_ptr<inequality> i);

@@ -1,6 +1,8 @@
 #include "join.h"
-#include <iostream>
 
+#include "tvpi_systemt.h"
+
+#include <iostream>
 
 std::ofstream join::full_hull_trace;
 int join::hull_ID = 0;
@@ -10,29 +12,32 @@ void join::rm_excess(
   std::shared_ptr<inequality> ref,
   std::vector<std::shared_ptr<inequality>> &ls)
 {
-
-  std::cout<<"ref: "<<ref->to_string()<<std::endl;
-  std::vector<std::shared_ptr<inequality>> rev_ls(ls.rbegin(),ls.rend());
-  auto pos = std::find_if_not(rev_ls.begin(),rev_ls.end(),[ref](std::shared_ptr<inequality> i){return cmp_angle(i,ref)!=inequality::GT;});
+  if(tvpi_systemt::dbg_all)
+  {
+    std::cout << "ref: " << ref->to_string() << std::endl;
+  }
+  std::vector<std::shared_ptr<inequality>> rev_ls(ls.rbegin(), ls.rend());
+  auto pos = std::find_if_not(
+    rev_ls.begin(),
+    rev_ls.end(),
+    [ref](std::shared_ptr<inequality> i)
+    { return cmp_angle(i, ref) != inequality::GT; });
 
   std::vector<std::shared_ptr<inequality>> beginning(rev_ls.begin(), pos);
   std::vector<std::shared_ptr<inequality>> end(pos, rev_ls.end());
 
   std::reverse(beginning.begin(), beginning.end());
   std::reverse(end.begin(), end.end());
-  
-  beginning.insert(beginning.end(),end.begin(),end.end());
+
+  beginning.insert(beginning.end(), end.begin(), end.end());
 
   ls = beginning;
-
 }
 
 std::vector<std::shared_ptr<inequality>> join::calc_hull(
   std::vector<std::shared_ptr<inequality>> xs,
   std::vector<std::shared_ptr<inequality>> ys)
 {
-  std::cout << "hull start function" << std::endl;
-
   /*
 std::cout<<std::endl;
 std::cout<<"xs: "<<std::endl;
@@ -77,51 +82,55 @@ std::cout<<std::endl;
   {
   case inequality::EQ:
 
-    if(calc_shift(x, y).get_numerator() > 0 && calc_shift(x, y).get_denominator() >0)
-    { 
-      std::cout<<"Entry 1"<<std::endl;
+    if(
+      calc_shift(x, y).get_numerator() > 0 &&
+      calc_shift(x, y).get_denominator() > 0)
+    {
+      //std::cout<<"Entry 1"<<std::endl;
       advance_outer(res, xn, xs, yn, ys);
     }
     else
     {
-      std::cout<<"Entry 2"<<std::endl;
+      //std::cout<<"Entry 2"<<std::endl;
       advance_outer(res, yn, ys, xn, xs);
     }
-    rm_excess(x,res);
+    rm_excess(x, res);
     break;
   case inequality::LT:
     dist_LT = calc_dist(yn, x, y);
-    if(dist_LT.has_value()){
-      std::cout<<dist_LT.value();
+    if(dist_LT.has_value())
+    {
+      //std::cout<<dist_LT.value();
     }
     if(dist_LT.has_value() && is_negative(dist_LT.value()))
-    { 
-    
-      std::cout<<"Entry 3"<<std::endl;
+    {
+      //std::cout<<"Entry 3"<<std::endl;
       advance_outer(res, yn, ys, xn, xs);
     }
     else
     {
-      std::cout<<"Entry 4"<<std::endl;
+      //std::cout<<"Entry 4"<<std::endl;
       advance_outer(res, xn, xs, yn, ys);
     }
-    rm_excess(x,res);
+    rm_excess(x, res);
     break;
   case inequality::GT:
     dist_GT = calc_dist(xn, y, x);
     if(dist_GT.has_value() && is_negative(dist_GT.value()))
     {
-      std::cout<<"Entry 5"<<std::endl;
+      //std::cout<<"Entry 5"<<std::endl;
       advance_outer(res, xn, xs, yn, ys);
     }
     else
-    { if(dist_GT.has_value()){
-      std::cout<<dist_GT.value()<<std::endl;
-    }
-      std::cout<<"Entry 6"<<std::endl;
+    {
+      if(dist_GT.has_value())
+      {
+        //std::cout<<dist_GT.value()<<std::endl;
+      }
+      //std::cout<<"Entry 6"<<std::endl;
       advance_outer(res, yn, ys, xn, xs);
     }
-    rm_excess(y,res);
+    rm_excess(y, res);
     break;
   }
 
@@ -139,10 +148,8 @@ std::cout<<"vector after local clean up"<<std::endl;
 print_cons(res);
 */
 
-  std::cout << "final res" << std::endl;
-  print_cons(res);
-
-
+  //std::cout << "final res" << std::endl;
+  //print_cons(res);
 
   return res;
 }
@@ -154,8 +161,8 @@ void join::merge(
 {
   full_hull_trace.open("../../trace/trace.txt");
 
-  std::cout << in_dir_xs << std::endl;
-  std::cout << in_dir_ys << std::endl;
+  //std::cout << in_dir_xs << std::endl;
+  //std::cout << in_dir_ys << std::endl;
 
   std::vector<std::shared_ptr<inequality>> xs =
     parser::parse_from_csv(in_dir_xs);
@@ -192,26 +199,26 @@ void join::merge(
   output.close();
 }
 
-void extract_dimensions(const std::vector<std::shared_ptr<inequality>> &sys){
+void extract_dimensions(const std::vector<std::shared_ptr<inequality>> &sys)
+{
+  std::vector<std::string> vars;
+  std::set<std::string> dims;
 
-std::vector<std::string> vars;
-std::set<std::string> dims;
+  for(const std::shared_ptr<inequality> &i : sys)
+  {
+    if(dimensions.size() >= 2)
+    {
+      break;
+    }
 
-for(const std::shared_ptr<inequality> &i: sys){
+    vars = i->vars();
+    dims = std::set<std::string>(vars.begin(), vars.end());
 
-if(dimensions.size()>=2){
-  break;
+    dimensions.insert(dims.begin(), dims.end());
+  }
 }
 
-vars = i->vars();
-dims = std::set<std::string>(vars.begin(),vars.end());
-
-dimensions.insert(dims.begin(),dims.end());
-
-}
-
-}
-
-void sweep_dimensions(){
+void sweep_dimensions()
+{
   dimensions = {};
 }

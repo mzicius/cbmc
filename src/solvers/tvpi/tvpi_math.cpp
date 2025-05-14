@@ -267,7 +267,7 @@ return 0;
   */
 
   //align start
-
+  /*
   tvpi_systemt a;
   tvpi_systemt b;
 
@@ -386,5 +386,7 @@ return 0;
   auto in = join::calc_hull(c.constraints,d.constraints);
   std::cout<<"in is:"<<std::endl;
   print_cons(in);
-  
+  */
+
+
 }

@@ -351,8 +351,11 @@ std::vector<std::shared_ptr<inequality>> complete::insert(
         }
       }
 
-      std::cout << "ds to be removed after entailment" << std::endl;
-      print_cons(ds);
+      if(debugging)
+      {
+        std::cout << "ds to be removed after entailment" << std::endl;
+        print_cons(ds);
+      }
 
       remove_all(cs, ds);
       cs.push_back(c);
@@ -511,7 +514,7 @@ complete::result(std::shared_ptr<inequality> i1, std::shared_ptr<inequality> i2)
   if(tvpi_systemt::dbg_all || !result.empty())
   {
     std::cout << "result of: " << i1->to_string() << " " << i2->to_string()
-              << std::endl;
+              << " ";
     print_cons(result);
   }
 
@@ -579,8 +582,11 @@ complete::remove_redundant_unary_inequalities(
   std::vector<std::shared_ptr<inequality>> rcs;
   std::vector<std::shared_ptr<inequality>> us;
 
-  std::cout << "in redundant unary" << std::endl;
-  print_cons(rcs);
+  if(debugging)
+  {
+    std::cout << "in redundant unary" << std::endl;
+    print_cons(rcs);
+  }
 
   for(auto c : cs)
   {
@@ -603,7 +609,10 @@ complete::remove_redundant_unary_inequalities(
       rcs.push_back(us.at(i));
   }
 
-  print_cons(rcs);
+  if(debugging)
+  {
+    print_cons(rcs);
+  }
   return rcs;
 }
 
@@ -704,13 +713,19 @@ std::vector<std::shared_ptr<inequality>> complete::inc_complete(
       if(x.compare(y) <= 0)
       {
         std::vector<std::string> Y = {x, y};
-        std::cout << "Y: x: " << x << " ,y: " << y << std::endl;
+        if(debugging)
+        {
+          std::cout << "Y: x: " << x << " ,y: " << y << std::endl;
+        }
         std::vector<std::shared_ptr<inequality>> project_cs =
           project(change_cs, Y);
         std::vector<std::shared_ptr<inequality>> project_as = project(as, Y);
 
-        std::cout << "projected out" << std::endl;
-        print_cons(project_as);
+        if(debugging)
+        {
+          std::cout << "projected out" << std::endl;
+          print_cons(project_as);
+        }
 
         for(auto i : project_as)
         {

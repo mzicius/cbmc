@@ -95,7 +95,8 @@ void tvpi_domaint::output(
 tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 {
   std::cerr << "inside the eval function" << std::endl;
-  std::cerr << "evaluating expression: " << e.pretty() << std::endl;
+  //std::cerr << "evaluating expression: " << e.pretty() << std::endl;
+  //std::cerr << "evaluating expression: " << e.get_string() << std::endl;
 
   if(e.id() == ID_constant)
   {
@@ -297,7 +298,10 @@ void tvpi_domaint::assume(const exprt &e)
 
 {
   std::cout << "inside the assume function" << std::endl;
-  std::cout << "assuming expression: " << e.pretty() << std::endl;
+
+  //std::cout << "assuming expression: " << e.pretty() << std::endl;
+  //std::cout << "assuming expression: " << e.type() << std::endl;
+
   if(e.id() == ID_equal)
   {
     //turn to object and then recurse
@@ -393,8 +397,9 @@ void tvpi_domaint::assume(const exprt &e)
   }
   if(e.id() == ID_not)
   {
-    std::cout << "we are in not" << std::endl;
-    std::cout << e.pretty() << std::endl;
+    //std::cout << "we are in not" <<e.get_string()<<std::endl;
+
+    //std::cout << e.pretty() << std::endl;
     not_exprt tmp(to_not_expr(e));
     if(tmp.op().id() == ID_not)
     {
@@ -446,7 +451,7 @@ void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 bool tvpi_domaint::ai_simplify(exprt &condition, const namespacet &ns) const
 {
   std::cout << "ai_simplify for tvpi!" << std::endl;
-  std::cout << "the condition is: " << condition.pretty() << std::endl;
+  //std::cout << "the condition is: " << condition.pretty() << std::endl;
   bool unchanged = true;
   tvpi_domaint copy_a(*this);
   tvpi_domaint copy_b(*this);
@@ -527,6 +532,9 @@ void tvpi_domaint::transform(
     //.find("__CPROVER") == std::string::npos)
     //{
     assign(to_symbol_expr(instruction.assign_lhs()), instruction.assign_rhs());
+    //*P = 0;
+    //DEREFERENCE EXPRESSION IS WRAPPED IN SYMBOL EXPRESSION
+    //BUG
     //}
     break;
 
@@ -629,7 +637,8 @@ void tvpi_domaint::transform(
     break;
   }
 
-  //this->bind.wipe_binding(this->sys);
+  //garbage here
+  this->bind.wipe_binding(this->sys);
 
   return;
 }
@@ -670,8 +679,6 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
     return is_modified;
   }
-
-  std::cerr << "MERGE CASE 4: WIDEN OR CONVEX UNION" << std::endl;
 
   std::cerr << "MERGE CASE 4: CONVEX UNION" << std::endl;
 
@@ -756,19 +763,24 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     filter_left = this->sys.filter(target_vars);
     filter_right = b.sys.filter(target_vars);
 
+    /*
     std::cout << "the target vars for filter are: :" << std::endl;
     for(const auto &var : target_vars)
     {
       std::cout << var << std::endl;
     }
+    */
 
-    std::cout << "left filter" << std::endl;
-    print_cons(filter_left);
-    std::cout << "right filter" << std::endl;
-    print_cons(filter_right);
+    //std::cout << "left filter" << std::endl;
+    //print_cons(filter_left);
+    //std::cout << "right filter" << std::endl;
+    //print_cons(filter_right);
+
     extract_dimensions(filter_left);
     extract_dimensions(filter_right);
+
     interm_union = join::calc_hull(filter_left, filter_right);
+
     std::cout << "inter convex hull is: " << std::endl;
     print_cons(interm_union);
     convex_union.insert(
@@ -776,43 +788,104 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   }
 
   //check if the new system is different
+  std::cout << "the convex hull is:" << std::endl;
+  print_cons(convex_union);
 
-  if(convex_union != this->sys.constraints)
-  {
-    std::cout << "the convex hull is:" << std::endl;
-    print_cons(convex_union);
-    is_modified = true;
-    this->sys.constraints = convex_union;
-  }
-
-  
   auto widen_mode =
-  from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
+    from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
-if(widen_mode == widen_modet::could_widen)
-{
-  std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
-  auto copy_a = this->sys.constraints;
-  auto copy_b = b.sys.constraints;
-
-  std::vector<std::shared_ptr<inequality>> intersection;
-
-  for(auto con_a : copy_a)
+  if(widen_mode == widen_modet::could_widen)
   {
-    for(auto con_b : copy_b)
+    std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
+    auto copy_a = this->sys.constraints;
+    auto copy_b = b.sys.constraints;
+
+    std::vector<std::shared_ptr<inequality>> intersection;
+
+    std::cout << "for inter left: " << std::endl;
+    print_cons(convex_union);
+
+    std::cout << "for inter right: " << std::endl;
+    print_cons(this->sys.constraints);
+
+    /*
+    for(auto con_a : convex_union)
     {
-      if(con_a->to_string() == con_b->to_string())
+      for(auto con_b : this->sys.constraints)
       {
-        intersection.push_back(con_a);
+        if(con_a->to_string() == con_b->to_string())
+        {
+          intersection.push_back(con_a);
+        }
       }
+  
+
+    }
+    */
+
+    intersection = this->sys.intersect(convex_union);
+
+    std::cerr << "intersection is:" << std::endl;
+    print_cons(intersection);
+
+    std::cout << "the main flow system now is: " << std::endl;
+    print_cons(this->sys.constraints);
+
+    std::cout << "is_equal inter to main: "
+              << std::equal(
+                   intersection.begin(),
+                   intersection.end(),
+                   this->sys.constraints.begin())
+              << std::endl;
+
+    //cautious
+    //should go at least twice around the loop before starting widening
+    //control flow
+    //check the flags
+    //in two points
+    //print flags
+    //custom check for equiv of containers
+    //if(intersection != this->sys.constraints){
+    //the size dif dif systems then
+
+    //if(!std::equal(
+    //intersection.begin(),
+    //this->sys.constraints.begin()))
+
+    if(!this->sys.is_equal(intersection))
+    {
+      std::cerr << "system is updated with inter" << std::endl;
+      this->sys.constraints = intersection;
+      is_modified = true;
     }
   }
+  else
+  {
+    std::cout << "the convex union is: " << std::endl;
+    print_cons(convex_union);
 
-  std::cerr << "intersection is:" << std::endl;
-  print_cons(intersection);
-  this->sys.constraints = intersection;
-}
+    std::cout << "the main flow system is: " << std::endl;
+    print_cons(this->sys.constraints);
 
+    std::cout << "is_equal convex to main: "
+              << std::equal(
+                   convex_union.begin(),
+                   convex_union.end(),
+                   this->sys.constraints.begin())
+              << std::endl;
+
+    //!std::equal(
+    // convex_union.begin(),
+    // convex_union.end(),
+    // this->sys.constraints.begin())
+
+    if(!this->sys.is_equal(convex_union))
+    {
+      std::cerr << "system is updated with convex union" << std::endl;
+      this->sys.constraints = convex_union;
+      is_modified = true;
+    }
+  }
 
   return is_modified;
 }
@@ -878,9 +951,12 @@ void align_bindings(
   {
     auto loc_in_left = left.find(right_bind_pair.first);
 
-    if(loc_in_left!=left.end()&& loc_in_left->second != right_bind_pair.second)
+    if(
+      loc_in_left != left.end() &&
+      loc_in_left->second != right_bind_pair.second)
     {
-      a.constraints = relabel_ineqs(a,loc_in_left->second,right_bind_pair.second);
+      a.constraints =
+        relabel_ineqs(a, loc_in_left->second, right_bind_pair.second);
       left[right_bind_pair.first] = right_bind_pair.second;
     }
     //fix the refrences in here

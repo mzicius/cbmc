@@ -117,16 +117,17 @@ std::optional<rationalt> tvpi_systemt::get_ub(mp_integer dimensiont)
   if(!unary_ineqs.empty())
   {
     rationalt u_bound;
- 
-    mp_integer a1,c1;
+
+    mp_integer a1, c1;
     std::shared_ptr<unary_inequality> u1 = unary_ineqs[0];
     a1 = u1->a;
     c1 = u1->c;
 
-    if((a1 > 0 && c1 > 0) || (a1 > 0 && c1 < 0)){
-      u_bound = rationalt(c1)/rationalt(a1);
+    if((a1 > 0 && c1 > 0) || (a1 > 0 && c1 < 0))
+    {
+      u_bound = rationalt(c1) / rationalt(a1);
     }
-    
+
     if(unary_ineqs.size() > 1)
     {
       mp_integer a2, c2;
@@ -134,10 +135,10 @@ std::optional<rationalt> tvpi_systemt::get_ub(mp_integer dimensiont)
       a2 = u2->a;
       c2 = u2->c;
 
-      if((a2 > 0 && c2 > 0) || (a2 > 0 && c2 < 0)){
-        u_bound = rationalt(c2)/rationalt(a2);
+      if((a2 > 0 && c2 > 0) || (a2 > 0 && c2 < 0))
+      {
+        u_bound = rationalt(c2) / rationalt(a2);
       }
-
     }
 
     return u_bound;
@@ -166,16 +167,17 @@ std::optional<rationalt> tvpi_systemt::get_lb(mp_integer dimensiont)
   if(!unary_ineqs.empty())
   {
     rationalt l_bound;
- 
-    mp_integer a1,c1;
+
+    mp_integer a1, c1;
     std::shared_ptr<unary_inequality> u1 = unary_ineqs[0];
     a1 = u1->a;
     c1 = u1->c;
 
-    if((a1 < 0 && c1 > 0) || (a1 < 0 && c1 < 0)){
-      l_bound = rationalt(c1)/rationalt(a1);
+    if((a1 < 0 && c1 > 0) || (a1 < 0 && c1 < 0))
+    {
+      l_bound = rationalt(c1) / rationalt(a1);
     }
-    
+
     if(unary_ineqs.size() > 1)
     {
       mp_integer a2, c2;
@@ -183,14 +185,42 @@ std::optional<rationalt> tvpi_systemt::get_lb(mp_integer dimensiont)
       a2 = u2->a;
       c2 = u2->c;
 
-      if((a2 < 0 && c2 > 0) || (a2 < 0 && c2 < 0)){
-        l_bound = rationalt(c2)/rationalt(a2);
+      if((a2 < 0 && c2 > 0) || (a2 < 0 && c2 < 0))
+      {
+        l_bound = rationalt(c2) / rationalt(a2);
       }
-
     }
 
     return l_bound;
   }
 
   return std::nullopt;
+}
+
+std::vector<std::shared_ptr<inequality>>
+tvpi_systemt::intersect(const std::vector<std::shared_ptr<inequality>> &b)
+{
+  std::vector<std::shared_ptr<inequality>> intersection;
+
+  for(auto con_a : constraints)
+  {
+    for(auto con_b : b)
+    {
+      if(con_a == con_b)
+      {
+        intersection.push_back(con_a);
+      }
+    }
+  }
+
+  return intersection;
+}
+
+bool tvpi_systemt::is_equal(const std::vector<std::shared_ptr<inequality>> &b)
+{
+  return std::equal(b.begin(),b.end(),constraints.begin());
+}
+
+void tvpi_systemt::to_canon(){
+  
 }

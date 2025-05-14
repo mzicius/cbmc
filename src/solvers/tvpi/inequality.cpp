@@ -1290,8 +1290,8 @@ rm_local_red(std::vector<std::shared_ptr<inequality>> &cs)
 
   while(cur < end + 1)
   {
-    std::cout << "prev: " << prev << " cur: " << cur << " x: " << x
-              << std::endl;
+    //std::cout << "prev: " << prev << " cur: " << cur << " x: " << x
+    //          << std::endl;
     if(is_redundant(cs[prev], cs[cur], cs[x]))
     {
       std::cout << "The redundant inequality is: ";
@@ -1342,7 +1342,7 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
 
   assert(check >= 0);
 
-  std::cout << "inside delta combination" << std::endl;
+  //std::cout << "inside delta combination" << std::endl;
   mp_integer n1, n2, d1, d2;
   mp_integer new_a, new_b, new_c, d;
   std::string x, y;
@@ -1390,7 +1390,7 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
     auto dim_target = dimensions.find(i2->x);
     if(dim_target == dimensions.begin())
     {
-      std::cout << "we hit c" << std::endl;
+      //std::cout << "we hit c" << std::endl;
       a2 = i2->a;
       b2 = 0;
       std::advance(dim_target, 1);
@@ -1413,7 +1413,7 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
     y = i2->y;
   }
 
-  std::cout << "the y is: " << y << std::endl;
+  //std::cout << "the y is: " << y << std::endl;
   //haskell fix sign from denominator jumps to numerator
   n1 = fr1.get_numerator();
   d1 = fr1.get_denominator();
@@ -1478,12 +1478,12 @@ std::vector<std::shared_ptr<inequality>> gen_delta_comb(
   std::shared_ptr<inequality> iP,
   std::vector<std::shared_ptr<inequality>> &other)
 {
-  std::cout << "inside gen delta: " << " oC: " << oC->to_string() << " iP "
-            << iP->to_string() << std::endl;
+  //std::cout << "inside gen delta: " << " oC: " << oC->to_string() << " iP "
+  //          << iP->to_string() << std::endl;
   if(mDInner.has_value() && mDOuter.has_value())
   {
-    std::cout << " mDInner: " << mDInner.value()
-              << " mDOuter: " << mDOuter.value() << std::endl;
+   // std::cout << " mDInner: " << mDInner.value()
+     //         << " mDOuter: " << mDOuter.value() << std::endl;
   }
 
   if(cmp_angle(oC, iP) == inequality::EQ)
@@ -1656,19 +1656,19 @@ void advance_outer(
 
         if(mDOuter.has_value())
         {
-          std::cout << mDOuter.value() << std::endl;
+          //std::cout << mDOuter.value() << std::endl;
         }
         else
         {
-          std::cout << "mDOuter does not exist" << std::endl;
+          //std::cout << "mDOuter does not exist" << std::endl;
         }
         if(mDInner.has_value())
         {
-          std::cout << mDInner.value() << std::endl;
+          //std::cout << mDInner.value() << std::endl;
         }
         else
         {
-          std::cout << "mDInner does not exist" << std::endl;
+          //std::cout << "mDInner does not exist" << std::endl;
         }
 
         //gen fix
@@ -1688,9 +1688,9 @@ void advance_outer(
     }
     else
     {
-      std::cout << std::endl;
-      std::cout << "OUT4 " << std::endl;
-      show_details(iP, iC, is, oP, oC, os, "", rationalt(0));
+      //std::cout << std::endl;
+      //std::cout << "OUT4 " << std::endl;
+      //show_details(iP, iC, is, oP, oC, os, "", rationalt(0));
       advance_inner(res, iP, is, oP, os);
     }
   }
@@ -1731,9 +1731,9 @@ void advance_inner(
       auto mDOuter = calc_dist(oP, iC, oC);
       if(mDOuter.has_value())
       {
-        std::cout << "mdOuter here:" << mDOuter.value() << std::endl;
-        std::cout << "greater or equal" << greater_equal_zero(mDOuter.value())
-                  << std::endl;
+        //std::cout << "mdOuter here:" << mDOuter.value() << std::endl;
+        //std::cout << "greater or equal" << greater_equal_zero(mDOuter.value())
+        //         << std::endl;
       }
 
       //if(greater_equal_zero(mDOuter))

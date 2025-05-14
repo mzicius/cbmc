@@ -12,7 +12,6 @@
 class tvpi_systemt
 {
 public:
-
   const static bool dbg_all = false;
   tvpi_systemt();
   typedef mp_integer dimensiont;
@@ -49,6 +48,13 @@ public:
   std::optional<rationalt> get_ub(mp_integer dimensiont);
 
   std::optional<rationalt> get_lb(mp_integer dimensiont);
+
+  std::vector<std::shared_ptr<inequality>> intersect(
+    const std::vector<std::shared_ptr<inequality>> &b);
+
+  bool is_equal(const std::vector<std::shared_ptr<inequality>> &b);
+
+  void to_canon()
 
 private:
   static dimensiont dim_counter;

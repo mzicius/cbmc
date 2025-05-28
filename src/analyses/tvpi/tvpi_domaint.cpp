@@ -527,17 +527,23 @@ void tvpi_domaint::transform(
     break;
 
   case ASSIGN:
-    //if(
-    //id2string(to_symbol_expr(instruction.assign_lhs()).get_identifier())
-    //.find("__CPROVER") == std::string::npos)
-    //{
-    assign(to_symbol_expr(instruction.assign_lhs()), instruction.assign_rhs());
-    //*P = 0;
-    //DEREFERENCE EXPRESSION IS WRAPPED IN SYMBOL EXPRESSION
-    //BUG
-    //}
+  {
+    exprt e = instruction.assign_lhs();
+    if(e.id() == ID_symbol)
+    {
+      assign(to_symbol_expr(e), instruction.assign_rhs());
+    }
+    else if(e.id() == ID_dereference)
+    {
+      //int *p = 0;
+      //The pointer address can point to the following
+      //CASE 1 - some object
+      //CASE 2 - location immediately past the object
+      //CASE 3 - null pointer
+      //CASE 4 - invalid value
+    }
     break;
-
+  }
   case GOTO:
   {
     // Comparing iterators is safe as the target must be within the same list
@@ -637,7 +643,7 @@ void tvpi_domaint::transform(
     break;
   }
 
-  //garbage here
+  //garbage collection
   this->bind.wipe_binding(this->sys);
 
   return;
@@ -794,7 +800,10 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   auto widen_mode =
     from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
-  if(widen_mode == widen_modet::could_widen)
+  if(
+    widen_mode == widen_modet::could_widen &&
+    from->current_location()->is_backwards_goto() &&
+    from->current_location()->get_target() == to->current_location())
   {
     std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
     auto copy_a = this->sys.constraints;
@@ -825,6 +834,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
     intersection = this->sys.intersect(convex_union);
 
+    /*
     std::cerr << "intersection is:" << std::endl;
     print_cons(intersection);
 
@@ -837,6 +847,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
                    intersection.end(),
                    this->sys.constraints.begin())
               << std::endl;
+    */
 
     //cautious
     //should go at least twice around the loop before starting widening
@@ -861,6 +872,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   }
   else
   {
+    /*
     std::cout << "the convex union is: " << std::endl;
     print_cons(convex_union);
 
@@ -873,7 +885,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
                    convex_union.end(),
                    this->sys.constraints.begin())
               << std::endl;
-
+    */
     //!std::equal(
     // convex_union.begin(),
     // convex_union.end(),

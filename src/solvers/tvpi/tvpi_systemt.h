@@ -54,7 +54,7 @@ public:
 
   bool is_equal(const std::vector<std::shared_ptr<inequality>> &b);
 
-  void to_canon()
+  std::vector<std::shared_ptr<inequality>> to_canon();
 
 private:
   static dimensiont dim_counter;

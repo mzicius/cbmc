@@ -218,9 +218,37 @@ tvpi_systemt::intersect(const std::vector<std::shared_ptr<inequality>> &b)
 
 bool tvpi_systemt::is_equal(const std::vector<std::shared_ptr<inequality>> &b)
 {
-  return std::equal(b.begin(),b.end(),constraints.begin());
+  //check if sizes are dif
+  //check
+  if(constraints.size() != b.size())
+  {
+    return false;
+  }
+  else
+  {
+    return std::equal(b.begin(), b.end(), constraints.begin());
+  }
 }
 
-void tvpi_systemt::to_canon(){
-  
+std::vector<std::shared_ptr<inequality>> tvpi_systemt::to_canon()
+{
+  //Part I
+  //constraints are from a closed system
+  std::vector<std::shared_ptr<inequality>> output = constraints;
+
+  //Part II
+  //output of canon is equiv to the input in every projection of that system
+
+  //to achieve projections we need the variable relations in the system
+  std::set<std::string> relations;
+  //relations = find_relations(constraints,{});
+  //slice up the systems and go back to them together
+
+  //Case 3 says that only the tightest bounds on single variables are represented.
+  //redundancy check
+
+  //Case 4 says that the output is minimal in the sense that if a non-unary constraint is
+  //removed it will change the space represented.
+
+  return output;
 }

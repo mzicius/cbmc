@@ -9,7 +9,11 @@ void tvpi_bindingt::set_binding(
   if(binding.find(symbol) != binding.end())
   {
     std::cout << "binding found" << std::endl;
+    std::cout<<"sym: "<<symbol.get_identifier()<<" at dim: "<<binding[symbol]<<" the ref count is: "<< references[binding[symbol]]<<std::endl;
+    //fix?
+    if(references[binding[symbol]]>0){
     references[binding[symbol]] = references[binding[symbol]] - 1;
+    }
     binding[symbol] = dim;
   }
   else
@@ -52,6 +56,7 @@ void tvpi_bindingt::print_references() const
 }
 
 void tvpi_bindingt::add_tmp_ref(tvpi_systemt::dimensiont dim) {
+  std::cout<<"the tmp dim ref is: "<<dim<<std::endl;
   if(references.find(dim)==references.end()){
     references.insert(std::make_pair(dim,0));
   }

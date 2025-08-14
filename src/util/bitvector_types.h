@@ -60,6 +60,10 @@ public:
     DATA_CHECK(
       vm, !type.get(ID_width).empty(), "bitvector type must have width");
   }
+
+  // helpers to create common constants
+  constant_exprt all_zeros_expr() const;
+  constant_exprt all_ones_expr() const;
 };
 
 /// Check whether a reference to a typet is a \ref bv_typet.
@@ -99,6 +103,11 @@ class integer_bitvector_typet : public bitvector_typet
 {
 public:
   integer_bitvector_typet(const irep_idt &id, std::size_t width)
+    : bitvector_typet(id, width)
+  {
+  }
+
+  integer_bitvector_typet(const irep_idt &id, const mp_integer &width)
     : bitvector_typet(id, width)
   {
   }
@@ -163,6 +172,11 @@ public:
   {
   }
 
+  explicit unsignedbv_typet(const mp_integer &width)
+    : integer_bitvector_typet(ID_unsignedbv, width)
+  {
+  }
+
   static void check(
     const typet &type,
     const validation_modet vm = validation_modet::INVARIANT)
@@ -208,6 +222,11 @@ class signedbv_typet : public integer_bitvector_typet
 {
 public:
   explicit signedbv_typet(std::size_t width)
+    : integer_bitvector_typet(ID_signedbv, width)
+  {
+  }
+
+  explicit signedbv_typet(const mp_integer &width)
     : integer_bitvector_typet(ID_signedbv, width)
   {
   }

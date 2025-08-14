@@ -66,37 +66,6 @@ exprt make_binary(const exprt &expr)
   return previous;
 }
 
-with_exprt make_with_expr(const update_exprt &src)
-{
-  const exprt::operandst &designator=src.designator();
-  PRECONDITION(!designator.empty());
-
-  with_exprt result{exprt{}, exprt{}, exprt{}};
-  exprt *dest=&result;
-
-  for(const auto &expr : designator)
-  {
-    with_exprt tmp{exprt{}, exprt{}, exprt{}};
-
-    if(expr.id() == ID_index_designator)
-    {
-      tmp.where() = to_index_designator(expr).index();
-    }
-    else if(expr.id() == ID_member_designator)
-    {
-      // irep_idt component_name=
-      //  to_member_designator(*it).get_component_name();
-    }
-    else
-      UNREACHABLE;
-
-    *dest=tmp;
-    dest=&to_with_expr(*dest).new_value();
-  }
-
-  return result;
-}
-
 exprt is_not_zero(
   const exprt &src,
   const namespacet &ns)
@@ -276,24 +245,25 @@ bool can_forward_propagatet::is_constant(const exprt &expr) const
   }
   else if(auto eb = expr_try_dynamic_cast<extractbits_exprt>(expr))
   {
-    if(
-      !is_constant(eb->src()) || !eb->lower().is_constant() ||
-      !eb->upper().is_constant())
+    if(!is_constant(eb->src()) || !eb->index().is_constant())
     {
       return false;
     }
+
+    const auto eb_bits = pointer_offset_bits(eb->type(), ns);
+    if(!eb_bits.has_value())
+      return false;
 
     const auto src_bits = pointer_offset_bits(eb->src().type(), ns);
     if(!src_bits.has_value())
       return false;
 
     const mp_integer lower_bound =
-      numeric_cast_v<mp_integer>(to_constant_expr(eb->lower()));
-    const mp_integer upper_bound =
-      numeric_cast_v<mp_integer>(to_constant_expr(eb->upper()));
+      numeric_cast_v<mp_integer>(to_constant_expr(eb->index()));
+    const mp_integer upper_bound = lower_bound + eb_bits.value() - 1;
 
     return lower_bound >= 0 && lower_bound <= upper_bound &&
-           upper_bound < src_bits;
+           upper_bound < src_bits.value();
   }
   else
   {
@@ -345,43 +315,5 @@ constant_exprt make_boolean_expr(bool value)
 
 exprt make_and(exprt a, exprt b)
 {
-  PRECONDITION(a.is_boolean() && b.is_boolean());
-  if(b.is_constant())
-  {
-    if(b.get(ID_value) == ID_false)
-      return false_exprt{};
-    return a;
-  }
-  if(a.is_constant())
-  {
-    if(a.get(ID_value) == ID_false)
-      return false_exprt{};
-    return b;
-  }
-  if(b.id() == ID_and)
-  {
-    b.add_to_operands(std::move(a));
-    return b;
-  }
-  return and_exprt{std::move(a), std::move(b)};
-}
-
-bool is_null_pointer(const constant_exprt &expr)
-{
-  if(expr.type().id() != ID_pointer)
-    return false;
-
-  if(expr.get_value() == ID_NULL)
-    return true;
-
-    // We used to support "0" (when NULL_is_zero), but really front-ends should
-    // resolve this and generate ID_NULL instead.
-#if 0
-  return config.ansi_c.NULL_is_zero && expr.value_is_zero_string();
-#else
-  INVARIANT(
-    !expr.value_is_zero_string() || !config.ansi_c.NULL_is_zero,
-    "front-end should use ID_NULL");
-  return false;
-#endif
+  return conjunction(a, b);
 }

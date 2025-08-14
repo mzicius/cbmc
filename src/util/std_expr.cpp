@@ -8,6 +8,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "std_expr.h"
 
+#include "config.h"
 #include "namespace.h"
 #include "pointer_expr.h"
 #include "range.h"
@@ -19,6 +20,22 @@ bool constant_exprt::value_is_zero_string() const
 {
   const std::string val=id2string(get_value());
   return val.find_first_not_of('0')==std::string::npos;
+}
+
+bool constant_exprt::is_null_pointer() const
+{
+  if(type().id() != ID_pointer)
+    return false;
+
+  if(get_value() == ID_NULL)
+    return true;
+
+  // We used to support "0" (when NULL_is_zero), but really front-ends should
+  // resolve this and generate ID_NULL instead.
+  INVARIANT(
+    !value_is_zero_string() || !config.ansi_c.NULL_is_zero,
+    "front-end should use ID_NULL");
+  return false;
 }
 
 void constant_exprt::check(const exprt &expr, const validation_modet vm)
@@ -63,12 +80,37 @@ exprt disjunction(const exprt::operandst &op)
   }
 }
 
+exprt conjunction(exprt a, exprt b)
+{
+  PRECONDITION(a.is_boolean() && b.is_boolean());
+  if(b.is_constant())
+  {
+    if(to_constant_expr(b).is_false())
+      return false_exprt{};
+    return a;
+  }
+  if(a.is_constant())
+  {
+    if(to_constant_expr(a).is_false())
+      return false_exprt{};
+    return b;
+  }
+  if(b.id() == ID_and)
+  {
+    b.add_to_operands(std::move(a));
+    return b;
+  }
+  return and_exprt{std::move(a), std::move(b)};
+}
+
 exprt conjunction(const exprt::operandst &op)
 {
   if(op.empty())
     return true_exprt();
   else if(op.size()==1)
     return op.front();
+  else if(op.size() == 2)
+    return conjunction(op[0], op[1]);
   else
   {
     return and_exprt(exprt::operandst(op));
@@ -174,6 +216,37 @@ void let_exprt::validate(const exprt &expr, const validation_modet vm)
   }
 }
 
+with_exprt update_exprt::make_with_expr() const
+{
+  const exprt::operandst &designators = designator();
+  PRECONDITION(!designators.empty());
+
+  with_exprt result{exprt{}, exprt{}, exprt{}};
+  exprt *dest = &result;
+
+  for(const auto &expr : designators)
+  {
+    with_exprt tmp{exprt{}, exprt{}, exprt{}};
+
+    if(expr.id() == ID_index_designator)
+    {
+      tmp.where() = to_index_designator(expr).index();
+    }
+    else if(expr.id() == ID_member_designator)
+    {
+      // irep_idt component_name=
+      //  to_member_designator(*it).get_component_name();
+    }
+    else
+      UNREACHABLE;
+
+    *dest = tmp;
+    dest = &to_with_expr(*dest).new_value();
+  }
+
+  return result;
+}
+
 exprt binding_exprt::instantiate(const operandst &values) const
 {
   // number of values must match the number of bound variables
@@ -211,4 +284,33 @@ exprt binding_exprt::instantiate(const variablest &new_variables) const
   for(const auto &new_variable : new_variables)
     values.push_back(new_variable);
   return instantiate(values);
+}
+
+exprt cond_exprt::lower() const
+{
+  INVARIANT(
+    operands().size() % 2 == 0, "cond must have even number of operands");
+
+  exprt result = nil_exprt();
+
+  auto &operands = this->operands();
+
+  // functional version -- go backwards
+  for(std::size_t i = operands.size(); i != 0; i -= 2)
+  {
+    INVARIANT(
+      i >= 2,
+      "since the number of operands is even if i is nonzero it must be "
+      "greater than two");
+
+    const exprt &cond = operands[i - 2];
+    const exprt &value = operands[i - 1];
+
+    if(result.is_nil())
+      result = value;
+    else
+      result = if_exprt{cond, value, std::move(result)};
+  }
+
+  return result;
 }

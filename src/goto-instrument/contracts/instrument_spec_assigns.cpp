@@ -19,9 +19,11 @@ Date: January 2022
 #include <util/fresh_symbol.h>
 #include <util/pointer_offset_size.h>
 #include <util/pointer_predicates.h>
+#include <util/prefix.h>
 #include <util/simplify_expr.h>
 
 #include <ansi-c/c_expr.h>
+#include <ansi-c/goto-conversion/destructor.h>
 #include <langapi/language_util.h>
 
 #include "cfg_info.h"
@@ -147,6 +149,13 @@ void instrument_spec_assignst::check_inclusion_assignment(
   const exprt &lhs,
   goto_programt &dest) const
 {
+  // Don't check assignable for CPROVER symbol
+  if(
+    lhs.id() == ID_symbol &&
+    has_prefix(id2string(to_symbol_expr(lhs).get_identifier()), CPROVER_PREFIX))
+  {
+    return;
+  }
   // create temporary car but do not track
   const auto car = create_car_expr(true_exprt{}, lhs);
   create_snapshot(car, dest);
@@ -411,8 +420,9 @@ void instrument_spec_assignst::track_spec_target_group(
   // clean up side effects from the guard expression if needed
   cleanert cleaner(st, log.get_message_handler());
   exprt condition(group.condition());
+  std::list<irep_idt> new_vars;
   if(has_subexpr(condition, ID_side_effect))
-    cleaner.clean(condition, dest, mode);
+    new_vars = cleaner.clean(condition, dest, mode);
 
   // create conditional address ranges by distributing the condition
   for(const auto &target : group.targets())
@@ -426,6 +436,8 @@ void instrument_spec_assignst::track_spec_target_group(
     // generate snapshot instructions for this target.
     create_snapshot(car, dest);
   }
+
+  destruct_locals(new_vars, dest, ns);
 }
 
 void instrument_spec_assignst::track_plain_spec_target(
@@ -644,9 +656,9 @@ exprt instrument_spec_assignst::target_validity_expr(
   // (or is NULL if we allow it explicitly).
   // This assertion will be falsified whenever `start_address` is invalid or
   // not of the right size (or is NULL if we do not allow it explicitly).
-  auto result =
-    or_exprt{not_exprt{car.condition()},
-             w_ok_exprt{car.target_start_address(), car.target_size()}};
+  auto result = or_exprt{
+    boolean_negate(car.condition()),
+    w_ok_exprt{car.target_start_address(), car.target_size()}};
 
   if(allow_null_target)
     result.add_to_operands(null_object(car.target_start_address()));

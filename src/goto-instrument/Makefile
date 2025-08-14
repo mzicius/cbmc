@@ -21,7 +21,6 @@ SRC = accelerate/accelerate.cpp \
       contracts/dynamic-frames/dfcc_utils.cpp \
       contracts/dynamic-frames/dfcc_loop_nesting_graph.cpp \
       contracts/dynamic-frames/dfcc_contract_mode.cpp \
-      contracts/dynamic-frames/dfcc_loop_contract_mode.cpp \
       contracts/dynamic-frames/dfcc_loop_tags.cpp \
       contracts/dynamic-frames/dfcc_check_loop_normal_form.cpp \
       contracts/dynamic-frames/dfcc_root_object.cpp \
@@ -30,6 +29,7 @@ SRC = accelerate/accelerate.cpp \
       contracts/dynamic-frames/dfcc_instrument_loop.cpp \
       contracts/dynamic-frames/dfcc_library.cpp \
       contracts/dynamic-frames/dfcc_is_cprover_symbol.cpp \
+      contracts/dynamic-frames/dfcc_pointer_equals.cpp \
       contracts/dynamic-frames/dfcc_is_fresh.cpp \
       contracts/dynamic-frames/dfcc_pointer_in_range.cpp \
       contracts/dynamic-frames/dfcc_is_freeable.cpp \
@@ -99,7 +99,6 @@ SRC = accelerate/accelerate.cpp \
       undefined_functions.cpp \
       uninitialized.cpp \
       unwind.cpp \
-      unwindset.cpp \
       value_set_fi_fp_removal.cpp \
       wmm/abstract_event.cpp \
       wmm/cycle_collection.cpp \

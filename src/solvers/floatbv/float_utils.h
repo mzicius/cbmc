@@ -25,19 +25,21 @@ public:
     literalt round_to_zero;
     literalt round_to_plus_inf;
     literalt round_to_minus_inf;
+    literalt round_to_away;
 
-    rounding_mode_bitst():
-      round_to_even(const_literal(true)),
-      round_to_zero(const_literal(false)),
-      round_to_plus_inf(const_literal(false)),
-      round_to_minus_inf(const_literal(false))
+    rounding_mode_bitst()
+      : round_to_even(const_literal(true)),
+        round_to_zero(const_literal(false)),
+        round_to_plus_inf(const_literal(false)),
+        round_to_minus_inf(const_literal(false)),
+        round_to_away(const_literal(false))
     {
     }
 
     void set(const ieee_floatt::rounding_modet mode)
     {
-      round_to_even=round_to_zero=round_to_plus_inf=round_to_minus_inf=
-        const_literal(false);
+      round_to_even = round_to_zero = round_to_plus_inf = round_to_minus_inf =
+        round_to_away = const_literal(false);
 
       switch(mode)
       {
@@ -55,6 +57,10 @@ public:
 
       case ieee_floatt::ROUND_TO_ZERO:
         round_to_zero=const_literal(true);
+        break;
+
+      case ieee_floatt::ROUND_TO_AWAY:
+        round_to_away = const_literal(true);
         break;
 
       case ieee_floatt::NONDETERMINISTIC:
@@ -87,7 +93,7 @@ public:
 
   ieee_float_spect spec;
 
-  bvt build_constant(const ieee_floatt &);
+  bvt build_constant(const ieee_float_valuet &);
 
   static inline literalt sign_bit(const bvt &src)
   {
@@ -133,13 +139,14 @@ public:
   bvt to_signed_integer(const bvt &src, std::size_t int_width);
   bvt to_unsigned_integer(const bvt &src, std::size_t int_width);
   bvt conversion(const bvt &src, const ieee_float_spect &dest_spec);
+  bvt round_to_integral(const bvt &);
 
   // relations
   enum class relt { LT, LE, EQ, GT, GE };
   literalt relation(const bvt &src1, relt rel, const bvt &src2);
 
   // constants
-  ieee_floatt get(const bvt &) const;
+  ieee_float_valuet get(const bvt &) const;
 
   // helpers
   literalt exponent_all_ones(const bvt &);
@@ -189,12 +196,15 @@ protected:
   {
   };
 
+  unbiased_floatt unpack(const bvt &);
   biased_floatt bias(const unbiased_floatt &);
 
+  // takes unpacked, returns unpacked
+  unbiased_floatt rounder(const unbiased_floatt &);
+
   // this takes unpacked format, and returns packed
-  virtual bvt rounder(const unbiased_floatt &);
+  bvt round_and_pack(const unbiased_floatt &);
   bvt pack(const biased_floatt &);
-  unbiased_floatt unpack(const bvt &);
 
   void round_fraction(unbiased_floatt &result);
   void round_exponent(unbiased_floatt &result);

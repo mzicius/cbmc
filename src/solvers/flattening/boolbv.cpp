@@ -8,8 +8,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "boolbv.h"
 
-#include <algorithm>
-
 #include <util/arith_tools.h>
 #include <util/bitvector_expr.h>
 #include <util/bitvector_types.h>
@@ -23,6 +21,10 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/string_constant.h>
 
 #include <solvers/floatbv/float_utils.h>
+
+#include "literal_vector_expr.h"
+
+#include <algorithm>
 
 endianness_mapt boolbvt::endianness_map(const typet &type) const
 {
@@ -76,6 +78,15 @@ const bvt &boolbvt::convert_bv(
   }
 
   return cache_entry;
+}
+
+exprt boolbvt::handle(const exprt &expr)
+{
+  if(expr.type().id() == ID_bool)
+    return prop_conv_solvert::handle(expr);
+  auto bv = convert_bv(expr);
+  set_frozen(bv); // for incremental usage
+  return literal_vector_exprt{bv, expr.type()};
 }
 
 /// Print that the expression of x has failed conversion,
@@ -148,12 +159,17 @@ bvt boolbvt::convert_bitvector(const exprt &expr)
     return convert_floatbv_mod_rem(to_binary_expr(expr));
   else if(expr.id()==ID_floatbv_typecast)
     return convert_floatbv_typecast(to_floatbv_typecast_expr(expr));
+  else if(expr.id() == ID_floatbv_round_to_integral)
+    return convert_floatbv_round_to_integral(
+      to_floatbv_round_to_integral_expr(expr));
   else if(expr.id()==ID_concatenation)
     return convert_concatenation(to_concatenation_expr(expr));
   else if(expr.id()==ID_replication)
     return convert_replication(to_replication_expr(expr));
   else if(expr.id()==ID_extractbits)
     return convert_extractbits(to_extractbits_expr(expr));
+  else if(expr.id() == ID_zero_extend)
+    return convert_bitvector(to_zero_extend_expr(expr).lower());
   else if(expr.id()==ID_bitnot || expr.id()==ID_bitand ||
           expr.id()==ID_bitor || expr.id()==ID_bitxor ||
           expr.id()==ID_bitxnor || expr.id()==ID_bitnor ||
@@ -242,6 +258,8 @@ bvt boolbvt::convert_bitvector(const exprt &expr)
   }
   else if(expr.id() == ID_find_first_set)
     return convert_bv(simplify_expr(to_find_first_set_expr(expr).lower(), ns));
+  else if(expr.id() == ID_literal_vector)
+    return to_literal_vector_expr(expr).bv();
 
   return conversion_failed(expr);
 }
@@ -397,8 +415,10 @@ literalt boolbvt::convert_rest(const exprt &expr)
           expr.id()==ID_reduction_nor || expr.id()==ID_reduction_nand ||
           expr.id()==ID_reduction_xor || expr.id()==ID_reduction_xnor)
     return convert_reduction(to_unary_expr(expr));
-  else if(expr.id()==ID_onehot || expr.id()==ID_onehot0)
-    return convert_onehot(to_unary_expr(expr));
+  else if(expr.id() == ID_onehot)
+    return convert_onehot(to_onehot_expr(expr));
+  else if(expr.id() == ID_onehot0)
+    return convert_onehot(to_onehot0_expr(expr));
   else if(
     const auto binary_overflow =
       expr_try_dynamic_cast<binary_overflow_exprt>(expr))

@@ -105,10 +105,13 @@ void c_typecheck_baset::typecheck_code(codet &code)
   }
   else if(statement==ID_static_assert)
   {
-    PRECONDITION(code.operands().size() == 2);
+    // C23 allows static_assert without message
+    PRECONDITION(code.operands().size() == 1 || code.operands().size() == 2);
 
     typecheck_expr(code.op0());
-    typecheck_expr(code.op1());
+
+    if(code.operands().size() == 2)
+      typecheck_expr(code.op1());
 
     implicit_typecast_bool(code.op0());
     make_constant(code.op0());
@@ -118,7 +121,7 @@ void c_typecheck_baset::typecheck_code(codet &code)
       // failed
       error().source_location = code.find_source_location();
       error() << "static assertion failed";
-      if(code.op1().id() == ID_string_constant)
+      if(code.operands().size() == 2 && code.op1().id() == ID_string_constant)
         error() << ": " << to_string_constant(code.op1()).value();
       error() << eom;
       throw 0;
@@ -387,9 +390,13 @@ bool c_typecheck_baset::is_complete_type(const typet &type) const
   }
   else if(type.id()==ID_vector)
     return is_complete_type(to_vector_type(type).element_type());
-  else if(type.id() == ID_struct_tag || type.id() == ID_union_tag)
+  else if(auto struct_tag_type = type_try_dynamic_cast<struct_tag_typet>(type))
   {
-    return is_complete_type(follow(type));
+    return is_complete_type(follow_tag(*struct_tag_type));
+  }
+  else if(auto union_tag_type = type_try_dynamic_cast<union_tag_typet>(type))
+  {
+    return is_complete_type(follow_tag(*union_tag_type));
   }
 
   return true;
@@ -628,14 +635,6 @@ void c_typecheck_baset::typecheck_ifthenelse(code_ifthenelset &code)
   exprt &cond=code.cond();
 
   typecheck_expr(cond);
-
-  #if 0
-  if(cond.id()==ID_sideeffect &&
-     cond.get(ID_statement)==ID_assign)
-  {
-    warning("warning: assignment in if condition");
-  }
-  #endif
 
   implicit_typecast_bool(cond);
 

@@ -7,6 +7,7 @@ main.c
 --
 ^warning: ignoring
 --
+
 Tests support for quantifiers in loop contracts with the SMT backend.
 When quantified loop invariants are used, they are inserted three times
 in the transformed program (base case assertion, step case assumption,

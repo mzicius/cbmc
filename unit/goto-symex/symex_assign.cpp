@@ -52,6 +52,7 @@ SCENARIO(
     source,
     DEFAULT_MAX_FIELD_SENSITIVITY_ARRAY_SIZE,
     true,
+    irep_idt{},
     manager,
     fresh_name};
 
@@ -89,6 +90,7 @@ SCENARIO(
         symex_targett::assignment_typet::STATE,
         ns,
         symex_config,
+        irep_idt{},
         target_equation}
         .assign_symbol(ssa_foo, expr_skeletont{}, rhs1, guard);
       THEN("An equation is added to the target")
@@ -145,6 +147,7 @@ SCENARIO(
         symex_targett::assignment_typet::STATE,
         ns,
         symex_config,
+        irep_idt{},
         target_equation};
       symex_assign.assign_symbol(ssa_foo, expr_skeletont{}, rhs1, guard);
       THEN("An equation with an empty guard is added to the target")
@@ -209,7 +212,10 @@ SCENARIO(
     struct_union_typet::componentst components;
     components.emplace_back("field1", int_type);
     const struct_typet struct_type{components};
-    const symbol_exprt struct1_sym{"struct1", struct_type};
+    const struct_tag_typet struct_tag_type{"tag-struct1"};
+    type_symbolt ts{"tag-struct1", std::move(struct_type), irep_idt{}};
+    symbol_table.insert(ts);
+    const symbol_exprt struct1_sym{"struct1", struct_tag_type};
     add_to_symbol_table(symbol_table, struct1_sym);
     const with_exprt rhs{
       struct1_sym, member_designatort{"field1"}, from_integer(234, int_type)};
@@ -228,6 +234,7 @@ SCENARIO(
         symex_targett::assignment_typet::STATE,
         ns,
         symex_config,
+        irep_idt{},
         target_equation}
         .assign_symbol(struct1_ssa, skeleton, rhs, guard);
       THEN("Two equations are added to the target")
@@ -258,7 +265,7 @@ SCENARIO(
             member_exprt{struct1_sym, "field1", int_type}};
           struct1_v0_field1.set_level_0(0);
           struct1_v0_field1.set_level_2(0);
-          struct_exprt struct_expr({struct1_v0_field1}, struct_type);
+          struct_exprt struct_expr({struct1_v0_field1}, struct_tag_type);
           with_exprt struct1_v0_with_field_set = rhs;
           struct1_v0_with_field_set.old() = struct_expr;
           REQUIRE(assign_step.ssa_rhs == struct1_v0_with_field_set);

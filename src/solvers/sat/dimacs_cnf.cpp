@@ -12,8 +12,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/invariant.h>
 #include <util/magic.h>
 
-#include <iostream>
-
 dimacs_cnft::dimacs_cnft(message_handlert &message_handler)
   : cnf_clause_listt(message_handler), break_lines(false)
 {
@@ -37,13 +35,13 @@ dimacs_cnf_dumpt::dimacs_cnf_dumpt(
 {
 }
 
-void dimacs_cnft::write_dimacs_cnf(std::ostream &out)
+void dimacs_cnft::write_dimacs_cnf(std::ostream &out) const
 {
   write_problem_line(out);
   write_clauses(out);
 }
 
-void dimacs_cnft::write_problem_line(std::ostream &out)
+void dimacs_cnft::write_problem_line(std::ostream &out) const
 {
   // We start counting at 1, thus there is one variable fewer.
   out << "p cnf " << (no_variables()-1) << " "
@@ -76,7 +74,7 @@ void dimacs_cnft::write_dimacs_clause(
   out << "0" << "\n";
 }
 
-void dimacs_cnft::write_clauses(std::ostream &out)
+void dimacs_cnft::write_clauses(std::ostream &out) const
 {
   std::size_t count = 0;
   std::stringstream output_block;

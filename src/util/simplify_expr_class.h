@@ -45,6 +45,7 @@ class exprt;
 class extractbit_exprt;
 class extractbits_exprt;
 class find_first_set_exprt;
+class floatbv_round_to_integral_exprt;
 class floatbv_typecast_exprt;
 class function_application_exprt;
 class ieee_float_op_exprt;
@@ -64,8 +65,10 @@ class plus_exprt;
 class pointer_object_exprt;
 class pointer_offset_exprt;
 class popcount_exprt;
+class power_exprt;
 class prophecy_pointer_in_range_exprt;
 class prophecy_r_or_w_ok_exprt;
+class quantifier_exprt;
 class refined_string_exprt;
 class shift_exprt;
 class sign_exprt;
@@ -76,6 +79,7 @@ class unary_overflow_exprt;
 class unary_plus_exprt;
 class update_exprt;
 class with_exprt;
+class zero_extend_exprt;
 
 class simplify_exprt
 {
@@ -152,6 +156,7 @@ public:
   [[nodiscard]] resultt<> simplify_extractbit(const extractbit_exprt &);
   [[nodiscard]] resultt<> simplify_extractbits(const extractbits_exprt &);
   [[nodiscard]] resultt<> simplify_concatenation(const concatenation_exprt &);
+  [[nodiscard]] resultt<> simplify_zero_extend(const zero_extend_exprt &);
   [[nodiscard]] resultt<> simplify_mult(const mult_exprt &);
   [[nodiscard]] resultt<> simplify_div(const div_exprt &);
   [[nodiscard]] resultt<> simplify_mod(const mod_exprt &);
@@ -159,16 +164,19 @@ public:
   [[nodiscard]] resultt<> simplify_minus(const minus_exprt &);
   [[nodiscard]] resultt<> simplify_floatbv_op(const ieee_float_op_exprt &);
   [[nodiscard]] resultt<>
+  simplify_floatbv_round_to_integral(const floatbv_round_to_integral_exprt &);
+  [[nodiscard]] resultt<>
   simplify_floatbv_typecast(const floatbv_typecast_exprt &);
   [[nodiscard]] resultt<> simplify_shifts(const shift_exprt &);
-  [[nodiscard]] resultt<> simplify_power(const binary_exprt &);
+  [[nodiscard]] resultt<> simplify_power(const power_exprt &);
   [[nodiscard]] resultt<> simplify_bitwise(const multi_ary_exprt &);
   [[nodiscard]] resultt<> simplify_if_preorder(const if_exprt &expr);
   [[nodiscard]] resultt<> simplify_if(const if_exprt &);
   [[nodiscard]] resultt<> simplify_bitnot(const bitnot_exprt &);
   [[nodiscard]] resultt<> simplify_not(const not_exprt &);
   [[nodiscard]] resultt<> simplify_boolean(const exprt &);
-  [[nodiscard]] resultt<> simplify_inequality(const binary_relation_exprt &);
+  [[nodiscard]] virtual resultt<>
+  simplify_inequality(const binary_relation_exprt &);
   [[nodiscard]] resultt<>
   simplify_ieee_float_relation(const binary_relation_exprt &);
   [[nodiscard]] resultt<> simplify_lambda(const lambda_exprt &);
@@ -195,7 +203,8 @@ public:
   [[nodiscard]] resultt<>
   simplify_dereference_preorder(const dereference_exprt &);
   [[nodiscard]] resultt<> simplify_address_of(const address_of_exprt &);
-  [[nodiscard]] resultt<> simplify_pointer_offset(const pointer_offset_exprt &);
+  [[nodiscard]] virtual resultt<>
+  simplify_pointer_offset(const pointer_offset_exprt &);
   [[nodiscard]] resultt<> simplify_bswap(const bswap_exprt &);
   [[nodiscard]] resultt<> simplify_isinf(const unary_exprt &);
   [[nodiscard]] resultt<> simplify_isnan(const unary_exprt &);
@@ -248,6 +257,9 @@ public:
   [[nodiscard]] resultt<>
   simplify_prophecy_pointer_in_range(const prophecy_pointer_in_range_exprt &);
 
+  /// Try to simplify exists/forall to a constant expression.
+  [[nodiscard]] resultt<> simplify_quantifier_expr(const quantifier_exprt &);
+
   // auxiliary
   bool simplify_if_implies(
     exprt &expr, const exprt &cond, bool truth, bool &new_truth);
@@ -265,7 +277,7 @@ public:
   simplify_inequality_rhs_is_constant(const binary_relation_exprt &);
   [[nodiscard]] resultt<>
   simplify_inequality_address_of(const binary_relation_exprt &);
-  [[nodiscard]] resultt<>
+  [[nodiscard]] virtual resultt<>
   simplify_inequality_pointer_object(const binary_relation_exprt &);
 
   // main recursion
@@ -274,13 +286,6 @@ public:
   [[nodiscard]] resultt<> simplify_rec(const exprt &);
 
   virtual bool simplify(exprt &expr);
-
-  static bool is_bitvector_type(const typet &type)
-  {
-    return type.id()==ID_unsignedbv ||
-           type.id()==ID_signedbv ||
-           type.id()==ID_bv;
-  }
 
 protected:
   const namespacet &ns;

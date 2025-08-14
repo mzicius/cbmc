@@ -233,8 +233,10 @@ void custom_bitvector_domaint::assign_struct_rec(
 {
   if(lhs.type().id() == ID_struct || lhs.type().id() == ID_struct_tag)
   {
-    const struct_typet &struct_type=
-      to_struct_type(ns.follow(lhs.type()));
+    const struct_typet &struct_type =
+      lhs.type().id() == ID_struct
+        ? to_struct_type(lhs.type())
+        : ns.follow_tag(to_struct_tag_type(lhs.type()));
 
     // assign member-by-member
     for(const auto &c : struct_type.components())
@@ -347,7 +349,7 @@ void custom_bitvector_domaint::transform(
             {
               if(
                 lhs.is_constant() &&
-                is_null_pointer(to_constant_expr(lhs))) // NULL means all
+                to_constant_expr(lhs).is_null_pointer()) // NULL means all
               {
                 if(mode==modet::CLEAR_MAY)
                 {
@@ -476,7 +478,7 @@ void custom_bitvector_domaint::transform(
         {
           if(
             lhs.is_constant() &&
-            is_null_pointer(to_constant_expr(lhs))) // NULL means all
+            to_constant_expr(lhs).is_null_pointer()) // NULL means all
           {
             if(mode==modet::CLEAR_MAY)
             {
@@ -714,7 +716,7 @@ exprt custom_bitvector_domaint::eval(
 
       if(
         pointer.is_constant() &&
-        is_null_pointer(to_constant_expr(pointer))) // NULL means all
+        to_constant_expr(pointer).is_null_pointer()) // NULL means all
       {
         if(src.id() == ID_get_may)
         {

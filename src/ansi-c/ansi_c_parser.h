@@ -36,8 +36,10 @@ public:
       cpp11(false),
       for_has_scope(false),
       ts_18661_3_Floatn_types(false),
+      __float128_is_keyword(false),
       float16_type(false),
-      bf16_type(false)
+      bf16_type(false),
+      fp16_type(false)
   {
     // set up global scope
     scopes.clear();
@@ -59,16 +61,18 @@ public:
   typedef configt::ansi_ct::flavourt modet;
   modet mode;
 
-  // recognize C++98 and C++11 keywords
-  bool cpp98, cpp11;
+  // recognize C++98, C++11, C17, C23 keywords
+  bool cpp98, cpp11, c17, c23;
 
   // in C99 and upwards, for(;;) has a scope
   bool for_has_scope;
 
   // ISO/IEC TS 18661-3:2015
   bool ts_18661_3_Floatn_types;
+  bool __float128_is_keyword;
   bool float16_type;
   bool bf16_type;
+  bool fp16_type;
 
   typedef ansi_c_identifiert identifiert;
   typedef ansi_c_scopet scopet;

@@ -45,8 +45,11 @@ int armcc_modet::doit()
     has_prefix(base_name, "goto-link");
   #endif
 
+  const auto default_verbosity =
+    cmdline.isset("diag_warning=") ? messaget::M_WARNING : messaget::M_ERROR;
   const auto verbosity = messaget::eval_verbosity(
-    cmdline.get_value("verbosity"), messaget::M_ERROR, message_handler);
+    cmdline.get_value("verbosity"), default_verbosity, message_handler);
+  message_handler.print_warnings_as_errors(cmdline.isset("diag_error="));
 
   messaget log{message_handler};
   log.debug() << "ARM mode" << messaget::eom;
@@ -102,11 +105,8 @@ int armcc_modet::doit()
   }
 
   // armcc's default is .o
-  if(cmdline.isset("default_extension="))
-    compiler.object_file_extension=
-      cmdline.get_value("default_extension=");
-  else
-    compiler.object_file_extension="o";
+  compiler.object_file_extension =
+    cmdline.value_opt("default_extension=").value_or("o");
 
   // note that ARM's default is "unsigned_chars",
   // in contrast to gcc's default!

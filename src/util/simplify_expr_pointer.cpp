@@ -10,7 +10,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "arith_tools.h"
 #include "c_types.h"
-#include "config.h"
 #include "expr_util.h"
 #include "namespace.h"
 #include "pointer_expr.h"
@@ -39,7 +38,7 @@ static bool is_dereference_integer_object(
     {
       const constant_exprt &constant = to_constant_expr(pointer);
 
-      if(is_null_pointer(constant))
+      if(constant.is_null_pointer())
       {
         address=0;
         return true;
@@ -399,26 +398,9 @@ simplify_exprt::simplify_pointer_offset(const pointer_offset_exprt &expr)
   {
     const constant_exprt &c_ptr = to_constant_expr(ptr);
 
-    if(is_null_pointer(c_ptr))
+    if(c_ptr.is_null_pointer())
     {
       return from_integer(0, expr.type());
-    }
-    else
-    {
-      // this is a pointer, we can't use to_integer
-      const auto width = to_pointer_type(ptr.type()).get_width();
-      mp_integer number = bvrep2integer(c_ptr.get_value(), width, false);
-      // a null pointer would have been caught above, return value 0
-      // will indicate that conversion failed
-      if(number==0)
-        return unchanged(expr);
-
-      // The constant address consists of OBJECT-ID || OFFSET.
-      mp_integer offset_bits =
-        *pointer_offset_bits(ptr.type(), ns) - config.bv_encoding.object_bits;
-      number%=power(2, offset_bits);
-
-      return from_integer(number, expr.type());
     }
   }
 
@@ -589,7 +571,7 @@ simplify_exprt::simplify_is_dynamic_object(const unary_exprt &expr)
   }
 
   // NULL is not dynamic
-  if(op.is_constant() && is_null_pointer(to_constant_expr(op)))
+  if(op.is_constant() && to_constant_expr(op).is_null_pointer())
     return false_exprt();
 
   // &something depends on the something
@@ -637,7 +619,7 @@ simplify_exprt::simplify_is_invalid_pointer(const unary_exprt &expr)
   }
 
   // NULL is not invalid
-  if(op.is_constant() && is_null_pointer(to_constant_expr(op)))
+  if(op.is_constant() && to_constant_expr(op).is_null_pointer())
   {
     return false_exprt();
   }

@@ -37,7 +37,6 @@ DIRS = tvpi \
        goto-gcc \
        goto-cl \
        goto-cc-cbmc \
-       goto-cc-cbmc-shared-options \
        cbmc-cpp \
        goto-cc-goto-analyzer \
        goto-analyzer-simplify \

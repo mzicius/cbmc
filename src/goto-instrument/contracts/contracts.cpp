@@ -14,27 +14,17 @@ Date: February 2016
 #include "contracts.h"
 
 #include <util/c_types.h>
-#include <util/exception_utils.h>
-#include <util/expr_util.h>
-#include <util/find_symbols.h>
 #include <util/format_expr.h>
 #include <util/fresh_symbol.h>
-#include <util/graph.h>
 #include <util/mathematical_expr.h>
-#include <util/message.h>
-#include <util/std_code.h>
 
 #include <goto-programs/goto_inline.h>
-#include <goto-programs/goto_program.h>
 #include <goto-programs/remove_skip.h>
+#include <goto-programs/unwindset.h>
 
 #include <analyses/local_may_alias.h>
-#include <ansi-c/c_expr.h>
-#include <goto-instrument/havoc_utils.h>
 #include <goto-instrument/nondet_static.h>
 #include <goto-instrument/unwind.h>
-#include <goto-instrument/unwindset.h>
-#include <langapi/language_util.h>
 
 #include "cfg_info.h"
 #include "havoc_assigns_clause_targets.h"
@@ -67,10 +57,6 @@ void code_contractst::check_apply_loop_contracts(
   // Temporary variables for storing the multidimensional decreases clause
   // at the start of and end of a loop body
   std::vector<symbol_exprt> old_decreases_vars, new_decreases_vars;
-
-  // replace bound variables by fresh instances
-  if(has_subexpr(invariant, ID_exists) || has_subexpr(invariant, ID_forall))
-    add_quantified_variable(symbol_table, invariant, mode);
 
   // instrument
   //
@@ -173,6 +159,8 @@ void code_contractst::check_apply_loop_contracts(
       initial_invariant_val, invariant};
     initial_invariant_value_assignment.add_source_location() =
       loop_head_location;
+
+    goto_convertt converter(symbol_table, log.get_message_handler());
     converter.goto_convert(
       initial_invariant_value_assignment, pre_loop_head_instrs, mode);
   }
@@ -218,7 +206,7 @@ void code_contractst::check_apply_loop_contracts(
     // and the inferred aliasing relation.
     try
     {
-      get_assigns(local_may_alias, loop, to_havoc);
+      infer_loop_assigns(local_may_alias, loop, to_havoc);
 
       // remove loop-local symbols from the inferred set
       cfg_info.erase_locals(to_havoc);
@@ -293,6 +281,8 @@ void code_contractst::check_apply_loop_contracts(
     assertion.add_source_location() = loop_head_location;
     assertion.add_source_location().set_comment(
       "Check loop invariant before entry");
+
+    goto_convertt converter(symbol_table, log.get_message_handler());
     converter.goto_convert(assertion, pre_loop_head_instrs, mode);
   }
 
@@ -338,6 +328,8 @@ void code_contractst::check_apply_loop_contracts(
   {
     code_assumet assumption{invariant};
     assumption.add_source_location() = loop_head_location;
+
+    goto_convertt converter(symbol_table, log.get_message_handler());
     converter.goto_convert(assumption, pre_loop_head_instrs, mode);
   }
 
@@ -393,6 +385,8 @@ void code_contractst::check_apply_loop_contracts(
       code_assignt old_decreases_assignment{
         old_decreases_vars[i], decreases_clause_exprs[i]};
       old_decreases_assignment.add_source_location() = loop_head_location;
+
+      goto_convertt converter(symbol_table, log.get_message_handler());
       converter.goto_convert(
         old_decreases_assignment, pre_loop_head_instrs, mode);
     }
@@ -441,6 +435,8 @@ void code_contractst::check_apply_loop_contracts(
     assertion.add_source_location() = loop_head_location;
     assertion.add_source_location().set_comment(
       "Check that loop invariant is preserved");
+
+    goto_convertt converter(symbol_table, log.get_message_handler());
     converter.goto_convert(assertion, pre_loop_end_instrs, mode);
   }
 
@@ -453,6 +449,8 @@ void code_contractst::check_apply_loop_contracts(
       code_assignt new_decreases_assignment{
         new_decreases_vars[i], decreases_clause_exprs[i]};
       new_decreases_assignment.add_source_location() = loop_head_location;
+
+      goto_convertt converter(symbol_table, log.get_message_handler());
       converter.goto_convert(
         new_decreases_assignment, pre_loop_end_instrs, mode);
     }
@@ -465,6 +463,8 @@ void code_contractst::check_apply_loop_contracts(
     monotonic_decreasing_assertion.add_source_location() = loop_head_location;
     monotonic_decreasing_assertion.add_source_location().set_comment(
       "Check decreases clause on loop iteration");
+
+    goto_convertt converter(symbol_table, log.get_message_handler());
     converter.goto_convert(
       monotonic_decreasing_assertion, pre_loop_end_instrs, mode);
 
@@ -557,23 +557,19 @@ static void generate_contract_constraints(
   goto_programt &program,
   const source_locationt &location)
 {
-  if(
-    has_subexpr(instantiated_clause, ID_exists) ||
-    has_subexpr(instantiated_clause, ID_forall))
-  {
-    add_quantified_variable(symbol_table, instantiated_clause, mode);
-  }
-
   goto_programt constraint;
   if(location.get_property_class() == ID_assume)
   {
-    converter.goto_convert(code_assumet(instantiated_clause), constraint, mode);
+    code_assumet assumption(instantiated_clause);
+    assumption.add_source_location() = location;
+    converter.goto_convert(assumption, constraint, mode);
   }
   else
   {
-    converter.goto_convert(code_assertt(instantiated_clause), constraint, mode);
+    code_assertt assertion(instantiated_clause);
+    assertion.add_source_location() = location;
+    converter.goto_convert(assertion, constraint, mode);
   }
-  constraint.instructions.back().source_location_nonconst() = location;
   is_fresh_update(constraint);
   throw_on_unsupported(constraint);
   program.destructive_append(constraint);
@@ -706,6 +702,7 @@ void code_contractst::apply_function_contract(
                             .append(" in ")
                             .append(function.c_str()));
     _location.set_property_class(ID_precondition);
+    goto_convertt converter(symbol_table, log.get_message_handler());
     generate_contract_constraints(
       symbol_table,
       converter,
@@ -785,6 +782,8 @@ void code_contractst::apply_function_contract(
     source_locationt _location = clause.source_location();
     _location.set_comment("Assume ensures clause");
     _location.set_property_class(ID_assume);
+
+    goto_convertt converter(symbol_table, log.get_message_handler());
     generate_contract_constraints(
       symbol_table,
       converter,
@@ -966,12 +965,11 @@ void code_contractst::apply_loop_contract(
       goto_function.body, loop_head, goto_programt::make_skip());
     loop_end->set_target(loop_head);
 
-    exprt assigns_clause =
-      static_cast<const exprt &>(loop_end->condition().find(ID_C_spec_assigns));
-    exprt invariant = static_cast<const exprt &>(
-      loop_end->condition().find(ID_C_spec_loop_invariant));
-    exprt decreases_clause = static_cast<const exprt &>(
-      loop_end->condition().find(ID_C_spec_decreases));
+    exprt assigns_clause = get_loop_assigns(loop_end);
+    exprt invariant =
+      get_loop_invariants(loop_end, loop_contract_config.check_side_effect);
+    exprt decreases_clause =
+      get_loop_decreases(loop_end, loop_contract_config.check_side_effect);
 
     if(invariant.is_nil())
     {
@@ -1355,6 +1353,7 @@ void code_contractst::add_contract_check(
     source_locationt _location = clause.source_location();
     _location.set_comment("Assume requires clause");
     _location.set_property_class(ID_assume);
+    goto_convertt converter(symbol_table, log.get_message_handler());
     generate_contract_constraints(
       symbol_table,
       converter,
@@ -1388,6 +1387,7 @@ void code_contractst::add_contract_check(
     source_locationt _location = clause.source_location();
     _location.set_comment("Check ensures clause");
     _location.set_property_class(ID_postcondition);
+    goto_convertt converter(symbol_table, log.get_message_handler());
     generate_contract_constraints(
       symbol_table,
       converter,
@@ -1481,7 +1481,7 @@ void code_contractst::apply_loop_contracts(
   nondet_static(goto_model, to_exclude_from_nondet_init);
 
   // unwind all transformed loops twice.
-  if(unwind_transformed_loops)
+  if(loop_contract_config.unwind_transformed_loops)
   {
     unwindsett unwindset{goto_model};
     unwindset.parse_unwindset(loop_names, log.get_message_handler());

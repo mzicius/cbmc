@@ -30,6 +30,8 @@ init_function_symbols(std::unordered_set<irep_idt> &function_symbols)
     function_symbols.insert(CPROVER_PREFIX "assert");
     function_symbols.insert(CPROVER_PREFIX "assignable");
     function_symbols.insert(CPROVER_PREFIX "assume");
+    function_symbols.insert(CPROVER_PREFIX "contracts_ptr_pred_ctx_init");
+    function_symbols.insert(CPROVER_PREFIX "contracts_ptr_pred_ctx_reset");
     function_symbols.insert(CPROVER_PREFIX "contracts_car_create");
     function_symbols.insert(CPROVER_PREFIX "contracts_car_set_contains");
     function_symbols.insert(CPROVER_PREFIX "contracts_car_set_create");
@@ -42,7 +44,7 @@ init_function_symbols(std::unordered_set<irep_idt> &function_symbols)
     function_symbols.insert(CPROVER_PREFIX "contracts_is_fresh");
     function_symbols.insert(CPROVER_PREFIX "contracts_link_allocated");
     function_symbols.insert(CPROVER_PREFIX "contracts_link_deallocated");
-    function_symbols.insert(CPROVER_PREFIX "contracts_link_is_fresh");
+    function_symbols.insert(CPROVER_PREFIX "contracts_link_ptr_pred_ctx");
     function_symbols.insert(CPROVER_PREFIX "contracts_obeys_contract");
     function_symbols.insert(CPROVER_PREFIX "contracts_obj_set_add");
     function_symbols.insert(CPROVER_PREFIX "contracts_obj_set_append");
@@ -53,6 +55,7 @@ init_function_symbols(std::unordered_set<irep_idt> &function_symbols)
                             "contracts_obj_set_create_indexed_by_object_id");
     function_symbols.insert(CPROVER_PREFIX "contracts_obj_set_release");
     function_symbols.insert(CPROVER_PREFIX "contracts_obj_set_remove");
+    function_symbols.insert(CPROVER_PREFIX "contracts_pointer_equals");
     function_symbols.insert(CPROVER_PREFIX "contracts_pointer_in_range_dfcc");
     function_symbols.insert(CPROVER_PREFIX "contracts_was_freed");
     function_symbols.insert(CPROVER_PREFIX "contracts_write_set_add_allocated");
@@ -151,5 +154,15 @@ bool dfcc_is_cprover_static_symbol(const irep_idt &id)
   init_static_symbols(static_symbols);
   return static_symbols.find(id) != static_symbols.end() ||
          // auto objects from pointer derefs
-         has_suffix(id2string(id), "$object");
+         has_suffix(id2string(id), "$object") ||
+         // going_to variables converted from goto statements
+         has_prefix(id2string(id), CPROVER_PREFIX "going_to");
+}
+
+bool dfcc_is_cprover_pointer_predicate(const irep_idt &id)
+{
+  return id == CPROVER_PREFIX "pointer_equals" ||
+         id == CPROVER_PREFIX "is_fresh" ||
+         id == CPROVER_PREFIX "pointer_in_range_dfcc" ||
+         id == CPROVER_PREFIX "obeys_contract";
 }

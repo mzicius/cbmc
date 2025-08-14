@@ -48,10 +48,10 @@ SRC += analyses/ai/ai.cpp \
        analyses/variable-sensitivity/value_set_pointer_abstract_object/to_predicate.cpp \
        analyses/variable-sensitivity/variable_sensitivity_domain/to_predicate.cpp \
        analyses/variable-sensitivity/variable_sensitivity_test_helpers.cpp \
+       ansi-c/allocate_objects.cpp \
        analyses/tvpi/tvpi_domain.cpp \
        analyses/tvpi/tvpi_renumber.cpp \
        ansi-c/expr2c.cpp \
-       ansi-c/max_malloc_size.cpp \
        ansi-c/type2name.cpp \
        ansi-c/c_typecheck_base.cpp \
        big-int/big-int.cpp \
@@ -63,7 +63,6 @@ SRC += analyses/ai/ai.cpp \
        goto-instrument/cover_instrument.cpp \
        goto-instrument/cover/cover_only.cpp \
        goto-synthesizer/expr_enumerator/expr_enumerator.cpp \
-       goto-programs/allocate_objects.cpp \
        goto-programs/goto_program_assume.cpp \
        goto-programs/goto_program_dead.cpp \
        goto-programs/goto_program_declaration.cpp \
@@ -99,6 +98,9 @@ SRC += analyses/ai/ai.cpp \
        pointer-analysis/value_set.cpp \
        solvers/bdd/miniBDD/miniBDD.cpp \
        solvers/flattening/boolbv.cpp \
+       solvers/flattening/boolbv_enumeration.cpp \
+       solvers/flattening/boolbv_onehot.cpp \
+       solvers/flattening/boolbv_update_bit.cpp \
        solvers/floatbv/float_utils.cpp \
        solvers/prop/bdd_expr.cpp \
        solvers/sat/external_sat.cpp \
@@ -147,9 +149,11 @@ SRC += analyses/ai/ai.cpp \
        util/format.cpp \
        util/format_expr.cpp \
        util/format_number_range.cpp \
+       util/format_type.cpp \
        util/get_base_name.cpp \
        util/graph.cpp \
        util/help_formatter.cpp \
+       util/ieee_float.cpp \
        util/interval/add.cpp \
        util/interval/bitwise.cpp \
        util/interval/comparisons.cpp \
@@ -170,6 +174,7 @@ SRC += analyses/ai/ai.cpp \
        util/json_object.cpp \
        util/lazy.cpp \
        util/lower_byte_operators.cpp \
+       util/max_malloc_size.cpp \
        util/memory_info.cpp \
        util/message.cpp \
        util/optional_utils.cpp \
@@ -257,7 +262,6 @@ BMC_DEPS =../src/cbmc/c_test_input_generator$(OBJEXT) \
           ../src/goto-instrument/reachability_slicer$(OBJEXT) \
           ../src/goto-instrument/nondet_static$(OBJEXT) \
           ../src/goto-instrument/full_slicer$(OBJEXT) \
-          ../src/goto-instrument/unwindset$(OBJEXT) \
           ../src/goto-synthesizer/expr_enumerator$(OBJEXT) \
           ../src/xmllang/xmllang$(LIBEXT) \
           ../src/goto-symex/goto-symex$(LIBEXT) \

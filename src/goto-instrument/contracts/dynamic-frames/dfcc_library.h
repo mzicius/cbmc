@@ -12,7 +12,6 @@ Author: Remi Delmas, delmasrd@amazon.com
 #ifndef CPROVER_GOTO_INSTRUMENT_CONTRACTS_DYNAMIC_FRAMES_DFCC_LIBRARY_H
 #define CPROVER_GOTO_INSTRUMENT_CONTRACTS_DYNAMIC_FRAMES_DFCC_LIBRARY_H
 
-#include <util/irep.h>
 #include <util/message.h>
 
 #include <goto-programs/goto_instruction_code.h>
@@ -31,6 +30,10 @@ enum class dfcc_typet
   CAR_SET,
   /// type of pointers to sets of CAR
   CAR_SET_PTR,
+  /// type of context info for pointer predicates evaluation
+  PTR_PRED_CTX,
+  /// type of pointers to context info for pointer predicates evaluation
+  PTR_PRED_CTX_PTR,
   /// type of sets of object identifiers
   OBJ_SET,
   /// type of pointers to sets of object identifiers
@@ -62,6 +65,10 @@ enum class dfcc_funt
   OBJ_SET_CREATE_APPEND,
   /// \see __CPROVER_contracts_obj_set_release
   OBJ_SET_RELEASE,
+  /// \see __CPROVER_contracts_ptr_pred_ctx_init
+  PTR_PRED_CTX_INIT,
+  /// \see __CPROVER_contracts_ptr_pred_ctx_reset
+  PTR_PRED_CTX_RESET,
   /// \see __CPROVER_contracts_obj_set_add
   OBJ_SET_ADD,
   /// \see __CPROVER_contracts_obj_set_append
@@ -120,12 +127,14 @@ enum class dfcc_funt
   WRITE_SET_HAVOC_OBJECT_WHOLE,
   /// \see __CPROVER_contracts_write_set_havoc_slice
   WRITE_SET_HAVOC_SLICE,
-  /// \see __CPROVER_contracts_link_is_fresh
-  LINK_IS_FRESH,
+  /// \see __CPROVER_contracts_link_ptr_pred_ctx
+  LINK_PTR_PRED_CTX,
   /// \see __CPROVER_contracts_link_allocated
   LINK_ALLOCATED,
   /// \see __CPROVER_contracts_link_deallocated
   LINK_DEALLOCATED,
+  /// \see __CPROVER_contracts_pointer_equals
+  POINTER_EQUALS,
   /// \see __CPROVER_contracts_is_fresh
   IS_FRESH,
   /// \see __CPROVER_contracts_pointer_in_range_dfcc
@@ -153,9 +162,7 @@ class typet;
 class dfcc_libraryt
 {
 public:
-  dfcc_libraryt(
-    goto_modelt &goto_model,
-    message_handlert &lmessage_handler);
+  dfcc_libraryt(goto_modelt &goto_model, message_handlert &lmessage_handler);
 
 protected:
   /// True iff the contracts library symbols are loaded
@@ -411,10 +418,10 @@ public:
     const source_locationt &source_location);
 
   /// \brief Builds call to
-  /// \ref __CPROVER_contracts_link_is_fresh
-  const code_function_callt link_is_fresh_call(
+  /// \ref __CPROVER_contracts_link_ptr_pred_ctx
+  const code_function_callt link_ptr_pred_ctx_call(
     const exprt &write_set_ptr,
-    const exprt &is_fresh_obj_set_ptr,
+    const exprt &ptr_pred_ctx_ptr,
     const source_locationt &source_location);
 
   /// \brief Builds call to
@@ -448,6 +455,18 @@ public:
   /// \ref __CPROVER_contracts_obj_set_release
   const code_function_callt obj_set_release_call(
     const exprt &obj_set_ptr,
+    const source_locationt &source_location);
+
+  /// \brief Builds call to
+  /// \ref __CPROVER_contracts_ptr_pred_ctx_init
+  const code_function_callt ptr_pred_ctx_init_call(
+    const exprt &ptr_pred_ctx_ptr,
+    const source_locationt &source_location);
+
+  /// \brief Builds call to
+  /// \ref __CPROVER_contracts_ptr_pred_ctx_init
+  const code_function_callt ptr_pred_ctx_reset_call(
+    const exprt &ptr_pred_ctx_ptr,
     const source_locationt &source_location);
 };
 

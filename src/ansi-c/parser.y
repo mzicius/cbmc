@@ -62,8 +62,9 @@ int yyansi_cerror(const std::string &error);
 
 %token TOK_AUTO      "auto"
 %token TOK_BOOL      "bool"
-%token TOK_COMPLEX   "complex"
+%token TOK_BITINT    "_BitInt"
 %token TOK_BREAK     "break"
+%token TOK_COMPLEX   "complex"
 %token TOK_CASE      "case"
 %token TOK_CHAR      "char"
 %token TOK_CONST     "const"
@@ -91,6 +92,7 @@ int yyansi_cerror(const std::string &error);
 %token TOK_STRUCT    "struct"
 %token TOK_SWITCH    "switch"
 %token TOK_TYPEDEF   "typedef"
+%token TOK_TYPEOF_UNQUAL "typeof_unqual"
 %token TOK_UNION     "union"
 %token TOK_UNSIGNED  "unsigned"
 %token TOK_VOID      "void"
@@ -236,6 +238,7 @@ int yyansi_cerror(const std::string &error);
 %token TOK_THREAD_LOCAL "_Thread_local"
 %token TOK_NULLPTR     "nullptr"
 %token TOK_CONSTEXPR   "constexpr"
+%token TOK_BIT_CAST    "__builtin_bit_cast"
 
 /*** special scanner reports ***/
 
@@ -255,6 +258,7 @@ int yyansi_cerror(const std::string &error);
 %token TOK_MUTABLE     "mutable"
 %token TOK_NAMESPACE   "namespace"
 %token TOK_NEW         "new"
+%token TOK_NODISCARD   "nodiscard"
 %token TOK_NOEXCEPT    "noexcept"
 %token TOK_OPERATOR    "operator"
 %token TOK_PRIVATE     "private"
@@ -342,10 +346,33 @@ string:
 
 /*** Constants **********************************************************/
 
-constant: integer
+constant:
+          integer
         | floating
         | character
         | string
+        | predefined_constant
+        ;
+
+predefined_constant:
+          TOK_FALSE
+        { $$ = $1;
+          stack_expr($$).id(ID_constant);
+          stack_expr($$).set(ID_value, ID_0);
+          stack_expr($$).type() = c_bool_type();
+        }
+        | TOK_TRUE
+        { $$ = $1;
+          stack_expr($$).id(ID_constant);
+          stack_expr($$).set(ID_value, ID_1);
+          stack_expr($$).type() = c_bool_type();
+        }
+        | TOK_NULLPTR
+        { $$ = $1;
+          stack_expr($$).id(ID_constant);
+          stack_expr($$).set(ID_value, ID_NULL);
+          stack_expr($$).type() = pointer_type(void_type());
+        }
         ;
 
 /*** Expressions ********************************************************/
@@ -714,6 +741,12 @@ unary_expression:
           parser_stack($$).id(ID_alignof);
           parser_stack($$).add(ID_type_arg).swap(parser_stack($3));
         }
+        | TOK_BIT_CAST '(' type_name ',' unary_expression ')'
+        { $$=$1;
+          set($$, ID_bit_cast);
+          mto($$, $5);
+          parser_stack($$).type().swap(parser_stack($3));
+        }
         ;
 
 cast_expression:
@@ -954,6 +987,14 @@ static_assert_declaration:
           to_ansi_c_declaration(parser_stack($$)).set_is_static_assert(true);
           mto($$, $3);
           mto($$, $5);
+        }
+        | TOK_STATIC_ASSERT '(' assignment_expression ')'
+        {
+          // C23 adds static_assert without message
+          $$=$1;
+          set($$, ID_declaration);
+          to_ansi_c_declaration(parser_stack($$)).set_is_static_assert(true);
+          mto($$, $3);
         }
         ;
 
@@ -1330,6 +1371,16 @@ typeof_specifier:
           parser_stack($$).id(ID_typeof);
           parser_stack($$).set(ID_type_arg, parser_stack($3));
         }
+        | TOK_TYPEOF_UNQUAL '(' comma_expression ')'
+        { $$ = $1;
+          parser_stack($$).id(ID_c_typeof_unqual);
+          mto($$, $3);
+        }
+        | TOK_TYPEOF_UNQUAL '(' type_name ')'
+        { $$ = $1;
+          parser_stack($$).id(ID_c_typeof_unqual);
+          parser_stack($$).set(ID_type_arg, parser_stack($3));
+        }
         ;
 
 typeof_type_specifier:
@@ -1509,6 +1560,11 @@ basic_type_name:
         | TOK_DOUBLE   { $$=$1; set($$, ID_double); }
         | TOK_SIGNED   { $$=$1; set($$, ID_signed); }
         | TOK_UNSIGNED { $$=$1; set($$, ID_unsigned); }
+        | TOK_BITINT '(' constant_expression ')'
+        {
+          init($$, ID_c_bitint);
+          parser_stack($$).add(ID_size).swap(parser_stack($3));
+        }
         | TOK_VOID     { $$=$1; set($$, ID_void); }
         | TOK_BOOL     { $$=$1; set($$, ID_c_bool); }
         | TOK_COMPLEX  { $$=$1; set($$, ID_complex); }
@@ -3329,17 +3385,27 @@ parameter_abstract_declarator:
         ;
 
 cprover_function_contract:
-          TOK_CPROVER_ENSURES '(' ACSL_binding_expression ')'
+          TOK_CPROVER_ENSURES
+        {
+          PARSER.new_scope("ensures::");
+        }
+          '(' ACSL_binding_expression ')'
         {
           $$=$1;
           set($$, ID_C_spec_ensures);
-          mto($$, $3);
+          mto($$, $4);
+          PARSER.pop_scope();
         }
-        | TOK_CPROVER_REQUIRES '(' ACSL_binding_expression ')'
+        | TOK_CPROVER_REQUIRES
+        {
+          PARSER.new_scope("requires::");
+        }
+          '(' ACSL_binding_expression ')'
         {
           $$=$1;
           set($$, ID_C_spec_requires);
-          mto($$, $3);
+          mto($$, $4);
+          PARSER.pop_scope();
         }
         | cprover_contract_assigns
         | cprover_contract_frees

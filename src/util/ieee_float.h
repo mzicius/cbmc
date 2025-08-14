@@ -112,37 +112,14 @@ public:
   }
 };
 
-class ieee_floatt
+/// An IEEE 754 floating-point value, including specificiation.
+class ieee_float_valuet
 {
 public:
-  // ROUND_TO_EVEN is also known as "round to nearest, ties to even", and
-  // is the IEEE default.
-  // The numbering below is what x86 uses in the control word and
-  // what is recommended in C11 5.2.4.2.2
-  enum rounding_modet
-  {
-    ROUND_TO_EVEN=0, ROUND_TO_MINUS_INF=1,
-    ROUND_TO_PLUS_INF=2,  ROUND_TO_ZERO=3,
-    UNKNOWN, NONDETERMINISTIC
-  };
-
-  // A helper to turn a rounding mode into a constant bitvector expression
-  static constant_exprt rounding_mode_expr(rounding_modet);
-
-  rounding_modet rounding_mode;
-
   ieee_float_spect spec;
 
-  explicit ieee_floatt(const ieee_float_spect &_spec):
-    rounding_mode(ROUND_TO_EVEN),
-    spec(_spec), sign_flag(false), exponent(0), fraction(0),
-    NaN_flag(false), infinity_flag(false)
-  {
-  }
-
-  explicit ieee_floatt(ieee_float_spect __spec, rounding_modet __rounding_mode)
-    : rounding_mode(__rounding_mode),
-      spec(std::move(__spec)),
+  explicit ieee_float_valuet(const ieee_float_spect &_spec)
+    : spec(_spec),
       sign_flag(false),
       exponent(0),
       fraction(0),
@@ -151,28 +128,28 @@ public:
   {
   }
 
-  explicit ieee_floatt(const floatbv_typet &type):
-    rounding_mode(ROUND_TO_EVEN),
-    spec(ieee_float_spect(type)),
-    sign_flag(false),
-    exponent(0),
-    fraction(0),
-    NaN_flag(false),
-    infinity_flag(false)
+  explicit ieee_float_valuet(const floatbv_typet &type)
+    : spec(ieee_float_spect(type)),
+      sign_flag(false),
+      exponent(0),
+      fraction(0),
+      NaN_flag(false),
+      infinity_flag(false)
   {
   }
 
-  ieee_floatt():
-    rounding_mode(ROUND_TO_EVEN),
-    sign_flag(false), exponent(0), fraction(0),
-    NaN_flag(false), infinity_flag(false)
-  {
-  }
-
-  explicit ieee_floatt(const constant_exprt &expr):
-    rounding_mode(ROUND_TO_EVEN)
+  explicit ieee_float_valuet(const constant_exprt &expr)
   {
     from_expr(expr);
+  }
+
+  ieee_float_valuet()
+    : sign_flag(false),
+      exponent(0),
+      fraction(0),
+      NaN_flag(false),
+      infinity_flag(false)
+  {
   }
 
   void negate()
@@ -192,12 +169,22 @@ public:
     infinity_flag=false;
   }
 
-  static ieee_floatt zero(const floatbv_typet &type)
+  static ieee_float_valuet zero(const floatbv_typet &type)
   {
-    ieee_floatt result(type);
+    ieee_float_valuet result(type);
     result.make_zero();
     return result;
   }
+
+  static ieee_float_valuet zero(const ieee_float_spect &spec)
+  {
+    ieee_float_valuet result(spec);
+    result.make_zero();
+    return result;
+  }
+
+  static ieee_float_valuet one(const floatbv_typet &);
+  static ieee_float_valuet one(const ieee_float_spect &);
 
   void make_NaN();
   void make_plus_infinity();
@@ -205,22 +192,42 @@ public:
   void make_fltmax(); // maximum representable finite floating-point number
   void make_fltmin(); // minimum normalized positive floating-point number
 
-  static ieee_floatt NaN(const ieee_float_spect &_spec)
-  { ieee_floatt c(_spec); c.make_NaN(); return c; }
+  static ieee_float_valuet NaN(const ieee_float_spect &_spec)
+  {
+    ieee_float_valuet c(_spec);
+    c.make_NaN();
+    return c;
+  }
 
-  static ieee_floatt plus_infinity(const ieee_float_spect &_spec)
-  { ieee_floatt c(_spec); c.make_plus_infinity(); return c; }
+  static ieee_float_valuet plus_infinity(const ieee_float_spect &_spec)
+  {
+    ieee_float_valuet c(_spec);
+    c.make_plus_infinity();
+    return c;
+  }
 
-  static ieee_floatt minus_infinity(const ieee_float_spect &_spec)
-  { ieee_floatt c(_spec); c.make_minus_infinity(); return c; }
+  static ieee_float_valuet minus_infinity(const ieee_float_spect &_spec)
+  {
+    ieee_float_valuet c(_spec);
+    c.make_minus_infinity();
+    return c;
+  }
 
   // maximum representable finite floating-point number
-  static ieee_floatt fltmax(const ieee_float_spect &_spec)
-  { ieee_floatt c(_spec); c.make_fltmax(); return c; }
+  static ieee_float_valuet fltmax(const ieee_float_spect &_spec)
+  {
+    ieee_float_valuet c(_spec);
+    c.make_fltmax();
+    return c;
+  }
 
   // minimum normalized positive floating-point number
-  static ieee_floatt fltmin(const ieee_float_spect &_spec)
-  { ieee_floatt c(_spec); c.make_fltmin(); return c; }
+  static ieee_float_valuet fltmin(const ieee_float_spect &_spec)
+  {
+    ieee_float_valuet c(_spec);
+    c.make_fltmin();
+    return c;
+  }
 
   // set to next representable number towards plus infinity
   void increment(bool distinguish_zero=false)
@@ -245,6 +252,10 @@ public:
     return !NaN_flag && !infinity_flag && fraction==0 && exponent==0;
   }
   bool get_sign() const { return sign_flag; }
+  bool is_negative() const
+  {
+    return sign_flag;
+  }
   bool is_NaN() const { return NaN_flag; }
   bool is_infinity() const { return !NaN_flag && infinity_flag; }
   bool is_normal() const;
@@ -252,13 +263,10 @@ public:
   const mp_integer &get_exponent() const { return exponent; }
   const mp_integer &get_fraction() const { return fraction; }
 
-  // performs conversion to IEEE floating point format
-  void from_integer(const mp_integer &i);
-  void from_base10(const mp_integer &exp, const mp_integer &frac);
-  void build(const mp_integer &exp, const mp_integer &frac);
-  void unpack(const mp_integer &i);
-  void from_double(const double d);
-  void from_float(const float f);
+  // Construct IEEE floating point value
+  void unpack(const mp_integer &);
+  void from_double(double);
+  void from_float(float);
 
   // performs conversions from IEEE float-point format
   // to something else
@@ -270,9 +278,6 @@ public:
   void extract_base2(mp_integer &_exponent, mp_integer &_fraction) const;
   void extract_base10(mp_integer &_exponent, mp_integer &_fraction) const;
   mp_integer to_integer() const; // this always rounds to zero
-
-  // conversions
-  void change_spec(const ieee_float_spect &dest_spec);
 
   // output
   void print(std::ostream &out) const;
@@ -290,32 +295,26 @@ public:
   constant_exprt to_expr() const;
   void from_expr(const constant_exprt &expr);
 
-  // the usual operators
-  ieee_floatt &operator/=(const ieee_floatt &other);
-  ieee_floatt &operator*=(const ieee_floatt &other);
-  ieee_floatt &operator+=(const ieee_floatt &other);
-  ieee_floatt &operator-=(const ieee_floatt &other);
+  bool operator<(const ieee_float_valuet &) const;
+  bool operator<=(const ieee_float_valuet &) const;
+  bool operator>(const ieee_float_valuet &) const;
+  bool operator>=(const ieee_float_valuet &) const;
 
-  bool operator<(const ieee_floatt &other) const;
-  bool operator<=(const ieee_floatt &other) const;
-  bool operator>(const ieee_floatt &other) const;
-  bool operator>=(const ieee_floatt &other) const;
+  ieee_float_valuet abs() const;
 
   // warning: these do packed equality, not IEEE equality
   // e.g., NAN==NAN
-  bool operator==(const ieee_floatt &other) const;
-  bool operator!=(const ieee_floatt &other) const;
-  bool operator==(int i) const;
+  bool operator==(const ieee_float_valuet &) const;
+  bool operator!=(const ieee_float_valuet &) const;
+  bool operator==(int) const;
+  bool operator==(double) const;
+  bool operator==(float) const;
 
   // these do IEEE equality, i.e., NAN!=NAN
-  bool ieee_equal(const ieee_floatt &other) const;
-  bool ieee_not_equal(const ieee_floatt &other) const;
+  bool ieee_equal(const ieee_float_valuet &) const;
+  bool ieee_not_equal(const ieee_float_valuet &) const;
 
 protected:
-  void divide_and_round(mp_integer &dividend, const mp_integer &divisor);
-  void align();
-  void next_representable(bool greater);
-
   // we store the number unpacked
   bool sign_flag;
   mp_integer exponent; // this is unbiased
@@ -324,13 +323,103 @@ protected:
 
   // number of digits of an integer >=1 in base 10
   static mp_integer base10_digits(const mp_integer &src);
+
+  void next_representable(bool greater);
 };
 
-inline std::ostream &operator<<(
-  std::ostream &out,
-  const ieee_floatt &f)
+inline std::ostream &operator<<(std::ostream &out, const ieee_float_valuet &f)
 {
   return out << f.to_ansi_c_string();
 }
+
+/// An IEEE 754 value plus a rounding mode,
+/// enabling operations with rounding on values.
+class ieee_floatt : public ieee_float_valuet
+{
+public:
+  // ROUND_TO_EVEN is also known as "round to nearest, ties to even", and
+  // is the IEEE default.
+  // ROUND_TO_AWAY is also known as "round to nearest, ties away from zero".
+  // The numbering below is what x86 uses in the control word and
+  // what is recommended in C11 5.2.4.2.2.
+  // The numbering of ROUND_TO_AWAY is not specified in C11 5.2.4.2.2.
+  enum rounding_modet
+  {
+    ROUND_TO_EVEN = 0,
+    ROUND_TO_MINUS_INF = 1,
+    ROUND_TO_PLUS_INF = 2,
+    ROUND_TO_ZERO = 3,
+    ROUND_TO_AWAY = 4,
+    UNKNOWN,
+    NONDETERMINISTIC
+  };
+
+  rounding_modet rounding_mode() const
+  {
+    return _rounding_mode;
+  }
+
+  // A helper to turn a rounding mode into a constant bitvector expression
+  static constant_exprt rounding_mode_expr(rounding_modet);
+
+  ieee_floatt(ieee_float_spect __spec, rounding_modet __rounding_mode)
+    : ieee_float_valuet(__spec), _rounding_mode(__rounding_mode)
+  {
+  }
+
+  ieee_floatt(
+    ieee_float_spect __spec,
+    rounding_modet __rounding_mode,
+    const mp_integer &value)
+    : ieee_float_valuet(__spec), _rounding_mode(__rounding_mode)
+  {
+    from_integer(value);
+  }
+
+  ieee_floatt(const floatbv_typet &type, rounding_modet __rounding_mode)
+    : ieee_float_valuet(type), _rounding_mode(__rounding_mode)
+  {
+  }
+
+  ieee_floatt(const constant_exprt &expr, rounding_modet __rounding_mode)
+    : ieee_float_valuet(expr), _rounding_mode(__rounding_mode)
+  {
+  }
+
+  ieee_floatt(ieee_float_valuet __value, rounding_modet __rounding_mode)
+    : ieee_float_valuet(__value), _rounding_mode(__rounding_mode)
+  {
+  }
+
+  // performs conversion to IEEE floating point format,
+  // with rounding.
+  void from_integer(const mp_integer &i);
+  void from_base10(const mp_integer &exp, const mp_integer &frac);
+  void build(const mp_integer &exp, const mp_integer &frac);
+
+  // performs conversions from IEEE float-point format
+  // to something else
+  double to_double() const;
+  float to_float() const;
+  mp_integer to_integer() const; // this always rounds to zero
+
+  // conversions
+  void change_spec(const ieee_float_spect &dest_spec);
+
+  // Rounds according to the configured rounding mode
+  ieee_floatt round_to_integral() const;
+
+  // the usual operators
+  ieee_floatt &operator/=(const ieee_floatt &other);
+  ieee_floatt &operator*=(const ieee_floatt &other);
+  ieee_floatt &operator+=(const ieee_floatt &other);
+  ieee_floatt &operator-=(const ieee_floatt &other);
+
+protected:
+  rounding_modet _rounding_mode;
+
+  void divide_and_round(mp_integer &dividend, const mp_integer &divisor);
+  void align();
+};
 
 #endif // CPROVER_UTIL_IEEE_FLOAT_H

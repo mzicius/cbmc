@@ -21,6 +21,7 @@ Date: February 2023
 #include <goto-programs/goto_model.h>
 
 #include <ansi-c/c_expr.h>
+#include <ansi-c/goto-conversion/destructor.h>
 #include <goto-instrument/contracts/utils.h>
 #include <langapi/language_util.h>
 
@@ -104,18 +105,21 @@ void dfcc_contract_clauses_codegent::encode_assignable_target_group(
   // clean up side effects from the condition expression if needed
   cleanert cleaner(goto_model.symbol_table, log.get_message_handler());
   exprt condition(group.condition());
+  std::list<irep_idt> new_vars;
   if(has_subexpr(condition, ID_side_effect))
-    cleaner.clean(condition, dest, language_mode);
+    new_vars = cleaner.clean(condition, dest, language_mode);
 
   // Jump target if condition is false
-  auto goto_instruction = dest.add(
-    goto_programt::make_incomplete_goto(not_exprt{condition}, source_location));
+  auto goto_instruction = dest.add(goto_programt::make_incomplete_goto(
+    boolean_negate(condition), source_location));
 
   for(const auto &target : group.targets())
     encode_assignable_target(language_mode, target, dest);
 
   auto label_instruction = dest.add(goto_programt::make_skip(source_location));
   goto_instruction->complete_goto(label_instruction);
+
+  destruct_locals(new_vars, dest, ns);
 }
 
 void dfcc_contract_clauses_codegent::encode_assignable_target(
@@ -190,18 +194,21 @@ void dfcc_contract_clauses_codegent::encode_freeable_target_group(
   // clean up side effects from the condition expression if needed
   cleanert cleaner(goto_model.symbol_table, log.get_message_handler());
   exprt condition(group.condition());
+  std::list<irep_idt> new_vars;
   if(has_subexpr(condition, ID_side_effect))
-    cleaner.clean(condition, dest, language_mode);
+    new_vars = cleaner.clean(condition, dest, language_mode);
 
   // Jump target if condition is false
-  auto goto_instruction = dest.add(
-    goto_programt::make_incomplete_goto(not_exprt{condition}, source_location));
+  auto goto_instruction = dest.add(goto_programt::make_incomplete_goto(
+    boolean_negate(condition), source_location));
 
   for(const auto &target : group.targets())
     encode_freeable_target(language_mode, target, dest);
 
   auto label_instruction = dest.add(goto_programt::make_skip(source_location));
   goto_instruction->complete_goto(label_instruction);
+
+  destruct_locals(new_vars, dest, ns);
 }
 
 void dfcc_contract_clauses_codegent::encode_freeable_target(

@@ -204,10 +204,8 @@ bool boolbvt::type_conversion(
         // bool to float
 
         // build a one
-        ieee_floatt f(to_floatbv_type(dest_type));
-        f.from_integer(1);
-
-        dest = convert_bv(f.to_expr());
+        auto one = ieee_floatt::one(to_floatbv_type(dest_type));
+        dest = convert_bv(one.to_expr());
 
         INVARIANT(
           src_width == 1, "bitvector of type boolean shall have width one");
@@ -538,17 +536,23 @@ bool boolbvt::type_conversion(
         return false;
       }
     }
-    else if(ns.follow(dest_type).id() == ID_struct)
+    else if(dest_type.id() == ID_struct || dest_type.id() == ID_struct_tag)
     {
-      const struct_typet &dest_struct = to_struct_type(ns.follow(dest_type));
+      const struct_typet &dest_struct =
+        dest_type.id() == ID_struct_tag
+          ? ns.follow_tag(to_struct_tag_type(dest_type))
+          : to_struct_type(dest_type);
 
-      if(ns.follow(src_type).id() == ID_struct)
+      if(src_type.id() == ID_struct || src_type.id() == ID_struct_tag)
       {
         // we do subsets
 
         dest.resize(dest_width, const_literal(false));
 
-        const struct_typet &op_struct = to_struct_type(ns.follow(src_type));
+        const struct_typet &op_struct =
+          src_type.id() == ID_struct_tag
+            ? ns.follow_tag(to_struct_tag_type(src_type))
+            : to_struct_type(src_type);
 
         const struct_typet::componentst &dest_comp = dest_struct.components();
 

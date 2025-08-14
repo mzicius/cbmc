@@ -24,22 +24,26 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <pointer-analysis/add_failed_symbols.h>
 
 #include "goto_symex_can_forward_propagate.h"
+#include "simplify_expr_with_value_set.h"
 #include "symex_target_equation.h"
-
-static void get_l1_name(exprt &expr);
 
 goto_symex_statet::goto_symex_statet(
   const symex_targett::sourcet &_source,
   std::size_t max_field_sensitive_array_size,
   bool should_simplify,
+  const irep_idt &language_mode,
   guard_managert &manager,
   std::function<std::size_t(const irep_idt &)> fresh_l2_name_provider)
   : goto_statet(manager),
     source(_source),
     guard_manager(manager),
     symex_target(nullptr),
-    field_sensitivity(max_field_sensitive_array_size, should_simplify),
+    field_sensitivity(
+      max_field_sensitive_array_size,
+      should_simplify,
+      language_mode),
     record_events({true}),
+    language_mode(language_mode),
     fresh_l2_name_provider(fresh_l2_name_provider)
 {
   threads.emplace_back(guard_manager);
@@ -85,7 +89,7 @@ renamedt<ssa_exprt, L2> goto_symex_statet::assignment(
   // the type might need renaming
   rename<L2>(lhs.type(), l1_identifier, ns);
   if(rhs_is_simplified)
-    simplify(lhs, ns);
+    simplify_expr_with_value_sett{value_set, language_mode, ns}.simplify(lhs);
   lhs.update_type();
   if(run_validation_checks)
   {
@@ -123,20 +127,7 @@ renamedt<ssa_exprt, L2> goto_symex_statet::assignment(
   else
     propagation.erase_if_exists(l1_identifier);
 
-  {
-    // update value sets
-    exprt l1_rhs(rhs);
-    get_l1_name(l1_rhs);
-
-    const ssa_exprt l1_lhs = remove_level_2(lhs);
-    if(run_validation_checks)
-    {
-      DATA_INVARIANT(!check_renaming_l1(l1_lhs), "lhs renaming failed on l1");
-      DATA_INVARIANT(!check_renaming_l1(l1_rhs), "rhs renaming failed on l1");
-    }
-
-    value_set.assign(l1_lhs, l1_rhs, ns, rhs_is_simplified, is_shared);
-  }
+  value_set.assign(lhs, rhs, ns, rhs_is_simplified, is_shared);
 
 #ifdef DEBUG
   std::cout << "Assigning " << l1_identifier << '\n';
@@ -741,17 +732,22 @@ void goto_symex_statet::rename(
     }
   }
 
-  // expand struct and union tag types
-  type = ns.follow(type);
-
   if(type.id()==ID_array)
   {
     auto &array_type = to_array_type(type);
     rename<level>(array_type.element_type(), irep_idt(), ns);
     array_type.size() = rename<level>(std::move(array_type.size()), ns).get();
   }
-  else if(type.id() == ID_struct || type.id() == ID_union)
+  else if(
+    type.id() == ID_struct || type.id() == ID_union ||
+    type.id() == ID_struct_tag || type.id() == ID_union_tag)
   {
+    // expand struct and union tag types
+    if(type.id() == ID_struct_tag)
+      type = ns.follow_tag(to_struct_tag_type(type));
+    else if(type.id() == ID_union_tag)
+      type = ns.follow_tag(to_union_tag_type(type));
+
     struct_union_typet &s_u_type=to_struct_union_type(type);
     struct_union_typet::componentst &components=s_u_type.components();
 
@@ -776,17 +772,6 @@ void goto_symex_statet::rename(
   if(level==L2 &&
      !l1_identifier.empty())
     l1_type_entry.first->second=type;
-}
-
-static void get_l1_name(exprt &expr)
-{
-  // do not reset the type !
-
-  if(is_ssa_expr(expr))
-    to_ssa_expr(expr).remove_level_2();
-  else
-    Forall_operands(it, expr)
-      get_l1_name(*it);
 }
 
 /// Dumps the current state of symex, printing the function name and location

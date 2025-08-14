@@ -33,7 +33,6 @@ protected:
   std::string convert_cpp_this();
   std::string convert_cpp_new(const exprt &src);
   std::string convert_extractbit(const exprt &src);
-  std::string convert_extractbits(const exprt &src);
   std::string convert_code_cpp_delete(const exprt &src, unsigned indent);
   std::string convert_code_cpp_new(const exprt &src, unsigned indent);
   std::string convert_struct(const exprt &src, unsigned &precedence) override;
@@ -43,7 +42,7 @@ protected:
 
   std::string convert_rec(
     const typet &src,
-    const qualifierst &qualifiers,
+    const c_qualifierst &qualifiers,
     const std::string &declarator) override;
 };
 
@@ -131,11 +130,11 @@ std::string expr2cppt::convert_constant(
 
 std::string expr2cppt::convert_rec(
   const typet &src,
-  const qualifierst &qualifiers,
+  const c_qualifierst &qualifiers,
   const std::string &declarator)
 {
-  std::unique_ptr<qualifierst> clone = qualifiers.clone();
-  qualifierst &new_qualifiers = *clone;
+  std::unique_ptr<c_qualifierst> clone = qualifiers.clone();
+  c_qualifierst &new_qualifiers = *clone;
   new_qualifiers.read(src);
 
   const std::string d = declarator.empty() ? declarator : (" " + declarator);
@@ -275,7 +274,7 @@ std::string expr2cppt::convert_rec(
     typet member;
     member.swap(tmp.add(ID_to_member));
 
-    std::string dest="("+convert_rec(member, c_qualifierst(), "")+":: *)";
+    std::string dest = "(" + convert(member) + ":: *)";
 
     const auto &base_type = to_pointer_type(src).base_type();
 
@@ -283,7 +282,7 @@ std::string expr2cppt::convert_rec(
     {
       const code_typet &code_type = to_code_type(base_type);
       const typet &return_type = code_type.return_type();
-      dest=convert_rec(return_type, c_qualifierst(), "")+" "+dest;
+      dest = convert(return_type) + " " + dest;
 
       const code_typet::parameterst &args = code_type.parameters();
       dest+="(";
@@ -294,14 +293,14 @@ std::string expr2cppt::convert_rec(
       {
         if(it!=args.begin())
           dest+=", ";
-        dest+=convert_rec(it->type(), c_qualifierst(), "");
+        dest += convert(it->type());
       }
 
       dest+=")";
       dest+=d;
     }
     else
-      dest = convert_rec(base_type, c_qualifierst(), "") + " " + dest + d;
+      dest = convert(base_type) + " " + dest + d;
 
     return dest;
   }
@@ -433,11 +432,6 @@ std::string expr2cppt::convert_with_precedence(
     precedence = 15;
     return convert_extractbit(src);
   }
-  else if(src.id()==ID_extractbits)
-  {
-    precedence = 15;
-    return convert_extractbits(src);
-  }
   else if(src.id()==ID_side_effect &&
           (src.get(ID_statement)==ID_cpp_new ||
            src.get(ID_statement)==ID_cpp_new_array))
@@ -487,14 +481,6 @@ std::string expr2cppt::convert_extractbit(const exprt &src)
   const auto &extractbit_expr = to_extractbit_expr(src);
   return convert(extractbit_expr.op0()) + "[" + convert(extractbit_expr.op1()) +
          "]";
-}
-
-std::string expr2cppt::convert_extractbits(const exprt &src)
-{
-  const auto &extractbits_expr = to_extractbits_expr(src);
-  return convert(extractbits_expr.src()) + ".range(" +
-         convert(extractbits_expr.upper()) + "," +
-         convert(extractbits_expr.lower()) + ")";
 }
 
 std::string expr2cpp(const exprt &expr, const namespacet &ns)

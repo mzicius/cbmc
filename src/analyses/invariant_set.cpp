@@ -121,7 +121,7 @@ std::string inv_object_storet::build_string(const exprt &expr) const
   if(expr.is_constant())
   {
     // NULL?
-    if(is_null_pointer(to_constant_expr(expr)))
+    if(to_constant_expr(expr).is_null_pointer())
       return "0";
 
     const auto i = numeric_cast<mp_integer>(expr);
@@ -474,7 +474,9 @@ void invariant_sett::strengthen_rec(const exprt &expr)
 
     if(op_type.id() == ID_struct || op_type.id() == ID_struct_tag)
     {
-      const struct_typet &struct_type = to_struct_type(ns.follow(op_type));
+      const struct_typet &struct_type =
+        op_type.id() == ID_struct ? to_struct_type(op_type)
+                                  : ns.follow_tag(to_struct_tag_type(op_type));
 
       for(const auto &comp : struct_type.components())
       {

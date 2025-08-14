@@ -3,6 +3,7 @@
 #include "smt2_incremental_decision_procedure.h"
 
 #include <util/arith_tools.h>
+#include <util/bitvector_expr.h>
 #include <util/byte_operators.h>
 #include <util/c_types.h>
 #include <util/range.h>
@@ -296,6 +297,17 @@ static exprt lower_rw_ok_pointer_in_range(exprt expr, const namespacet &ns)
   return expr;
 }
 
+static exprt lower_zero_extend(exprt expr, const namespacet &ns)
+{
+  expr.visit_pre([](exprt &expr) {
+    if(auto zero_extend = expr_try_dynamic_cast<zero_extend_exprt>(expr))
+    {
+      expr = zero_extend->lower();
+    }
+  });
+  return expr;
+}
+
 void smt2_incremental_decision_proceduret::ensure_handle_for_expr_defined(
   const exprt &in_expr)
 {
@@ -322,16 +334,14 @@ void smt2_incremental_decision_proceduret::ensure_handle_for_expr_defined(
 void smt2_incremental_decision_proceduret::define_index_identifiers(
   const exprt &expr)
 {
-  expr.visit_pre([&](const exprt &expr_node) {
-    if(!can_cast_type<array_typet>(expr_node.type()))
-      return;
-    if(const auto with_expr = expr_try_dynamic_cast<with_exprt>(expr_node))
+  expr.visit_post(
+    [&](const exprt &expr_node)
     {
-      for(auto operand_ite = ++with_expr->operands().begin();
-          operand_ite != with_expr->operands().end();
-          operand_ite += 2)
+      if(!can_cast_type<array_typet>(expr_node.type()))
+        return;
+      if(const auto with_expr = expr_try_dynamic_cast<with_exprt>(expr_node))
       {
-        const auto index_expr = *operand_ite;
+        const auto index_expr = with_expr->where();
         const auto index_term = convert_expr_to_smt(index_expr);
         const auto index_identifier =
           "index_" + std::to_string(index_sequence());
@@ -344,8 +354,7 @@ void smt2_incremental_decision_proceduret::define_index_identifiers(
         solver_process->send(
           smt_define_function_commandt{index_identifier, {}, index_term});
       }
-    }
-  });
+    });
 }
 
 exprt smt2_incremental_decision_proceduret::substitute_defined_padding(
@@ -677,8 +686,10 @@ void smt2_incremental_decision_proceduret::define_object_properties()
 
 exprt smt2_incremental_decision_proceduret::lower(exprt expression) const
 {
-  const exprt lowered = struct_encoding.encode(lower_enum(
-    lower_byte_operators(lower_rw_ok_pointer_in_range(expression, ns), ns),
+  const exprt lowered = struct_encoding.encode(lower_zero_extend(
+    lower_enum(
+      lower_byte_operators(lower_rw_ok_pointer_in_range(expression, ns), ns),
+      ns),
     ns));
   log.conditional_output(log.debug(), [&](messaget::mstreamt &debug) {
     if(lowered != expression)

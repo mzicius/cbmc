@@ -1271,17 +1271,17 @@ TEST_CASE(
       INFO("Expression being converted: " + with.pretty(2, 0));
       CHECK(test.convert(with) == expected);
     }
-    SECTION("Dual where/new_value pair update")
+    SECTION("Nested where/new_value pair update")
     {
       exprt index2 = from_integer(24, unsignedbv_typet{64});
       exprt value2 = from_integer(21, value_type);
-      with.add_to_operands(std::move(index2), std::move(value2));
+      with_exprt with2{with, std::move(index2), std::move(value2)};
       const smt_termt expected2 = smt_array_theoryt::store(
         expected,
         smt_bit_vector_constant_termt{24, 64},
         smt_bit_vector_constant_termt{21, 8});
-      INFO("Expression being converted: " + with.pretty(2, 0));
-      CHECK(test.convert(with) == expected2);
+      INFO("Expression being converted: " + with2.pretty(2, 0));
+      CHECK(test.convert(with2) == expected2);
     }
   }
 }
@@ -1329,13 +1329,12 @@ TEST_CASE(
       "Bit vector typed bounds",
       extractbits_exprt{
         symbol_exprt{"foo", operand_type},
-        from_integer(4, operand_type),
         from_integer(2, operand_type),
         unsignedbv_typet{3}}},
     rowt{
       "Constant integer bounds",
       extractbits_exprt{
-        symbol_exprt{"foo", operand_type}, 4, 2, unsignedbv_typet{3}}});
+        symbol_exprt{"foo", operand_type}, 2, unsignedbv_typet{3}}});
   const smt_termt expected_result = smt_bit_vector_theoryt::extract(4, 2)(
     smt_identifier_termt{"foo", smt_bit_vector_sortt{8}});
   SECTION(description)
@@ -1345,7 +1344,6 @@ TEST_CASE(
     const cbmc_invariants_should_throwt invariants_throw;
     CHECK_THROWS(test.convert(extractbits_exprt{
       symbol_exprt{"foo", operand_type},
-      symbol_exprt{"bar", operand_type},
       symbol_exprt{"bar", operand_type},
       unsignedbv_typet{3}}));
   }

@@ -21,9 +21,10 @@ Author: Remi Delmas, delmasrd@amazon.com
 
 #include <goto-programs/goto_program.h>
 
+#include <goto-instrument/contracts/loop_contract_config.h>
+
 #include "dfcc_contract_mode.h"
 #include "dfcc_instrument_loop.h"
-#include "dfcc_loop_contract_mode.h"
 
 #include <map>
 #include <set>
@@ -75,12 +76,12 @@ public:
   /// called from the loop.
   ///
   /// \param function_id Function to instrument
-  /// \param loop_contract_mode Mode to use for loop contracts
+  /// \param loop_contract_config Config to use for loop contracts
   /// \param function_pointer_contracts Contract names discovered in calls to
   /// the `obeys_contract` predicate are added to this set.
   void instrument_harness_function(
     const irep_idt &function_id,
-    const dfcc_loop_contract_modet loop_contract_mode,
+    const loop_contract_configt &loop_contract_config,
     std::set<irep_idt> &function_pointer_contracts);
 
   /// \brief Instruments a GOTO function by adding an extra write set parameter
@@ -96,12 +97,12 @@ public:
   /// \param function_id The name of the function, used to retrieve the function
   /// to instrument and used as prefix when generating new symbols during
   /// instrumentation.
-  /// \param loop_contract_mode Mode to use for loop contracts
+  /// \param loop_contract_config Config to use for loop contracts
   /// \param function_pointer_contracts Contracts discovered in calls to
   /// the obeys_contract predicate are added to this set.
   void instrument_function(
     const irep_idt &function_id,
-    const dfcc_loop_contract_modet loop_contract_mode,
+    const loop_contract_configt &loop_contract_config,
     std::set<irep_idt> &function_pointer_contracts);
 
   /// \brief Instruments a GOTO function by adding an extra write set parameter
@@ -121,13 +122,13 @@ public:
   /// \param initial_function_id The initial name of the function,
   /// before mangling. This is the name used to identify statics symbols in the
   /// symbol table that were locally declared in the function.
-  /// \param loop_contract_mode Mode to use for loop contracts
+  /// \param loop_contract_config Config to use for loop contracts
   /// \param function_pointer_contracts contracts discovered in calls to
   /// the obeys_contract predicate are added to this set.
   void instrument_wrapped_function(
     const irep_idt &wrapped_function_id,
     const irep_idt &initial_function_id,
-    const dfcc_loop_contract_modet loop_contract_mode,
+    const loop_contract_configt &loop_contract_config,
     std::set<irep_idt> &function_pointer_contracts);
 
   /// \brief Instruments a GOTO program against a given write set variable.
@@ -234,7 +235,7 @@ protected:
     goto_functiont &goto_function,
     const exprt &write_set,
     const std::set<symbol_exprt> &local_statics,
-    const dfcc_loop_contract_modet loop_contract_mode,
+    const loop_contract_configt &loop_contract_config,
     std::set<irep_idt> &function_pointer_contracts);
 
   /// \brief Instruments the instructions found between \p first_instruction and
@@ -282,17 +283,8 @@ protected:
     goto_programt &goto_program,
     dfcc_cfg_infot &cfg_info);
 
-  /// Checks if \p lhs is the `dead_object`, and if \p rhs
-  /// is an `if_exprt(nondet, ptr, dead_object)` expression.
-  /// Returns a pointer to the `ptr` expression if the pattern was matched,
-  /// returns `nullptr` otherwise.
-  std::optional<exprt>
-  is_dead_object_update(const exprt &lhs, const exprt &rhs);
-
   /// Instrument the \p lhs of an `ASSIGN lhs := rhs` instruction by
   /// adding an inclusion check of \p lhs in \p write_set.
-  /// If \ref is_dead_object_update returns a successful match, the matched
-  /// pointer expression is removed from \p write_set.
   /// If \p rhs is a `side_effect_expr(ID_allocate)`, the allocated pointer gets
   /// added to the \p write_set.
   /// \pre \p target points to an `ASSIGN` instruction.
@@ -361,7 +353,7 @@ protected:
     const irep_idt &function_id,
     goto_functiont &goto_function,
     dfcc_cfg_infot &cfg_info,
-    const dfcc_loop_contract_modet loop_contract_mode,
+    const loop_contract_configt &loop_contract_config,
     const std::set<symbol_exprt> &local_statics,
     std::set<irep_idt> &function_pointer_contracts);
 };

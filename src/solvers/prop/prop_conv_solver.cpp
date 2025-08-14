@@ -257,7 +257,7 @@ literalt prop_conv_solvert::convert_bool(const exprt &expr)
   }
   else if(
     expr.id() == ID_or || expr.id() == ID_and || expr.id() == ID_xor ||
-    expr.id() == ID_nor || expr.id() == ID_nand)
+    expr.id() == ID_nor || expr.id() == ID_nand || expr.id() == ID_xnor)
   {
     INVARIANT(
       !op.empty(),
@@ -268,19 +268,20 @@ literalt prop_conv_solvert::convert_bool(const exprt &expr)
     for(const auto &operand : op)
       bv.push_back(convert(operand));
 
-    if(!bv.empty())
-    {
-      if(expr.id() == ID_or)
-        return prop.lor(bv);
-      else if(expr.id() == ID_nor)
-        return !prop.lor(bv);
-      else if(expr.id() == ID_and)
-        return prop.land(bv);
-      else if(expr.id() == ID_nand)
-        return !prop.land(bv);
-      else if(expr.id() == ID_xor)
-        return prop.lxor(bv);
-    }
+    CHECK_RETURN(!bv.empty());
+
+    if(expr.id() == ID_or)
+      return prop.lor(bv);
+    else if(expr.id() == ID_nor)
+      return !prop.lor(bv);
+    else if(expr.id() == ID_and)
+      return prop.land(bv);
+    else if(expr.id() == ID_nand)
+      return !prop.land(bv);
+    else if(expr.id() == ID_xor)
+      return prop.lxor(bv);
+    else if(expr.id() == ID_xnor)
+      return !prop.lxor(bv);
   }
   else if(expr.id() == ID_not)
   {
@@ -447,18 +448,18 @@ prop_conv_solvert::dec_solve(const exprt &assumption)
   {
     const auto post_process_start = std::chrono::steady_clock::now();
 
-    log.statistics() << "Post-processing" << messaget::eom;
+    log.progress() << "Post-processing" << messaget::eom;
     finish_eager_conversion();
     post_processing_done = true;
 
     const auto post_process_stop = std::chrono::steady_clock::now();
     std::chrono::duration<double> post_process_runtime =
       std::chrono::duration<double>(post_process_stop - post_process_start);
-    log.status() << "Runtime Post-process: " << post_process_runtime.count()
-                 << "s" << messaget::eom;
+    log.statistics() << "Runtime Post-process: " << post_process_runtime.count()
+                     << "s" << messaget::eom;
   }
 
-  log.statistics() << "Solving with " << prop.solver_text() << messaget::eom;
+  log.progress() << "Solving with " << prop.solver_text() << messaget::eom;
 
   if(assumption.is_nil())
     push();

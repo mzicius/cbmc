@@ -23,4 +23,4 @@ context, as described by the flags carried by the write set parameter).
 ---
  Prev | Next
 :-----|:------
- @ref contracts-dev | @ref contracts-dev-spec-reminder
+ @ref contracts-dev | @ref contracts-dev-spec-pointer-equals

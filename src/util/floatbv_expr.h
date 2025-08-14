@@ -83,6 +83,70 @@ inline floatbv_typecast_exprt &to_floatbv_typecast_expr(exprt &expr)
   return ret;
 }
 
+/// \brief Round a floating-point number to an integral value
+/// considering the given rounding mode
+class floatbv_round_to_integral_exprt : public binary_exprt
+{
+public:
+  floatbv_round_to_integral_exprt(exprt op, exprt rounding)
+    : binary_exprt(
+        op,
+        ID_floatbv_round_to_integral,
+        std::move(rounding),
+        op.type())
+  {
+  }
+
+  exprt &op()
+  {
+    return op0();
+  }
+
+  const exprt &op() const
+  {
+    return op0();
+  }
+
+  exprt &rounding_mode()
+  {
+    return op1();
+  }
+
+  const exprt &rounding_mode() const
+  {
+    return op1();
+  }
+};
+
+template <>
+inline bool can_cast_expr<floatbv_round_to_integral_exprt>(const exprt &base)
+{
+  return base.id() == ID_floatbv_round_to_integral;
+}
+
+/// \brief Cast an exprt to a \ref floatbv_round_to_integral_exprt
+///
+/// \a expr must be known to be \ref floatbv_round_to_integral_exprt.
+///
+/// \param expr: Source expression
+/// \return Object of type \ref floatbv_round_to_integral_exprt
+inline const floatbv_round_to_integral_exprt &
+to_floatbv_round_to_integral_expr(const exprt &expr)
+{
+  PRECONDITION(expr.id() == ID_floatbv_round_to_integral);
+  floatbv_round_to_integral_exprt::check(expr);
+  return static_cast<const floatbv_round_to_integral_exprt &>(expr);
+}
+
+/// \copydoc to_floatbv_round_to_integral_expr(const exprt &)
+inline floatbv_round_to_integral_exprt &
+to_floatbv_round_to_integral_expr(exprt &expr)
+{
+  PRECONDITION(expr.id() == ID_floatbv_round_to_integral);
+  floatbv_round_to_integral_exprt::check(expr);
+  return static_cast<floatbv_round_to_integral_exprt &>(expr);
+}
+
 /// \brief Evaluates to true if the operand is NaN
 class isnan_exprt : public unary_predicate_exprt
 {
@@ -436,6 +500,72 @@ inline ieee_float_op_exprt &to_ieee_float_op_expr(exprt &expr)
   ieee_float_op_exprt &ret = static_cast<ieee_float_op_exprt &>(expr);
   validate_expr(ret);
   return ret;
+}
+
+/// \brief IEEE floating-point mod
+///
+/// Note that this expression does not have a rounding mode.
+class floatbv_mod_exprt : public binary_exprt
+{
+public:
+  floatbv_mod_exprt(exprt _lhs, exprt _rhs)
+    : binary_exprt(_lhs, ID_floatbv_mod, _rhs, _lhs.type())
+  {
+  }
+};
+
+/// \brief Cast an exprt to a \ref floatbv_mod_exprt
+///
+/// \a expr must be known to be \ref floatbv_mod_exprt.
+///
+/// \param expr: Source expression
+/// \return Object of type \ref floatbv_mod_exprt
+inline const floatbv_mod_exprt &to_floatbv_mod_expr(const exprt &expr)
+{
+  PRECONDITION(expr.id() == ID_floatbv_mod);
+  floatbv_mod_exprt::check(expr);
+  return static_cast<const floatbv_mod_exprt &>(expr);
+}
+
+/// \copydoc to_floatbv_mod_expr(const exprt &)
+inline floatbv_mod_exprt &to_floatbv_mod_expr(exprt &expr)
+{
+  PRECONDITION(expr.id() == ID_floatbv_mod);
+  floatbv_mod_exprt::check(expr);
+  return static_cast<floatbv_mod_exprt &>(expr);
+}
+
+/// \brief IEEE floating-point rem
+///
+/// Note that this expression does not have a rounding mode.
+class floatbv_rem_exprt : public binary_exprt
+{
+public:
+  floatbv_rem_exprt(exprt _lhs, exprt _rhs)
+    : binary_exprt(_lhs, ID_floatbv_rem, _rhs, _lhs.type())
+  {
+  }
+};
+
+/// \brief Cast an exprt to a \ref floatbv_rem_exprt
+///
+/// \a expr must be known to be \ref floatbv_rem_exprt.
+///
+/// \param expr: Source expression
+/// \return Object of type \ref floatbv_rem_exprt
+inline const floatbv_rem_exprt &to_floatbv_rem_expr(const exprt &expr)
+{
+  PRECONDITION(expr.id() == ID_floatbv_rem);
+  floatbv_rem_exprt::check(expr);
+  return static_cast<const floatbv_rem_exprt &>(expr);
+}
+
+/// \copydoc to_floatbv_rem_expr(const exprt &)
+inline floatbv_rem_exprt &to_floatbv_rem_expr(exprt &expr)
+{
+  PRECONDITION(expr.id() == ID_floatbv_rem);
+  floatbv_rem_exprt::check(expr);
+  return static_cast<floatbv_rem_exprt &>(expr);
 }
 
 /// \brief returns the a rounding mode expression for a given

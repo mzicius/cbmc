@@ -13,12 +13,12 @@ Author: Qinheping Hu
 
 #include <util/arith_tools.h>
 #include <util/c_types.h>
+#include <util/expr_iterator.h>
 #include <util/options.h>
 #include <util/pointer_offset_size.h>
 #include <util/pointer_predicates.h>
+#include <util/simplify_expr.h>
 
-#include <goto-programs/goto_convert_functions.h>
-#include <goto-programs/link_to_library.h>
 #include <goto-programs/pointer_arithmetic.h>
 #include <goto-programs/process_goto_program.h>
 #include <goto-programs/remove_skip.h>
@@ -26,6 +26,8 @@ Author: Qinheping Hu
 
 #include <analyses/dependence_graph.h>
 #include <ansi-c/cprover_library.h>
+#include <ansi-c/goto-conversion/goto_convert_functions.h>
+#include <ansi-c/goto-conversion/link_to_library.h>
 #include <assembler/remove_asm.h>
 #include <cpp/cprover_library.h>
 #include <goto-checker/all_properties_verifier_with_trace_storage.h>
@@ -71,7 +73,7 @@ get_checked_pointer_from_null_pointer_check(const exprt &violation)
   // NULL == ptr
   if(
     can_cast_expr<constant_exprt>(lhs_pointer) &&
-    is_null_pointer(*expr_try_dynamic_cast<constant_exprt>(lhs_pointer)))
+    expr_try_dynamic_cast<constant_exprt>(lhs_pointer)->is_null_pointer())
   {
     return rhs_pointer;
   }
@@ -546,12 +548,8 @@ cext cegis_verifiert::build_cex(
 
 void cegis_verifiert::restore_functions()
 {
-  for(const auto &fun_entry : goto_model.goto_functions.function_map)
-  {
-    irep_idt fun_name = fun_entry.first;
-    goto_model.goto_functions.function_map[fun_name].body.swap(
-      original_functions[fun_name]);
-  }
+  for(auto &[fun_name, orig_fun_body] : original_functions)
+    goto_model.goto_functions.function_map[fun_name].body.swap(orig_fun_body);
 }
 
 std::optional<cext> cegis_verifiert::verify()
@@ -569,10 +567,12 @@ std::optional<cext> cegis_verifiert::verify()
   // 3. construct the formatted counterexample from the violated property and
   //    its trace.
 
-  // Store the original functions. We will restore them after the verification.
+  // Store the original functions when they have a body (library functions might
+  // not yet have one). We will restore them after the verification.
   for(const auto &fun_entry : goto_model.goto_functions.function_map)
   {
-    original_functions[fun_entry.first].copy_from(fun_entry.second.body);
+    if(fun_entry.second.body_available())
+      original_functions[fun_entry.first].copy_from(fun_entry.second.body);
   }
 
   // Annotate the candidates to the goto_model for checking.
@@ -588,8 +588,8 @@ std::optional<cext> cegis_verifiert::verify()
     log.get_message_handler().set_verbosity(messaget::M_ERROR);
 
   // Apply loop contracts we annotated.
-  code_contractst cont(goto_model, log);
-  cont.unwind_transformed_loops = false;
+  code_contractst cont(
+    goto_model, log, loop_contract_configt{true, false, true});
   cont.apply_loop_contracts();
   original_loop_number_map = cont.get_original_loop_number_map();
   loop_havoc_set = cont.get_loop_havoc_set();

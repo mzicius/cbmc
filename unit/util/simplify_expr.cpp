@@ -6,14 +6,13 @@ Author: Michael Tautschnig
 
 \*******************************************************************/
 
-#include <testing-utils/use_catch.h>
-
 #include <util/arith_tools.h>
 #include <util/bitvector_expr.h>
 #include <util/byte_operators.h>
 #include <util/c_types.h>
 #include <util/cmdline.h>
 #include <util/config.h>
+#include <util/mathematical_expr.h>
 #include <util/namespace.h>
 #include <util/pointer_expr.h>
 #include <util/pointer_predicates.h>
@@ -21,6 +20,8 @@ Author: Michael Tautschnig
 #include <util/simplify_utils.h>
 #include <util/std_expr.h>
 #include <util/symbol_table.h>
+
+#include <testing-utils/use_catch.h>
 
 TEST_CASE("Simplify pointer_offset(address of array index)", "[core][util]")
 {
@@ -42,27 +43,6 @@ TEST_CASE("Simplify pointer_offset(address of array index)", "[core][util]")
   const mp_integer offset_value =
     numeric_cast_v<mp_integer>(to_constant_expr(simp));
   REQUIRE(offset_value==1);
-}
-
-TEST_CASE("Simplify const pointer offset", "[core][util]")
-{
-  config.set_arch("none");
-
-  symbol_tablet symbol_table;
-  namespacet ns(symbol_table);
-
-  // build a numeric constant of some pointer type
-  constant_exprt number=from_integer(1234, size_type());
-  number.type()=pointer_type(char_type());
-
-  exprt p_o=pointer_offset(number);
-
-  exprt simp=simplify_expr(p_o, ns);
-
-  REQUIRE(simp.is_constant());
-  const mp_integer offset_value =
-    numeric_cast_v<mp_integer>(to_constant_expr(simp));
-  REQUIRE(offset_value==1234);
 }
 
 TEST_CASE("Simplify byte extract", "[core][util]")
@@ -176,7 +156,7 @@ TEST_CASE("Simplify extractbits", "[core][util]")
 
   const exprt deadbeef = from_integer(0xdeadbeef, unsignedbv_typet(32));
 
-  exprt eb = extractbits_exprt(deadbeef, 15, 8, unsignedbv_typet(8));
+  exprt eb = extractbits_exprt(deadbeef, 8, unsignedbv_typet(8));
   bool unmodified = simplify(eb, ns);
 
   REQUIRE(!unmodified);
@@ -573,5 +553,60 @@ TEST_CASE("Simplify inequality", "[core][util]")
     simp = simplify_expr(comparison_lt, ns);
 
     REQUIRE(simp == true_exprt{});
+  }
+}
+
+TEST_CASE("Simplify bitxor", "[core][util]")
+{
+  config.set_arch("none");
+
+  const symbol_tablet symbol_table;
+  const namespacet ns(symbol_table);
+
+  SECTION("Simplification for c_bool")
+  {
+    constant_exprt false_c_bool = from_integer(0, c_bool_type());
+
+    REQUIRE(
+      simplify_expr(bitxor_exprt{false_c_bool, false_c_bool}, ns) ==
+      false_c_bool);
+  }
+}
+
+TEST_CASE("Simplify power", "[core][util]")
+{
+  const symbol_tablet symbol_table;
+  const namespacet ns{symbol_table};
+
+  SECTION("Simplification for power")
+  {
+    symbol_exprt a{"a", integer_typet{}};
+
+    REQUIRE(
+      simplify_expr(power_exprt{a, from_integer(1, integer_typet{})}, ns) == a);
+  }
+}
+
+TEST_CASE("Simplify quantifier", "[core][util]")
+{
+  const symbol_tablet symbol_table;
+  const namespacet ns{symbol_table};
+
+  SECTION("Simplification for exists")
+  {
+    symbol_exprt a{"a", integer_typet{}};
+
+    REQUIRE(simplify_expr(exists_exprt{a, false_exprt{}}, ns) == false_exprt{});
+
+    REQUIRE(simplify_expr(exists_exprt{a, true_exprt{}}, ns) == true_exprt{});
+  }
+
+  SECTION("Simplification for forall")
+  {
+    symbol_exprt a{"a", integer_typet{}};
+
+    REQUIRE(simplify_expr(forall_exprt{a, false_exprt{}}, ns) == false_exprt{});
+
+    REQUIRE(simplify_expr(forall_exprt{a, true_exprt{}}, ns) == true_exprt{});
   }
 }

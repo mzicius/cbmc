@@ -13,8 +13,6 @@ Date: August 2022
 #ifndef CPROVER_GOTO_INSTRUMENT_CONTRACTS_DYNAMIC_FRAMES_DFCC_UTILS_H
 #define CPROVER_GOTO_INSTRUMENT_CONTRACTS_DYNAMIC_FRAMES_DFCC_UTILS_H
 
-#include <util/message.h>
-#include <util/namespace.h>
 #include <util/std_expr.h>
 
 #include <set>
@@ -22,6 +20,7 @@ Date: August 2022
 class goto_modelt;
 class goto_programt;
 class message_handlert;
+class symbol_table_baset;
 class symbolt;
 
 struct dfcc_utilst
@@ -72,7 +71,11 @@ struct dfcc_utilst
     const bool no_nondet_initialization = true);
 
   /// Creates a new parameter symbol for the given function_id
-  static const symbolt &create_new_parameter_symbol(
+#if defined(__GNUC__) && __GNUC__ >= 14
+  [[gnu::no_dangling]]
+#endif
+  static const symbolt &
+  create_new_parameter_symbol(
     symbol_table_baset &,
     const irep_idt &function_id,
     const std::string &base_name,
@@ -100,7 +103,11 @@ struct dfcc_utilst
   /// The cloned function symbol has `new_function_id` as name
   /// The cloned parameters symbols have `new_function_id::name` as name
   /// Returns the new function symbol
-  static const symbolt &clone_and_rename_function(
+#if defined(__GNUC__) && __GNUC__ >= 14
+  [[gnu::no_dangling]]
+#endif
+  static const symbolt &
+  clone_and_rename_function(
     goto_modelt &goto_model,
     const irep_idt &function_id,
     const irep_idt &new_function_id,

@@ -18,6 +18,7 @@ Date: September 2021
 #include <util/pointer_expr.h>
 #include <util/pointer_offset_size.h>
 #include <util/pointer_predicates.h>
+#include <util/prefix.h>
 #include <util/simplify_expr.h>
 #include <util/symbol.h>
 
@@ -40,7 +41,9 @@ static void append_safe_havoc_code_for_expr(
   // skip havocing only if all pointer derefs in the expression are valid
   // (to avoid spurious pointer deref errors)
   dest.add(goto_programt::make_goto(
-    skip_target, not_exprt{all_dereferences_are_valid(expr, ns)}, location));
+    skip_target,
+    boolean_negate(all_dereferences_are_valid(expr, ns)),
+    location));
 
   havoc_code_impl();
 
@@ -249,12 +252,12 @@ void insert_before_and_update_jumps(
   const auto new_target = destination.insert_before(target, i);
   for(auto it : target->incoming_edges)
   {
-    if(it->is_goto())
+    if(it->is_goto() && it->get_target() == target)
       it->set_target(new_target);
   }
 }
 
-void simplify_gotos(goto_programt &goto_program, namespacet &ns)
+void simplify_gotos(goto_programt &goto_program, const namespacet &ns)
 {
   for(auto &instruction : goto_program.instructions)
   {
@@ -267,7 +270,7 @@ void simplify_gotos(goto_programt &goto_program, namespacet &ns)
 
 bool is_loop_free(
   const goto_programt &goto_program,
-  namespacet &ns,
+  const namespacet &ns,
   messaget &log)
 {
   // create cfg from instruction list
@@ -338,6 +341,22 @@ bool is_assigns_clause_replacement_tracking_comment(const irep_idt &comment)
          std::string::npos;
 }
 
+void infer_loop_assigns(
+  const local_may_aliast &local_may_alias,
+  const loopt &loop,
+  assignst &assigns)
+{
+  // Assign targets should not include cprover symbols.
+  get_assigns(local_may_alias, loop, assigns, [](const exprt &e) {
+    if(e.id() == ID_symbol)
+    {
+      const auto &s = expr_try_dynamic_cast<symbol_exprt>(e);
+      return !has_prefix(id2string(s->get_identifier()), CPROVER_PREFIX);
+    }
+    return true;
+  });
+}
+
 void widen_assigns(assignst &assigns, const namespacet &ns)
 {
   assignst result;
@@ -362,80 +381,6 @@ void widen_assigns(assignst &assigns, const namespacet &ns)
       result.emplace(e);
   }
   assigns = result;
-}
-
-void add_quantified_variable(
-  symbol_table_baset &symbol_table,
-  exprt &expression,
-  const irep_idt &mode)
-{
-  if(expression.id() == ID_not || expression.id() == ID_typecast)
-  {
-    // For unary connectives, recursively check for
-    // nested quantified formulae in the term
-    auto &unary_expression = to_unary_expr(expression);
-    add_quantified_variable(symbol_table, unary_expression.op(), mode);
-  }
-  if(expression.id() == ID_notequal || expression.id() == ID_implies)
-  {
-    // For binary connectives, recursively check for
-    // nested quantified formulae in the left and right terms
-    auto &binary_expression = to_binary_expr(expression);
-    add_quantified_variable(symbol_table, binary_expression.lhs(), mode);
-    add_quantified_variable(symbol_table, binary_expression.rhs(), mode);
-  }
-  if(expression.id() == ID_if)
-  {
-    // For ternary connectives, recursively check for
-    // nested quantified formulae in all three terms
-    auto &if_expression = to_if_expr(expression);
-    add_quantified_variable(symbol_table, if_expression.cond(), mode);
-    add_quantified_variable(symbol_table, if_expression.true_case(), mode);
-    add_quantified_variable(symbol_table, if_expression.false_case(), mode);
-  }
-  if(expression.id() == ID_and || expression.id() == ID_or)
-  {
-    // For multi-ary connectives, recursively check for
-    // nested quantified formulae in all terms
-    auto &multi_ary_expression = to_multi_ary_expr(expression);
-    for(auto &operand : multi_ary_expression.operands())
-    {
-      add_quantified_variable(symbol_table, operand, mode);
-    }
-  }
-  else if(expression.id() == ID_exists || expression.id() == ID_forall)
-  {
-    // When a quantifier expression is found, create a fresh symbol for each
-    // quantified variable and rewrite the expression to use those fresh
-    // symbols.
-    auto &quantifier_expression = to_quantifier_expr(expression);
-    std::vector<symbol_exprt> fresh_variables;
-    fresh_variables.reserve(quantifier_expression.variables().size());
-    for(const auto &quantified_variable : quantifier_expression.variables())
-    {
-      // 1. create fresh symbol
-      symbolt new_symbol = get_fresh_aux_symbol(
-        quantified_variable.type(),
-        id2string(quantified_variable.source_location().get_function()),
-        "tmp_cc",
-        quantified_variable.source_location(),
-        mode,
-        symbol_table);
-
-      // 2. add created fresh symbol to expression map
-      fresh_variables.push_back(new_symbol.symbol_expr());
-    }
-
-    // use fresh symbols
-    exprt where = quantifier_expression.instantiate(fresh_variables);
-
-    // recursively check for nested quantified formulae
-    add_quantified_variable(symbol_table, where, mode);
-
-    // replace previous variables and body
-    quantifier_expression.variables() = fresh_variables;
-    quantifier_expression.where() = std::move(where);
-  }
 }
 
 static void replace_history_parameter_rec(
@@ -490,8 +435,8 @@ static void replace_history_parameter_rec(
 
     // 2.2. Skip storing the history if the expression is invalid
     auto goto_instruction = history.add(goto_programt::make_incomplete_goto(
-      not_exprt{
-        all_dereferences_are_valid(parameter, namespacet(symbol_table))},
+      boolean_negate(
+        all_dereferences_are_valid(parameter, namespacet(symbol_table))),
       location));
 
     // 2.3. Add an assignment such that the value pointed to by the new
@@ -695,6 +640,66 @@ goto_programt::targett
 get_loop_head(const unsigned int target_loop_number, goto_functiont &function)
 {
   return get_loop_head_or_end(target_loop_number, function, true);
+}
+
+/// Extract loop invariants from loop end without any checks.
+static exprt
+extract_loop_invariants(const goto_programt::const_targett &loop_end)
+{
+  return static_cast<const exprt &>(
+    loop_end->condition().find(ID_C_spec_loop_invariant));
+}
+
+static exprt extract_loop_assigns(const goto_programt::const_targett &loop_end)
+{
+  return static_cast<const exprt &>(
+    loop_end->condition().find(ID_C_spec_assigns));
+}
+
+static exprt
+extract_loop_decreases(const goto_programt::const_targett &loop_end)
+{
+  return static_cast<const exprt &>(
+    loop_end->condition().find(ID_C_spec_decreases));
+}
+
+exprt get_loop_invariants(
+  const goto_programt::const_targett &loop_end,
+  const bool check_side_effect)
+{
+  auto invariant = extract_loop_invariants(loop_end);
+  if(!invariant.is_nil() && check_side_effect)
+  {
+    if(has_subexpr(invariant, ID_side_effect))
+    {
+      throw incorrect_goto_program_exceptiont(
+        "Loop invariant is not side-effect free.",
+        loop_end->condition().find_source_location());
+    }
+  }
+  return invariant;
+}
+
+exprt get_loop_assigns(const goto_programt::const_targett &loop_end)
+{
+  return extract_loop_assigns(loop_end);
+}
+
+exprt get_loop_decreases(
+  const goto_programt::const_targett &loop_end,
+  const bool check_side_effect)
+{
+  auto decreases_clause = extract_loop_decreases(loop_end);
+  if(!decreases_clause.is_nil() && check_side_effect)
+  {
+    if(has_subexpr(decreases_clause, ID_side_effect))
+    {
+      throw incorrect_goto_program_exceptiont(
+        "Decreases clause is not side-effect free.",
+        loop_end->condition().find_source_location());
+    }
+  }
+  return decreases_clause;
 }
 
 void annotate_invariants(

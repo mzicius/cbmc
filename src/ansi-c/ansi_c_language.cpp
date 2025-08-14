@@ -23,8 +23,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "expr2c.h"
 #include "type2name.h"
 
-#include <fstream>
-
 std::set<std::string> ansi_c_languaget::extensions() const
 {
   return { "c", "i" };
@@ -76,10 +74,17 @@ bool ansi_c_languaget::parse(
   ansi_c_parser.in=&codestr;
   ansi_c_parser.for_has_scope=config.ansi_c.for_has_scope;
   ansi_c_parser.ts_18661_3_Floatn_types=config.ansi_c.ts_18661_3_Floatn_types;
+  ansi_c_parser.__float128_is_keyword = config.ansi_c.__float128_is_keyword;
   ansi_c_parser.float16_type = config.ansi_c.float16_type;
   ansi_c_parser.bf16_type = config.ansi_c.bf16_type;
+  ansi_c_parser.fp16_type = config.ansi_c.fp16_type;
   ansi_c_parser.cpp98=false; // it's not C++
   ansi_c_parser.cpp11=false; // it's not C++
+  ansi_c_parser.c17 =
+    config.ansi_c.c_standard == configt::ansi_ct::c_standardt::C17 ||
+    config.ansi_c.c_standard == configt::ansi_ct::c_standardt::C23;
+  ansi_c_parser.c23 =
+    config.ansi_c.c_standard == configt::ansi_ct::c_standardt::C23;
   ansi_c_parser.mode=config.ansi_c.mode;
 
   ansi_c_scanner_init(ansi_c_parser);
@@ -200,8 +205,10 @@ bool ansi_c_languaget::to_expr(
   ansi_c_parser.in=&i_preprocessed;
   ansi_c_parser.for_has_scope = config.ansi_c.for_has_scope;
   ansi_c_parser.ts_18661_3_Floatn_types=config.ansi_c.ts_18661_3_Floatn_types;
+  ansi_c_parser.__float128_is_keyword = config.ansi_c.__float128_is_keyword;
   ansi_c_parser.float16_type = config.ansi_c.float16_type;
   ansi_c_parser.bf16_type = config.ansi_c.bf16_type;
+  ansi_c_parser.fp16_type = config.ansi_c.fp16_type;
   ansi_c_parser.cpp98 = false; // it's not C++
   ansi_c_parser.cpp11 = false; // it's not C++
   ansi_c_parser.mode = config.ansi_c.mode;

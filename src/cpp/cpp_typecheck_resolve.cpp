@@ -294,23 +294,13 @@ exprt cpp_typecheck_resolvet::convert_identifier(
 
       // check if the member can be applied to the object
       if(
-        object.type().id() == ID_struct_tag ||
-        object.type().id() == ID_union_tag)
+        (object.type().id() != ID_struct_tag &&
+         object.type().id() != ID_union_tag) ||
+        !has_component_rec(object.type(), identifier.identifier, cpp_typecheck))
       {
-        const struct_union_typet &object_type =
-          object.type().id() == ID_struct_tag
-            ? static_cast<const struct_union_typet &>(
-                cpp_typecheck.follow_tag(to_struct_tag_type(object.type())))
-            : static_cast<const struct_union_typet &>(
-                cpp_typecheck.follow_tag(to_union_tag_type(object.type())));
-        if(!has_component_rec(
-             object_type, identifier.identifier, cpp_typecheck))
-        {
-          object.make_nil(); // failed!
-        }
-      }
-      else
+        // failed
         object.make_nil();
+      }
 
       if(object.is_not_nil())
       {
@@ -1675,9 +1665,8 @@ exprt cpp_typecheck_resolvet::resolve(
       return nil_exprt();
 
     cpp_typecheck.error().source_location=result.source_location());
-    cpp_typecheck.str
-      << "error: member '" << result.get(ID_component_name)
-      << "' is not accessible";
+    cpp_typecheck.error() << "member '" << result.get(ID_component_name)
+                          << "' is not accessible" << messaget::eom;
     throw 0;
     #endif
   }
@@ -1693,7 +1682,7 @@ exprt cpp_typecheck_resolvet::resolve(
       cpp_typecheck.error().source_location=source_location;
 
       cpp_typecheck.error()
-        << "error: expected expression, but got type '"
+        << "expected expression, but got type '"
         << cpp_typecheck.to_string(result.type()) << "'" << messaget::eom;
 
       throw 0;
@@ -1709,7 +1698,7 @@ exprt cpp_typecheck_resolvet::resolve(
       cpp_typecheck.error().source_location=source_location;
 
       cpp_typecheck.error()
-        << "error: expected type, but got expression '"
+        << "expected type, but got expression '"
         << cpp_typecheck.to_string(result) << "'" << messaget::eom;
 
       throw 0;

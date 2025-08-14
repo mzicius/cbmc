@@ -706,6 +706,13 @@ do not allow malloc calls to fail by default
 \fB\-\-string\-abstraction\fR
 track C string lengths and zero\-termination
 .TP
+\fB\-\-dfcc\-debug\-lib\fR
+enable debug assertions in the cprover contracts library
+.TP
+\fB\-\-dfcc\-simple\-invalid\-pointer\-model\fR
+use simplified invalid pointer model in the cprover contracts library
+(faster, unsound)
+.TP
 \fB\-\-model\-argc\-argv\fR \fIn\fR
 Create up to \fIn\fR non-deterministic C strings as entries to \fIargv\fR and
 set \fIargc\fR accordingly. In absence of such modelling, \fIargv\fR is left
@@ -849,7 +856,7 @@ empty the function pointer is removed using the standard
 show the loops in the program
 .TP
 \fB\-\-unwind\fR \fInr\fR
-unwind nr times
+unwind all loops \fInr\fR times
 .TP
 \fB\-\-unwindset\fR [\fIT\fR:]\fIL\fR:\fIB\fR,...
 unwind loop \fIL\fR with a bound of \fIB\fR
@@ -860,10 +867,16 @@ unwind loop \fIL\fR with a bound of \fIB\fR
 read unwindset from file
 .TP
 \fB\-\-partial\-loops\fR
-permit paths with partial loops
+permit paths that execute loops only partially (up to the given unwinding bound)
+and then continue beyond the loop even when the loop condition would still hold
+(such paths may be spurious, resulting in false alarms)
+.TP
+\fB\-\-no\-unwinding\-assertions\fR
+do not generate unwinding assertions
 .TP
 \fB\-\-unwinding\-assertions\fR
-generate unwinding assertions
+generate unwinding assertions (which are enabled by default; overrides
+\fB\-\-no\-unwinding\-assertions\fR when both of these are given)
 .TP
 \fB\-\-continue\-as\-loops\fR
 add loop for remaining iterations after unwound part
@@ -1011,7 +1024,13 @@ force aggressive slicer to preserve all direct paths
 .SS "Code contracts:"
 .TP
 \fB\-\-apply\-loop\-contracts\fR
-check and use loop contracts when provided
+.TP
+\fB\-disable\-loop\-contracts\-side\-effect\-check\fR
+UNSOUND OPTION. Disable checking the absence of side effects in loop
+contract clauses. In absence of such checking, loop contracts clauses will
+accept more expressions, such as pure functions and statement expressions.
+But user have to make sure the loop contracts are side-effect free by them self
+to get a sound result.
 .TP
 \fB\-loop\-contracts\-no\-unwind\fR
 do not unwind transformed loops

@@ -412,6 +412,9 @@ perform taint analysis using rules in given file
 \fB\-\-show\-taint\fR
 print taint analysis results on stdout
 .TP
+\fB\-\-show\-local\-bitvector\fR
+perform procedure\-local bitvector analysis
+.TP
 \fB\-\-show\-local\-may\-alias\fR
 perform procedure\-local may alias analysis
 .SS "C/C++ frontend options:"
@@ -425,7 +428,7 @@ set include file (C/C++)
 \fB\-D\fR macro
 define preprocessor macro (C/C++)
 .TP
-\fB\-\-c89\fR, \fB\-\-c99\fR, \fB\-\-c11\fR
+\fB\-\-c89\fR, \fB\-\-c99\fR, \fB\-\-c11\fR, \fB\-\-c17\fR, \fB\-\-c23\fR
 set C language standard (default: c11)
 .TP
 \fB\-\-cpp98\fR, \fB\-\-cpp03\fR, \fB\-\-cpp11\fR
@@ -464,7 +467,7 @@ Set analysis architecture, which defaults to the host architecture. Use one of:
 \fB\-\-os\fR \fIos\fR
 Set analysis operating system, which defaults to the host operating system. Use
 one of: \fBfreebsd\fR, \fBlinux\fR, \fBmacos\fR, \fBnetbsd\fR, \fBopenbsd\fR,
-\fBsolaris\fR, or \fBwindows\fR.
+\fBsolaris\fR, \fBhurd\fR, or \fBwindows\fR.
 .TP
 \fB\-\-i386\-linux\fR, \fB\-\-i386\-win32\fR, \fB\-\-i386\-macos\fR, \fB\-\-ppc\-macos\fR, \fB\-\-win32\fR, \fB\-\-winx64\fR
 Set analysis architecture and operating system.
@@ -585,6 +588,13 @@ set malloc failure mode to return null
 .TP
 \fB\-\-string\-abstraction\fR
 track C string lengths and zero\-termination
+.TP
+\fB\-\-dfcc\-debug\-lib\fR
+enable debug assertions in the cprover contracts library
+.TP
+\fB\-\-dfcc\-simple\-invalid\-pointer\-model\fR
+use simplified invalid pointer model in the cprover contracts library
+(faster, unsound)
 .SS "Standard Checks"
 From version \fB6.0\fR onwards, \fBcbmc\fR, \fBgoto-analyzer\fR and some other tools
 apply some checks to the program by default (called the "standard checks"), with the

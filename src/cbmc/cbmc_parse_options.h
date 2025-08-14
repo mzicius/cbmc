@@ -21,7 +21,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/goto_trace.h>
 
 #include <ansi-c/ansi_c_language.h>
-#include <ansi-c/goto_check_c.h>
+#include <ansi-c/goto-conversion/goto_check_c.h>
 #include <goto-checker/bmc_util.h>
 #include <goto-instrument/cover.h>
 #include <json/json_interface.h>
@@ -55,7 +55,6 @@ class optionst;
   OPT_SHOW_PROPERTIES \
   "(show-symbol-table)(show-parse-tree)" \
   "(drop-unused-functions)" \
-  "(havoc-undefined-functions)" \
   "(property):(stop-on-fail)(trace)" \
   "(verbosity):(no-library)" \
   "(nondet-static)" \

@@ -12,9 +12,9 @@ Author: Michael Tautschnig
 #include <util/byte_operators.h>
 #include <util/c_types.h>
 #include <util/pointer_offset_size.h>
-#include <util/simplify_expr.h>
 
 #include "goto_symex_state.h"
+#include "simplify_expr_with_value_set.h"
 #include "symex_target.h"
 
 #define ENABLE_ARRAY_FIELD_SENSITIVITY
@@ -51,14 +51,14 @@ exprt field_sensitivityt::apply(
     !write && expr.id() == ID_member &&
     to_member_expr(expr).struct_op().id() == ID_struct)
   {
-    return simplify_opt(std::move(expr), ns);
+    return simplify_opt(std::move(expr), state.value_set, ns);
   }
 #ifdef ENABLE_ARRAY_FIELD_SENSITIVITY
   else if(
     !write && expr.id() == ID_index &&
     to_index_expr(expr).array().id() == ID_array)
   {
-    return simplify_opt(std::move(expr), ns);
+    return simplify_opt(std::move(expr), state.value_set, ns);
   }
 #endif // ENABLE_ARRAY_FIELD_SENSITIVITY
   else if(expr.id() == ID_member)
@@ -99,7 +99,10 @@ exprt field_sensitivityt::apply(
        be.op().type().id() == ID_union_tag) &&
       is_ssa_expr(be.op()) && be.offset().is_constant())
     {
-      const union_typet &type = to_union_type(ns.follow(be.op().type()));
+      const union_typet &type =
+        be.op().type().id() == ID_union_tag
+          ? ns.follow_tag(to_union_tag_type(be.op().type()))
+          : to_union_type(be.op().type());
       for(const auto &comp : type.components())
       {
         ssa_exprt tmp = to_ssa_expr(be.op());
@@ -148,7 +151,10 @@ exprt field_sensitivityt::apply(
     // than only the full array
     index_exprt &index = to_index_expr(expr);
     if(should_simplify)
-      simplify(index.index(), ns);
+    {
+      simplify_expr_with_value_sett{state.value_set, language_mode, ns}
+        .simplify(index.index());
+    }
 
     if(
       is_ssa_expr(index.array()) && index.array().type().id() == ID_array &&
@@ -157,9 +163,12 @@ exprt field_sensitivityt::apply(
       // place the entire index expression, not just the array operand, in an
       // SSA expression
       ssa_exprt tmp = to_ssa_expr(index.array());
-      auto l2_index = state.rename(index.index(), ns);
+      auto l2_index = state.rename(index.index(), ns).get();
       if(should_simplify)
-        l2_index.simplify(ns);
+      {
+        simplify_expr_with_value_sett{state.value_set, language_mode, ns}
+          .simplify(l2_index);
+      }
       bool was_l2 = !tmp.get_level_2().empty();
       exprt l2_size =
         state.rename(to_array_type(index.array().type()).size(), ns).get();
@@ -178,14 +187,14 @@ exprt field_sensitivityt::apply(
         numeric_cast_v<mp_integer>(to_constant_expr(l2_size)) <=
           max_field_sensitivity_array_size)
       {
-        if(l2_index.get().is_constant())
+        if(l2_index.is_constant())
         {
           // place the entire index expression, not just the array operand,
           // in an SSA expression
           ssa_exprt ssa_array = to_ssa_expr(index.array());
           ssa_array.remove_level_2();
           index.array() = ssa_array.get_original_expr();
-          index.index() = l2_index.get();
+          index.index() = l2_index;
           tmp.set_expression(index);
           if(was_l2)
           {
@@ -221,9 +230,12 @@ exprt field_sensitivityt::get_fields(
     (!disjoined_fields_only && (ssa_expr.type().id() == ID_union ||
                                 ssa_expr.type().id() == ID_union_tag)))
   {
-    const struct_union_typet &type =
-      to_struct_union_type(ns.follow(ssa_expr.type()));
-    const struct_union_typet::componentst &components = type.components();
+    const struct_union_typet::componentst &components =
+      (ssa_expr.type().id() == ID_struct_tag ||
+       ssa_expr.type().id() == ID_union_tag)
+        ? ns.follow_tag(to_struct_or_union_tag_type(ssa_expr.type()))
+            .components()
+        : to_struct_union_type(ssa_expr.type()).components();
 
     exprt::operandst fields;
     fields.reserve(components.size());
@@ -371,7 +383,10 @@ void field_sensitivityt::field_assignments_rec(
   else if(
     ssa_rhs.type().id() == ID_struct || ssa_rhs.type().id() == ID_struct_tag)
   {
-    const struct_typet &type = to_struct_type(ns.follow(ssa_rhs.type()));
+    const struct_typet &type =
+      ssa_rhs.type().id() == ID_struct_tag
+        ? ns.follow_tag(to_struct_tag_type(ssa_rhs.type()))
+        : to_struct_type(ssa_rhs.type());
     const struct_union_typet::componentst &components = type.components();
 
     PRECONDITION(
@@ -384,7 +399,10 @@ void field_sensitivityt::field_assignments_rec(
       const exprt member_rhs = apply(
         ns,
         state,
-        simplify_opt(member_exprt{ssa_rhs, comp.get_name(), comp.type()}, ns),
+        simplify_opt(
+          member_exprt{ssa_rhs, comp.get_name(), comp.type()},
+          state.value_set,
+          ns),
         false);
 
       const exprt &member_lhs = *fs_it;
@@ -409,7 +427,10 @@ void field_sensitivityt::field_assignments_rec(
   else if(
     ssa_rhs.type().id() == ID_union || ssa_rhs.type().id() == ID_union_tag)
   {
-    const union_typet &type = to_union_type(ns.follow(ssa_rhs.type()));
+    const union_typet &type =
+      ssa_rhs.type().id() == ID_union_tag
+        ? ns.follow_tag(to_union_tag_type(ssa_rhs.type()))
+        : to_union_type(ssa_rhs.type());
     const struct_union_typet::componentst &components = type.components();
 
     PRECONDITION(
@@ -425,6 +446,7 @@ void field_sensitivityt::field_assignments_rec(
         simplify_opt(
           make_byte_extract(
             ssa_rhs, from_integer(0, c_index_type()), comp.type()),
+          state.value_set,
           ns),
         false);
 
@@ -464,7 +486,9 @@ void field_sensitivityt::field_assignments_rec(
         ns,
         state,
         simplify_opt(
-          index_exprt{ssa_rhs, from_integer(i, type->index_type())}, ns),
+          index_exprt{ssa_rhs, from_integer(i, type->index_type())},
+          state.value_set,
+          ns),
         false);
 
       const exprt &index_lhs = *fs_it;
@@ -546,10 +570,14 @@ bool field_sensitivityt::is_divisible(
   return false;
 }
 
-exprt field_sensitivityt::simplify_opt(exprt e, const namespacet &ns) const
+exprt field_sensitivityt::simplify_opt(
+  exprt e,
+  const value_sett &value_set,
+  const namespacet &ns) const
 {
   if(!should_simplify)
     return e;
 
-  return simplify_expr(std::move(e), ns);
+  simplify_expr_with_value_sett{value_set, language_mode, ns}.simplify(e);
+  return e;
 }

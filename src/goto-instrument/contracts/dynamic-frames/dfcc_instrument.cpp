@@ -20,13 +20,13 @@ Author: Remi Delmas, delmarsd@amazon.com
 
 #include <goto-programs/goto_model.h>
 #include <goto-programs/remove_skip.h>
+#include <goto-programs/unwindset.h>
 
 #include <ansi-c/c_expr.h>
 #include <ansi-c/c_object_factory_parameters.h>
 #include <goto-instrument/contracts/utils.h>
 #include <goto-instrument/generate_function_bodies.h>
 #include <goto-instrument/unwind.h>
-#include <goto-instrument/unwindset.h>
 #include <langapi/language_util.h>
 
 #include "dfcc_cfg_info.h"
@@ -37,6 +37,7 @@ Author: Remi Delmas, delmarsd@amazon.com
 #include "dfcc_is_fresh.h"
 #include "dfcc_library.h"
 #include "dfcc_obeys_contract.h"
+#include "dfcc_pointer_equals.h"
 #include "dfcc_pointer_in_range.h"
 #include "dfcc_spec_functions.h"
 #include "dfcc_utils.h"
@@ -237,7 +238,7 @@ bool dfcc_instrumentt::do_not_instrument(const irep_idt &id) const
 
 void dfcc_instrumentt::instrument_harness_function(
   const irep_idt &function_id,
-  const dfcc_loop_contract_modet loop_contract_mode,
+  const loop_contract_configt &loop_contract_config,
   std::set<irep_idt> &function_pointer_contracts)
 {
   // never instrument a function twice
@@ -272,7 +273,7 @@ void dfcc_instrumentt::instrument_harness_function(
     goto_function,
     write_set,
     local_statics,
-    loop_contract_mode,
+    loop_contract_config,
     function_pointer_contracts);
 
   auto &body = goto_function.body;
@@ -316,7 +317,7 @@ dfcc_instrumentt::get_local_statics(const irep_idt &function_id)
 
 void dfcc_instrumentt::instrument_function(
   const irep_idt &function_id,
-  const dfcc_loop_contract_modet loop_contract_mode,
+  const loop_contract_configt &loop_contract_config,
   std::set<irep_idt> &function_pointer_contracts)
 {
   // never instrument a function twice
@@ -345,14 +346,14 @@ void dfcc_instrumentt::instrument_function(
     goto_function,
     write_set,
     local_statics,
-    loop_contract_mode,
+    loop_contract_config,
     function_pointer_contracts);
 }
 
 void dfcc_instrumentt::instrument_wrapped_function(
   const irep_idt &wrapped_function_id,
   const irep_idt &initial_function_id,
-  const dfcc_loop_contract_modet loop_contract_mode,
+  const loop_contract_configt &loop_contract_config,
   std::set<irep_idt> &function_pointer_contracts)
 {
   // never instrument a function twice
@@ -383,7 +384,7 @@ void dfcc_instrumentt::instrument_wrapped_function(
     goto_function,
     write_set,
     local_statics,
-    loop_contract_mode,
+    loop_contract_config,
     function_pointer_contracts);
 }
 
@@ -399,10 +400,11 @@ void dfcc_instrumentt::instrument_goto_program(
 
   // build control flow graph information
   dfcc_cfg_infot cfg_info(
+    goto_model,
     function_id,
     goto_function,
     write_set,
-    dfcc_loop_contract_modet::NONE,
+    loop_contract_configt{false},
     goto_model.symbol_table,
     message_handler,
     library);
@@ -429,7 +431,7 @@ void dfcc_instrumentt::instrument_goto_function(
   goto_functiont &goto_function,
   const exprt &write_set,
   const std::set<symbol_exprt> &local_statics,
-  const dfcc_loop_contract_modet loop_contract_mode,
+  const loop_contract_configt &loop_contract_config,
   std::set<irep_idt> &function_pointer_contracts)
 {
   if(!goto_function.body_available())
@@ -448,10 +450,11 @@ void dfcc_instrumentt::instrument_goto_function(
 
   // build control flow graph information
   dfcc_cfg_infot cfg_info(
+    goto_model,
     function_id,
     goto_function,
     write_set,
-    loop_contract_mode,
+    loop_contract_config,
     goto_model.symbol_table,
     message_handler,
     library);
@@ -468,13 +471,13 @@ void dfcc_instrumentt::instrument_goto_function(
   // recalculate numbers, etc.
   goto_model.goto_functions.update();
 
-  if(loop_contract_mode != dfcc_loop_contract_modet::NONE)
+  if(loop_contract_config.apply_loop_contracts)
   {
     apply_loop_contracts(
       function_id,
       goto_function,
       cfg_info,
-      loop_contract_mode,
+      loop_contract_config,
       local_statics,
       function_pointer_contracts);
   }
@@ -523,6 +526,11 @@ void dfcc_instrumentt::instrument_instructions(
   dfcc_cfg_infot &cfg_info,
   std::set<irep_idt> &function_pointer_contracts)
 {
+  // rewrite pointer_equals calls
+  dfcc_pointer_equalst pointer_equals(library, message_handler);
+  pointer_equals.rewrite_calls(
+    goto_program, first_instruction, last_instruction, cfg_info);
+
   // rewrite pointer_in_range calls
   dfcc_pointer_in_ranget pointer_in_range(library, message_handler);
   pointer_in_range.rewrite_calls(
@@ -693,83 +701,44 @@ void dfcc_instrumentt::instrument_lhs(
   check_source_location.set_comment(
     "Check that " + from_expr_using_mode(ns, mode, lhs) + " is assignable");
 
-  if(cfg_info.must_check_lhs(target))
-  {
-    // ```
-    // IF !write_set GOTO skip_target;
-    // DECL check_assign: bool;
-    // CALL check_assign = check_assignment(write_set, &lhs, sizeof(lhs));
-    // ASSERT(check_assign);
-    // DEAD check_assign;
-    // skip_target: SKIP;
-    // ----
-    // ASSIGN lhs := rhs;
-    // ```
+  // ```
+  // IF !write_set GOTO skip_target;
+  // DECL check_assign: bool;
+  // CALL check_assign = check_assignment(write_set, &lhs, sizeof(lhs));
+  // ASSERT(check_assign);
+  // DEAD check_assign;
+  // skip_target: SKIP;
+  // ----
+  // ASSIGN lhs := rhs;
+  // ```
 
-    const auto check_var = dfcc_utilst::create_symbol(
-      goto_model.symbol_table,
-      bool_typet(),
-      function_id,
-      "__check_lhs_assignment",
-      lhs_source_location);
+  const auto check_var = dfcc_utilst::create_symbol(
+    goto_model.symbol_table,
+    bool_typet(),
+    function_id,
+    "__check_lhs_assignment",
+    lhs_source_location);
 
-    payload.add(goto_programt::make_decl(check_var, lhs_source_location));
+  payload.add(goto_programt::make_decl(check_var, lhs_source_location));
 
-    payload.add(goto_programt::make_function_call(
-      library.write_set_check_assignment_call(
-        check_var,
-        write_set,
-        typecast_exprt::conditional_cast(
-          address_of_exprt(lhs), pointer_type(empty_typet{})),
-        dfcc_utilst::make_sizeof_expr(lhs, ns),
-        lhs_source_location),
-      lhs_source_location));
+  payload.add(goto_programt::make_function_call(
+    library.write_set_check_assignment_call(
+      check_var,
+      write_set,
+      typecast_exprt::conditional_cast(
+        address_of_exprt(lhs), pointer_type(empty_typet{})),
+      dfcc_utilst::make_sizeof_expr(lhs, ns),
+      lhs_source_location),
+    lhs_source_location));
 
-    payload.add(
-      goto_programt::make_assertion(check_var, check_source_location));
-    payload.add(goto_programt::make_dead(check_var, check_source_location));
-  }
-  else
-  {
-    // ```
-    // IF !write_set GOTO skip_target;
-    // ASSERT(true);
-    // skip_target: SKIP;
-    // ----
-    // ASSIGN lhs := rhs;
-    // ```
-    payload.add(
-      goto_programt::make_assertion(true_exprt(), check_source_location));
-  }
+  payload.add(goto_programt::make_assertion(check_var, check_source_location));
+  payload.add(goto_programt::make_dead(check_var, check_source_location));
 
   auto label_instruction =
     payload.add(goto_programt::make_skip(lhs_source_location));
   goto_instruction->complete_goto(label_instruction);
 
   insert_before_swap_and_advance(goto_program, target, payload);
-}
-
-/// Checks if lhs is the `dead_object`, and if the rhs
-/// is an `if_exprt(nondet, ptr, dead_object)` expression.
-/// Returns `ptr` if the pattern was matched, nullptr otherwise.
-std::optional<exprt>
-dfcc_instrumentt::is_dead_object_update(const exprt &lhs, const exprt &rhs)
-{
-  if(
-    lhs.id() == ID_symbol &&
-    to_symbol_expr(lhs).get_identifier() == CPROVER_PREFIX "dead_object")
-  {
-    // error out if rhs is different from `if_exprt(nondet, ptr, dead_object)`
-    PRECONDITION(rhs.id() == ID_if);
-    auto &if_expr = to_if_expr(rhs);
-    PRECONDITION(can_cast_expr<side_effect_expr_nondett>(if_expr.cond()));
-    PRECONDITION(if_expr.false_case() == lhs);
-    return if_expr.true_case();
-  }
-  else
-  {
-    return {};
-  }
 }
 
 void dfcc_instrumentt::instrument_assign(
@@ -784,44 +753,8 @@ void dfcc_instrumentt::instrument_assign(
   auto &write_set = cfg_info.get_write_set(target);
 
   // check the lhs
-  instrument_lhs(function_id, target, lhs, goto_program, cfg_info);
-
-  // handle dead_object updates (created by __builtin_alloca for instance)
-  // Remark: we do not really need to track this deallocation since the default
-  // CBMC checks are already able to detect writes to DEAD objects
-  const auto dead_ptr = is_dead_object_update(lhs, rhs);
-  if(dead_ptr.has_value())
-  {
-    // ```
-    // ASSIGN dead_object := if_exprt(nondet, ptr, dead_object);
-    // ----
-    // IF !write_set GOTO skip_target;
-    // CALL record_deallocated(write_set, ptr);
-    // skip_target: SKIP;
-    // ```
-
-    // step over the instruction
-    target++;
-
-    goto_programt payload;
-
-    auto goto_instruction = payload.add(goto_programt::make_incomplete_goto(
-      dfcc_utilst::make_null_check_expr(write_set), target_location));
-
-    payload.add(goto_programt::make_function_call(
-      library.write_set_record_dead_call(
-        write_set, dead_ptr.value(), target_location),
-      target_location));
-
-    auto label_instruction =
-      payload.add(goto_programt::make_skip(target_location));
-    goto_instruction->complete_goto(label_instruction);
-
-    insert_before_swap_and_advance(goto_program, target, payload);
-
-    // step back
-    target--;
-  }
+  if(cfg_info.must_check_lhs(target))
+    instrument_lhs(function_id, target, lhs, goto_program, cfg_info);
 
   // is the rhs expression a side_effect("allocate") expression ?
   if(rhs.id() == ID_side_effect && rhs.get(ID_statement) == ID_allocate)
@@ -1016,7 +949,7 @@ void dfcc_instrumentt::instrument_function_call(
   auto &write_set = cfg_info.get_write_set(target);
 
   // Instrument the lhs if any.
-  if(target->call_lhs().is_not_nil())
+  if(target->call_lhs().is_not_nil() && cfg_info.must_check_lhs(target))
   {
     instrument_lhs(
       function_id, target, target->call_lhs(), goto_program, cfg_info);
@@ -1239,11 +1172,11 @@ void dfcc_instrumentt::apply_loop_contracts(
   const irep_idt &function_id,
   goto_functiont &goto_function,
   dfcc_cfg_infot &cfg_info,
-  const dfcc_loop_contract_modet loop_contract_mode,
+  const loop_contract_configt &loop_contract_config,
   const std::set<symbol_exprt> &local_statics,
   std::set<irep_idt> &function_pointer_contracts)
 {
-  PRECONDITION(loop_contract_mode != dfcc_loop_contract_modet::NONE);
+  PRECONDITION(loop_contract_config.apply_loop_contracts);
   cfg_info.get_loops_toposorted();
 
   std::list<std::string> to_unwind;
@@ -1252,7 +1185,7 @@ void dfcc_instrumentt::apply_loop_contracts(
   for(const auto &loop_id : cfg_info.get_loops_toposorted())
   {
     const auto &loop = cfg_info.get_loop_info(loop_id);
-    if(loop.invariant.is_nil() && loop.decreases.empty())
+    if(loop.must_skip())
     {
       // skip loops that do not have contracts
       log.warning() << "loop " << function_id << "." << loop.cbmc_loop_id
@@ -1273,7 +1206,7 @@ void dfcc_instrumentt::apply_loop_contracts(
   }
 
   // If required, unwind all transformed loops to yield base and step cases
-  if(loop_contract_mode == dfcc_loop_contract_modet::APPLY_UNWIND)
+  if(loop_contract_config.unwind_transformed_loops)
   {
     unwindsett unwindset{goto_model};
     unwindset.parse_unwindset(to_unwind, log.get_message_handler());

@@ -196,6 +196,7 @@ exprt value_set_dereferencet::dereference(
 
     if(
       can_cast_type<pointer_typet>(pointer_expr.type()) &&
+      pointer_expr.id() != ID_typecast &&
       !can_cast_type<pointer_typet>(offset_expr.type()) &&
       !can_cast_expr<constant_exprt>(offset_expr))
     {
@@ -372,9 +373,12 @@ bool value_set_dereferencet::dereference_type_compare(
     return true; // ok, they just match
 
   // check for struct prefixes
-
-  const typet ot_base=ns.follow(object_type),
-              dt_base=ns.follow(dereference_type);
+  const typet &ot_base = object_type.id() == ID_struct_tag
+                           ? ns.follow_tag(to_struct_tag_type(object_type))
+                           : object_type;
+  const typet &dt_base = dereference_type.id() == ID_struct_tag
+                           ? ns.follow_tag(to_struct_tag_type(dereference_type))
+                           : dereference_type;
 
   if(ot_base.id()==ID_struct &&
      dt_base.id()==ID_struct)

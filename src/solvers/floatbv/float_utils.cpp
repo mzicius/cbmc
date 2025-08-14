@@ -22,11 +22,14 @@ void float_utilst::set_rounding_mode(const bvt &src)
     bv_utils.build_constant(ieee_floatt::ROUND_TO_MINUS_INF, src.size());
   bvt round_to_zero=
     bv_utils.build_constant(ieee_floatt::ROUND_TO_ZERO, src.size());
+  bvt round_to_away =
+    bv_utils.build_constant(ieee_floatt::ROUND_TO_AWAY, src.size());
 
   rounding_mode_bits.round_to_even=bv_utils.equal(src, round_to_even);
   rounding_mode_bits.round_to_plus_inf=bv_utils.equal(src, round_to_plus_inf);
   rounding_mode_bits.round_to_minus_inf=bv_utils.equal(src, round_to_minus_inf);
   rounding_mode_bits.round_to_zero=bv_utils.equal(src, round_to_zero);
+  rounding_mode_bits.round_to_away = bv_utils.equal(src, round_to_away);
 }
 
 bvt float_utilst::from_signed_integer(const bvt &src)
@@ -44,7 +47,7 @@ bvt float_utilst::from_signed_integer(const bvt &src)
       src.size()-1,
       address_bits(src.size() - 1) + 1);
 
-  return rounder(result);
+  return round_and_pack(result);
 }
 
 bvt float_utilst::from_unsigned_integer(const bvt &src)
@@ -61,7 +64,7 @@ bvt float_utilst::from_unsigned_integer(const bvt &src)
 
   result.sign=const_literal(false);
 
-  return rounder(result);
+  return round_and_pack(result);
 }
 
 bvt float_utilst::to_signed_integer(
@@ -136,7 +139,7 @@ bvt float_utilst::to_integer(
   return result;
 }
 
-bvt float_utilst::build_constant(const ieee_floatt &src)
+bvt float_utilst::build_constant(const ieee_float_valuet &src)
 {
   unbiased_floatt result;
 
@@ -147,6 +150,36 @@ bvt float_utilst::build_constant(const ieee_floatt &src)
   result.fraction=bv_utils.build_constant(src.get_fraction(), spec.f+1);
 
   return pack(bias(result));
+}
+
+bvt float_utilst::round_to_integral(const bvt &src)
+{
+  PRECONDITION(src.size() == spec.width());
+
+  // Zero? NaN? Infinity?
+  auto unpacked = unpack(src);
+  auto is_special = prop.lor({unpacked.zero, unpacked.NaN, unpacked.infinity});
+
+  // add 2^f, where f is the number of fraction bits,
+  // by adding f to the exponent
+  auto magic_number = ieee_floatt{
+    spec, ieee_floatt::rounding_modet::ROUND_TO_ZERO, power(2, spec.f)};
+
+  auto magic_number_bv = build_constant(magic_number);
+
+  // abs(x) >= magic_number? If so, then there is no fractional part.
+  literalt ge_magic_number = relation(abs(src), relt::GE, magic_number_bv);
+
+  magic_number_bv.back() = src.back(); // copy sign bit
+
+  auto tmp1 = add_sub(src, magic_number_bv, false);
+
+  auto tmp2 = add_sub(tmp1, magic_number_bv, true);
+
+  // restore the original sign bit
+  tmp2.back() = src.back();
+
+  return bv_utils.select(prop.lor(is_special, ge_magic_number), src, tmp2);
 }
 
 bvt float_utilst::conversion(
@@ -216,7 +249,7 @@ bvt float_utilst::conversion(
     // we actually need to round
     unbiased_floatt result=unpack(src);
     spec=dest_spec;
-    return rounder(result);
+    return round_and_pack(result);
   }
 }
 
@@ -382,7 +415,7 @@ bvt float_utilst::add_sub(
   return pack(bias(result));
   #endif
 
-  return rounder(result);
+  return round_and_pack(result);
 }
 
 /// Limits the shift distance
@@ -458,7 +491,7 @@ bvt float_utilst::mul(const bvt &src1, const bvt &src2)
     result.NaN=prop.lor(NaN_cond);
   }
 
-  return rounder(result);
+  return round_and_pack(result);
 }
 
 bvt float_utilst::div(const bvt &src1, const bvt &src2)
@@ -537,7 +570,7 @@ bvt float_utilst::div(const bvt &src1, const bvt &src2)
   result.fraction=bv_utils.select(force_zero,
     bv_utils.zeros(result.fraction.size()), result.fraction);
 
-  return rounder(result);
+  return round_and_pack(result);
 }
 
 bvt float_utilst::rem(const bvt &src1, const bvt &src2)
@@ -901,11 +934,11 @@ void float_utilst::denormalization_shift(bvt &fraction, bvt &exponent)
       exponent);
 }
 
-bvt float_utilst::rounder(const unbiased_floatt &src)
+float_utilst::unbiased_floatt float_utilst::rounder(const unbiased_floatt &src)
 {
   // incoming: some fraction (with explicit 1),
   //           some exponent without bias
-  // outgoing: rounded, with right size, with hidden bit, bias
+  // outgoing: rounded, with right size, but still unpacked
 
   bvt aligned_fraction=src.fraction,
       aligned_exponent=src.exponent;
@@ -936,7 +969,12 @@ bvt float_utilst::rounder(const unbiased_floatt &src)
   round_fraction(result);
   round_exponent(result);
 
-  return pack(bias(result));
+  return result;
+}
+
+bvt float_utilst::round_and_pack(const unbiased_floatt &src)
+{
+  return pack(bias(rounder(src)));
 }
 
 /// rounding decision for fraction using sticky bit
@@ -990,12 +1028,18 @@ literalt float_utilst::fraction_rounding_decision(
   literalt round_to_zero=
     const_literal(false);
 
+  // round-to-nearest (ties to away)
+  literalt round_to_away = rounding_bit;
+
   // now select appropriate one
+  // clang-format off
   return prop.lselect(rounding_mode_bits.round_to_even, round_to_even,
          prop.lselect(rounding_mode_bits.round_to_plus_inf, round_to_plus_inf,
          prop.lselect(rounding_mode_bits.round_to_minus_inf, round_to_minus_inf,
          prop.lselect(rounding_mode_bits.round_to_zero, round_to_zero,
-           prop.new_variable())))); // otherwise non-det
+         prop.lselect(rounding_mode_bits.round_to_away, round_to_away,
+           prop.new_variable()))))); // otherwise non-det
+  // clang-format on
 }
 
 void float_utilst::round_fraction(unbiased_floatt &result)
@@ -1268,14 +1312,14 @@ bvt float_utilst::pack(const biased_floatt &src)
   return result;
 }
 
-ieee_floatt float_utilst::get(const bvt &src) const
+ieee_float_valuet float_utilst::get(const bvt &src) const
 {
   mp_integer int_value=0;
 
   for(std::size_t i=0; i<src.size(); i++)
     int_value+=power(2, i)*prop.l_get(src[i]).is_true();
 
-  ieee_floatt result;
+  ieee_float_valuet result;
   result.spec=spec;
   result.unpack(int_value);
 

@@ -52,10 +52,14 @@ static bool convert(
   ansi_c_parser.in=&in;
   ansi_c_parser.for_has_scope=config.ansi_c.for_has_scope;
   ansi_c_parser.ts_18661_3_Floatn_types = config.ansi_c.ts_18661_3_Floatn_types;
+  ansi_c_parser.__float128_is_keyword = config.ansi_c.__float128_is_keyword;
   ansi_c_parser.float16_type = config.ansi_c.float16_type;
   ansi_c_parser.bf16_type = config.ansi_c.bf16_type;
+  ansi_c_parser.fp16_type = config.ansi_c.fp16_type;
   ansi_c_parser.cpp98=false; // it's not C++
   ansi_c_parser.cpp11=false; // it's not C++
+  ansi_c_parser.c17 = false; // we do C11 for now
+  ansi_c_parser.c23 = false; // we do C11 for now
   ansi_c_parser.mode=config.ansi_c.mode;
 
   ansi_c_scanner_init(ansi_c_parser);
@@ -184,6 +188,15 @@ bool builtin_factory(
         return convert(identifier, s, symbol_table, mh);
 
       if(find_pattern(pattern, gcc_builtin_headers_ia32_6, s))
+        return convert(identifier, s, symbol_table, mh);
+
+      if(find_pattern(pattern, gcc_builtin_headers_ia32_7, s))
+        return convert(identifier, s, symbol_table, mh);
+
+      if(find_pattern(pattern, gcc_builtin_headers_ia32_8, s))
+        return convert(identifier, s, symbol_table, mh);
+
+      if(find_pattern(pattern, gcc_builtin_headers_ia32_9, s))
         return convert(identifier, s, symbol_table, mh);
     }
     else if(config.ansi_c.arch=="arm64" ||

@@ -53,8 +53,6 @@ void c_typecheck_baset::typecheck_symbol(symbolt &symbol)
 {
   bool is_function=symbol.type.id()==ID_code;
 
-  const typet &final_type=follow(symbol.type);
-
   // set a few flags
   symbol.is_lvalue=!symbol.is_type && !symbol.is_macro;
 
@@ -91,15 +89,15 @@ void c_typecheck_baset::typecheck_symbol(symbolt &symbol)
   }
 
   // set the pretty name
-  if(symbol.is_type && final_type.id() == ID_struct)
+  if(symbol.is_type && symbol.type.id() == ID_struct)
   {
     symbol.pretty_name="struct "+id2string(symbol.base_name);
   }
-  else if(symbol.is_type && final_type.id() == ID_union)
+  else if(symbol.is_type && symbol.type.id() == ID_union)
   {
     symbol.pretty_name="union "+id2string(symbol.base_name);
   }
-  else if(symbol.is_type && final_type.id() == ID_c_enum)
+  else if(symbol.is_type && symbol.type.id() == ID_c_enum)
   {
     symbol.pretty_name="enum "+id2string(symbol.base_name);
   }
@@ -191,8 +189,8 @@ void c_typecheck_baset::typecheck_redefinition_type(
   symbolt &old_symbol,
   symbolt &new_symbol)
 {
-  const typet &final_old=follow(old_symbol.type);
-  const typet &final_new=follow(new_symbol.type);
+  const typet &final_old = old_symbol.type;
+  const typet &final_new = new_symbol.type;
 
   // see if we had something incomplete before
   if(
@@ -260,8 +258,8 @@ void c_typecheck_baset::typecheck_redefinition_type(
     else if(
       config.ansi_c.os == configt::ansi_ct::ost::OS_WIN &&
       final_new.id() == ID_pointer && final_old.id() == ID_pointer &&
-      follow(to_pointer_type(final_new).base_type()).id() == ID_c_enum &&
-      follow(to_pointer_type(final_old).base_type()).id() == ID_c_enum)
+      to_pointer_type(final_new).base_type().id() == ID_c_enum &&
+      to_pointer_type(final_old).base_type().id() == ID_c_enum)
     {
       // under Windows, ignore this silently;
       // MSC doesn't think this is a problem, but GCC complains.
@@ -269,7 +267,7 @@ void c_typecheck_baset::typecheck_redefinition_type(
     else
     {
       // see if it changed
-      if(follow(new_symbol.type)!=follow(old_symbol.type))
+      if(new_symbol.type != old_symbol.type)
       {
         error().source_location=new_symbol.location;
         error() << "type symbol '" << new_symbol.display_name()
@@ -321,8 +319,8 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
   symbolt &old_symbol,
   symbolt &new_symbol)
 {
-  const typet &final_old=follow(old_symbol.type);
-  const typet &initial_new=follow(new_symbol.type);
+  const typet &final_old = old_symbol.type;
+  const typet &initial_new = new_symbol.type;
 
   if(
     final_old.id() == ID_array &&
@@ -351,7 +349,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
   if(new_symbol.type.id() != ID_code && !new_symbol.is_macro)
     do_initializer(new_symbol);
 
-  const typet &final_new=follow(new_symbol.type);
+  const typet &final_new = new_symbol.type;
 
   // K&R stuff?
   if(old_symbol.type.id()==ID_KnR)
@@ -375,7 +373,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
     if(final_old.id()!=ID_code)
     {
       error().source_location=new_symbol.location;
-      error() << "error: function symbol '" << new_symbol.display_name()
+      error() << "function symbol '" << new_symbol.display_name()
               << "' redefined with a different type:\n"
               << "Original: " << to_string(old_symbol.type) << "\n"
               << "     New: " << to_string(new_symbol.type) << eom;
@@ -548,9 +546,10 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
       // int (*f) ();
     }
     else if(
-      final_old.id() == ID_struct && final_new.id() == ID_struct &&
+      final_old.id() == ID_struct_tag && final_new.id() == ID_struct_tag &&
       is_instantiation_of_flexible_array(
-        to_struct_type(final_old), to_struct_type(final_new)))
+        follow_tag(to_struct_tag_type(final_old)),
+        follow_tag(to_struct_tag_type(final_new))))
     {
       old_symbol.type = new_symbol.type;
     }
@@ -669,6 +668,10 @@ void c_typecheck_baset::apply_asm_label(
   {
     symbol.name=asm_label;
     symbol.base_name=asm_label;
+    // asm renaming may be combined with varied return types - make sure the
+    // actual definition sets the final type
+    if(symbol.type.id() == ID_code)
+      symbol.type.set(ID_C_incomplete, true);
   }
 
   if(symbol.name!=orig_name)
@@ -679,9 +682,8 @@ void c_typecheck_baset::apply_asm_label(
       if(asm_label_map[orig_name]!=asm_label)
       {
         error().source_location=symbol.location;
-        error() << "error: replacing asm renaming "
-                << asm_label_map[orig_name] << " by "
-                << asm_label << eom;
+        error() << "replacing asm renaming " << asm_label_map[orig_name]
+                << " by " << asm_label << eom;
         throw 0;
       }
     }

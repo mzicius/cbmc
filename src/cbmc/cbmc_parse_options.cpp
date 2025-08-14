@@ -19,7 +19,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/version.h>
 
 #include <goto-programs/initialize_goto_model.h>
-#include <goto-programs/link_to_library.h>
 #include <goto-programs/loop_ids.h>
 #include <goto-programs/process_goto_program.h>
 #include <goto-programs/read_goto_binary.h>
@@ -34,6 +33,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <ansi-c/c_preprocess.h>
 #include <ansi-c/cprover_library.h>
 #include <ansi-c/gcc_version.h>
+#include <ansi-c/goto-conversion/link_to_library.h>
 #include <assembler/remove_asm.h>
 #include <cpp/cprover_library.h>
 #include <goto-checker/all_properties_verifier.h>
@@ -285,9 +285,6 @@ void cbmc_parse_optionst::get_command_line_options(optionst &options)
   if(cmdline.isset("drop-unused-functions"))
     options.set_option("drop-unused-functions", true);
 
-  if(cmdline.isset("havoc-undefined-functions"))
-    options.set_option("havoc-undefined-functions", true);
-
   if(cmdline.isset("string-abstraction"))
     options.set_option("string-abstraction", true);
 
@@ -503,7 +500,7 @@ int cbmc_parse_optionst::doit()
   get_command_line_options(options);
 
   messaget::eval_verbosity(
-    cmdline.get_value("verbosity"), messaget::M_STATISTICS, ui_message_handler);
+    cmdline.get_value("verbosity"), messaget::M_STATUS, ui_message_handler);
 
   log_version_and_architecture("CBMC");
 
@@ -808,6 +805,8 @@ int cbmc_parse_optionst::get_goto_program(
 
   goto_model = initialize_goto_model(cmdline.args, ui_message_handler, options);
 
+  update_max_malloc_size(goto_model, ui_message_handler);
+
   if(cmdline.isset("show-symbol-table"))
   {
     show_symbol_table(goto_model, ui_message_handler);
@@ -839,7 +838,7 @@ int cbmc_parse_optionst::get_goto_program(
     return CPROVER_EXIT_SUCCESS;
   }
 
-  log.status() << config.object_bits_info() << messaget::eom;
+  log.statistics() << config.object_bits_info() << messaget::eom;
 
   return -1; // no error, continue
 }
@@ -1059,9 +1058,6 @@ void cbmc_parse_optionst::help()
     " {y--full-slice} \t run full slicer (experimental)\n"
     " {y--drop-unused-functions} \t drop functions trivially unreachable from"
     " main function\n"
-    " {y--havoc-undefined-functions} \t for any function that has no body,"
-    " assign non-deterministic values to any parameters passed as non-const"
-    " pointers and the return value\n"
     "\n"
     "Semantic transformations:\n"
     " {y--nondet-static} \t add nondeterministic initialization of variables"
@@ -1085,7 +1081,7 @@ void cbmc_parse_optionst::help()
     HELP_JSON_INTERFACE
     HELP_GOTO_TRACE
     HELP_FLUSH
-    " {y--verbosity} {u#} \t verbosity level\n"
+    " {y--verbosity} {u#} \t verbosity level (default 6)\n"
     HELP_TIMESTAMP
     "\n");
   // clang-format on

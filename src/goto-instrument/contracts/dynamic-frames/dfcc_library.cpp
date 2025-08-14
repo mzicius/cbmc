@@ -18,16 +18,16 @@ Author: Remi Delmas, delmarsd@amazon.com
 #include <util/std_code.h>
 #include <util/std_expr.h>
 
-#include <goto-programs/goto_convert_functions.h>
 #include <goto-programs/goto_function.h>
 #include <goto-programs/goto_model.h>
+#include <goto-programs/unwindset.h>
 
 #include <ansi-c/c_expr.h>
 #include <ansi-c/c_object_factory_parameters.h>
 #include <ansi-c/cprover_library.h>
+#include <ansi-c/goto-conversion/goto_convert_functions.h>
 #include <goto-instrument/generate_function_bodies.h>
 #include <goto-instrument/unwind.h>
-#include <goto-instrument/unwindset.h>
 #include <linking/static_lifetime_init.h>
 
 #include "dfcc_utils.h"
@@ -52,6 +52,8 @@ const std::map<dfcc_typet, irep_idt> create_dfcc_type_to_name()
     {dfcc_typet::CAR, CONTRACTS_PREFIX "car_t"},
     {dfcc_typet::CAR_SET, CONTRACTS_PREFIX "car_set_t"},
     {dfcc_typet::CAR_SET_PTR, CONTRACTS_PREFIX "car_set_ptr_t"},
+    {dfcc_typet::PTR_PRED_CTX, CONTRACTS_PREFIX "ptr_pred_ctx_t"},
+    {dfcc_typet::PTR_PRED_CTX_PTR, CONTRACTS_PREFIX "ptr_pred_ctx_ptr_t"},
     {dfcc_typet::OBJ_SET, CONTRACTS_PREFIX "obj_set_t"},
     {dfcc_typet::OBJ_SET_PTR, CONTRACTS_PREFIX "obj_set_ptr_t"},
     {dfcc_typet::WRITE_SET, CONTRACTS_PREFIX "write_set_t"},
@@ -122,9 +124,12 @@ const std::map<dfcc_funt, irep_idt> create_dfcc_fun_to_name()
      CONTRACTS_PREFIX "write_set_havoc_object_whole"},
     {dfcc_funt::WRITE_SET_HAVOC_SLICE,
      CONTRACTS_PREFIX "write_set_havoc_slice"},
-    {dfcc_funt::LINK_IS_FRESH, CONTRACTS_PREFIX "link_is_fresh"},
+    {dfcc_funt::LINK_PTR_PRED_CTX, CONTRACTS_PREFIX "link_ptr_pred_ctx"},
     {dfcc_funt::LINK_ALLOCATED, CONTRACTS_PREFIX "link_allocated"},
     {dfcc_funt::LINK_DEALLOCATED, CONTRACTS_PREFIX "link_deallocated"},
+    {dfcc_funt::PTR_PRED_CTX_INIT, CONTRACTS_PREFIX "ptr_pred_ctx_init"},
+    {dfcc_funt::PTR_PRED_CTX_RESET, CONTRACTS_PREFIX "ptr_pred_ctx_reset"},
+    {dfcc_funt::POINTER_EQUALS, CONTRACTS_PREFIX "pointer_equals"},
     {dfcc_funt::IS_FRESH, CONTRACTS_PREFIX "is_fresh"},
     {dfcc_funt::POINTER_IN_RANGE_DFCC,
      CONTRACTS_PREFIX "pointer_in_range_dfcc"},
@@ -326,6 +331,7 @@ void dfcc_libraryt::load(std::set<irep_idt> &to_instrument)
   {
     goto_convert(
       id, goto_model.symbol_table, goto_model.goto_functions, message_handler);
+    goto_model.symbol_table.get_writeable_ref(id).set_compiled();
   }
 
   // check that all symbols have a goto_implementation
@@ -808,14 +814,14 @@ const code_function_callt dfcc_libraryt::write_set_deallocate_freeable_call(
   return call;
 }
 
-const code_function_callt dfcc_libraryt::link_is_fresh_call(
+const code_function_callt dfcc_libraryt::link_ptr_pred_ctx_call(
   const exprt &write_set_ptr,
-  const exprt &is_fresh_obj_set_ptr,
+  const exprt &ptr_pred_ctx_ptr,
   const source_locationt &source_location)
 {
   code_function_callt call(
-    dfcc_fun_symbol[dfcc_funt::LINK_IS_FRESH].symbol_expr(),
-    {write_set_ptr, is_fresh_obj_set_ptr});
+    dfcc_fun_symbol[dfcc_funt::LINK_PTR_PRED_CTX].symbol_expr(),
+    {write_set_ptr, ptr_pred_ctx_ptr});
   call.add_source_location() = source_location;
   return call;
 }
@@ -877,6 +883,28 @@ const code_function_callt dfcc_libraryt::obj_set_release_call(
 {
   code_function_callt call(
     dfcc_fun_symbol[dfcc_funt::OBJ_SET_RELEASE].symbol_expr(), {obj_set_ptr});
+  call.add_source_location() = source_location;
+  return call;
+}
+
+const code_function_callt dfcc_libraryt::ptr_pred_ctx_init_call(
+  const exprt &ptr_pred_ctx_ptr,
+  const source_locationt &source_location)
+{
+  code_function_callt call(
+    dfcc_fun_symbol[dfcc_funt::PTR_PRED_CTX_INIT].symbol_expr(),
+    {ptr_pred_ctx_ptr});
+  call.add_source_location() = source_location;
+  return call;
+}
+
+const code_function_callt dfcc_libraryt::ptr_pred_ctx_reset_call(
+  const exprt &ptr_pred_ctx_ptr,
+  const source_locationt &source_location)
+{
+  code_function_callt call(
+    dfcc_fun_symbol[dfcc_funt::PTR_PRED_CTX_INIT].symbol_expr(),
+    {ptr_pred_ctx_ptr});
   call.add_source_location() = source_location;
   return call;
 }

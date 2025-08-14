@@ -315,6 +315,8 @@ int gcc_modet::doit()
     messaget::M_WARNING : messaget::M_ERROR;
   messaget::eval_verbosity(
     cmdline.get_value("verbosity"), default_verbosity, gcc_message_handler);
+  gcc_message_handler.print_warnings_as_errors(
+    cmdline.isset("Werror") && !cmdline.isset("Wno-error"));
 
   bool act_as_bcc=
     base_name=="bcc" ||
@@ -645,6 +647,20 @@ int gcc_modet::doit()
     if(std_string=="gnu11" || std_string=="c11" ||
        std_string=="gnu1x" || std_string=="c1x")
       config.ansi_c.set_c11();
+
+    if(
+      std_string == "gnu17" || std_string == "c17" || std_string == "gnu18" ||
+      std_string == "c18")
+    {
+      config.ansi_c.set_c17();
+    }
+
+    if(
+      std_string == "gnu2x" || std_string == "c2x" || std_string == "gnu23" ||
+      std_string == "c23")
+    {
+      config.ansi_c.set_c23();
+    }
 
     if(std_string=="c++11" || std_string=="c++1x" ||
        std_string=="gnu++11" || std_string=="gnu++1x" ||
@@ -980,10 +996,7 @@ int gcc_modet::gcc_hybrid_binary(compilet &compiler)
   else
   {
     // -c is not given
-    if(cmdline.isset('o'))
-      output_files.push_back(cmdline.get_value('o'));
-    else
-      output_files.push_back("a.out");
+    output_files.push_back(cmdline.value_opt('o').value_or("a.out"));
   }
 
   if(output_files.empty() ||

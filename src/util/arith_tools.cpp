@@ -25,14 +25,13 @@ bool to_integer(const constant_exprt &expr, mp_integer &int_value)
 
   if(type_id==ID_pointer)
   {
-    if(is_null_pointer(expr))
+    if(expr.is_null_pointer())
     {
       int_value=0;
       return false;
     }
   }
-  else if(type_id==ID_integer ||
-          type_id==ID_natural)
+  else if(type_id == ID_integer || type_id == ID_natural || type_id == ID_range)
   {
     int_value=string2integer(id2string(value));
     return false;
@@ -112,6 +111,13 @@ constant_exprt from_integer(
     PRECONDITION(int_value >= 0);
     return constant_exprt(integer2string(int_value), type);
   }
+  else if(type_id == ID_range)
+  {
+    auto &range_type = to_range_type(type);
+    PRECONDITION(int_value >= range_type.get_from());
+    PRECONDITION(int_value <= range_type.get_to());
+    return constant_exprt{integer2string(int_value), type};
+  }
   else if(type_id==ID_unsignedbv)
   {
     std::size_t width=to_unsignedbv_type(type).get_width();
@@ -165,7 +171,9 @@ constant_exprt from_integer(
   }
   else if(type_id==ID_floatbv)
   {
-    ieee_floatt ieee_float(to_floatbv_type(type));
+    ieee_floatt ieee_float(
+      to_floatbv_type(type), ieee_floatt::rounding_modet::ROUND_TO_EVEN);
+    // always rounds to zero
     ieee_float.from_integer(int_value);
     return ieee_float.to_expr();
   }

@@ -12,6 +12,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/json.h>
 #include <util/message.h>
 #include <util/replace_expr.h>
+#include <util/replace_symbol.h>
 #include <util/std_expr.h>
 
 #include <solvers/prop/literal_expr.h>
@@ -144,11 +145,8 @@ void arrayst::collect_arrays(const exprt &a)
     collect_arrays(with_expr.old());
 
     // make sure this shows as an application
-    for(std::size_t i = 1; i < with_expr.operands().size(); i += 2)
-    {
-      index_exprt index_expr(with_expr.old(), with_expr.operands()[i]);
-      record_array_index(index_expr);
-    }
+    index_exprt index_expr(with_expr.old(), with_expr.where());
+    record_array_index(index_expr);
   }
   else if(a.id()==ID_update)
   {
@@ -236,6 +234,11 @@ void arrayst::collect_arrays(const exprt &a)
   }
   else if(a.id() == ID_array_comprehension)
   {
+  }
+  else if(auto let_expr = expr_try_dynamic_cast<let_exprt>(a))
+  {
+    arrays.make_union(a, let_expr->where());
+    collect_arrays(let_expr->where());
   }
   else
   {
@@ -528,6 +531,33 @@ void arrayst::add_array_constraints(
   else if(expr.id()==ID_index)
   {
   }
+  else if(auto let_expr = expr_try_dynamic_cast<let_exprt>(expr))
+  {
+    // we got x=let(a=e, A)
+    // add x[i]=A[a/e][i]
+
+    exprt where = let_expr->where();
+    replace_symbolt replace_symbol;
+    for(const auto &binding :
+        make_range(let_expr->variables()).zip(let_expr->values()))
+    {
+      replace_symbol.insert(binding.first, binding.second);
+    }
+    replace_symbol(where);
+
+    for(const auto &index : index_set)
+    {
+      index_exprt index_expr{expr, index};
+      index_exprt where_indexed{where, index};
+
+      // add constraint
+      lazy_constraintt lazy{
+        lazy_typet::ARRAY_LET, equal_exprt{index_expr, where_indexed}};
+
+      add_array_constraint(lazy, false); // added immediately
+      array_constraint_count[constraint_typet::ARRAY_LET]++;
+    }
+  }
   else
   {
     DATA_INVARIANT(
@@ -541,31 +571,24 @@ void arrayst::add_array_constraints_with(
   const index_sett &index_set,
   const with_exprt &expr)
 {
-  // We got x=(y with [i:=v, j:=w, ...]).
-  // First add constraints x[i]=v, x[j]=w, ...
+  // We got x=(y with [i:=v]).
+  // First add constraint x[i]=v
   std::unordered_set<exprt, irep_hash> updated_indices;
 
-  const exprt::operandst &operands = expr.operands();
-  for(std::size_t i = 1; i + 1 < operands.size(); i += 2)
-  {
-    const exprt &index = operands[i];
-    const exprt &value = operands[i + 1];
+  index_exprt index_expr(
+    expr, expr.where(), to_array_type(expr.type()).element_type());
 
-    index_exprt index_expr(
-      expr, index, to_array_type(expr.type()).element_type());
+  DATA_INVARIANT_WITH_DIAGNOSTICS(
+    index_expr.type() == expr.new_value().type(),
+    "with-expression operand should match array element type",
+    irep_pretty_diagnosticst{expr});
 
-    DATA_INVARIANT_WITH_DIAGNOSTICS(
-      index_expr.type() == value.type(),
-      "with-expression operand should match array element type",
-      irep_pretty_diagnosticst{expr});
+  lazy_constraintt lazy(
+    lazy_typet::ARRAY_WITH, equal_exprt(index_expr, expr.new_value()));
+  add_array_constraint(lazy, false); // added immediately
+  array_constraint_count[constraint_typet::ARRAY_WITH]++;
 
-    lazy_constraintt lazy(
-      lazy_typet::ARRAY_WITH, equal_exprt(index_expr, value));
-    add_array_constraint(lazy, false); // added immediately
-    array_constraint_count[constraint_typet::ARRAY_WITH]++;
-
-    updated_indices.insert(index);
-  }
+  updated_indices.insert(expr.where());
 
   // For all other indices use the existing value, i.e., add constraints
   // x[I]=y[I] for I!=i,j,...
@@ -875,6 +898,8 @@ std::string arrayst::enum_to_string(constraint_typet type)
     return "arrayComprehension";
   case constraint_typet::ARRAY_EQUALITY:
     return "arrayEquality";
+  case constraint_typet::ARRAY_LET:
+    return "arrayLet";
   default:
     UNREACHABLE;
   }

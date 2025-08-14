@@ -12,16 +12,17 @@ Author: Daniel Kroening, Peter Schrammel
 #ifndef CPROVER_GOTO_CHECKER_SOLVER_FACTORY_H
 #define CPROVER_GOTO_CHECKER_SOLVER_FACTORY_H
 
-#include <solvers/prop/prop.h>
+#include <solvers/flattening/boolbv.h>
 #include <solvers/smt2/smt2_dec.h>
 
+#include <fstream>
 #include <memory>
 
 class cmdlinet;
 class message_handlert;
 class namespacet;
 class optionst;
-class stack_decision_proceduret;
+class solver_resource_limitst;
 
 class solver_factoryt final
 {
@@ -38,23 +39,24 @@ public:
   class solvert final
   {
   public:
-    explicit solvert(std::unique_ptr<decision_proceduret> p);
-    solvert(std::unique_ptr<decision_proceduret> p1, std::unique_ptr<propt> p2);
+    explicit solvert(std::unique_ptr<stack_decision_proceduret> p);
     solvert(
-      std::unique_ptr<decision_proceduret> p1,
+      std::unique_ptr<stack_decision_proceduret> p1,
+      std::unique_ptr<propt> p2);
+    solvert(
+      std::unique_ptr<stack_decision_proceduret> p1,
       std::unique_ptr<std::ofstream> p2);
+    solvert(std::unique_ptr<boolbvt> p1, std::unique_ptr<propt> p2);
 
-    decision_proceduret &decision_procedure() const;
-    stack_decision_proceduret &stack_decision_procedure() const;
+    stack_decision_proceduret &decision_procedure() const;
+    boolbvt &boolbv_decision_procedure() const;
 
-    void set_decision_procedure(std::unique_ptr<decision_proceduret> p);
-    void set_prop(std::unique_ptr<propt> p);
-    void set_ofstream(std::unique_ptr<std::ofstream> p);
-
+  private:
     // the objects are deleted in the opposite order they appear below
     std::unique_ptr<std::ofstream> ofstream_ptr;
     std::unique_ptr<propt> prop_ptr;
-    std::unique_ptr<decision_proceduret> decision_procedure_ptr;
+    std::unique_ptr<stack_decision_proceduret> decision_procedure_ptr;
+    std::unique_ptr<boolbvt> decision_procedure_is_boolbvt_ptr;
   };
 
   /// Returns a solvert object
@@ -81,8 +83,8 @@ protected:
   /// Sets the timeout of \p decision_procedure if the `solver-time-limit`
   /// option has a positive value (in seconds).
   /// \note Most solvers silently ignore the time limit at the moment.
-  void
-  set_decision_procedure_time_limit(decision_proceduret &decision_procedure);
+  void set_decision_procedure_time_limit(
+    solver_resource_limitst &decision_procedure);
 
   // consistency checks during solver creation
   void no_beautification();

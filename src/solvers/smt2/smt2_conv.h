@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/std_expr.h>
 #include <util/threeval.h>
 
+#include <cstdint>
 #include <map>
 #include <set>
 #include <sstream>
@@ -31,6 +32,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 class floatbv_typecast_exprt;
 class ieee_float_op_exprt;
+class floatbv_round_to_integral_exprt;
 class union_typet;
 class update_bit_exprt;
 class update_bits_exprt;
@@ -144,6 +146,8 @@ protected:
   void convert_floatbv_div(const ieee_float_op_exprt &expr);
   void convert_floatbv_mult(const ieee_float_op_exprt &expr);
   void convert_floatbv_rem(const binary_exprt &expr);
+  void
+  convert_floatbv_round_to_integral(const floatbv_round_to_integral_exprt &);
   void convert_mod(const mod_exprt &expr);
   void convert_euclidean_mod(const euclidean_mod_exprt &expr);
   void convert_index(const index_exprt &expr);
@@ -242,13 +246,16 @@ protected:
   // keeps track of all non-Boolean symbols and their value
   struct identifiert
   {
+    // We do not currently read any of the following members, but might do so in
+    // future. At this time, we just care about (not) having an entry in
+    // `identifier_map`.
     bool is_bound;
     typet type;
     exprt value;
 
-    identifiert() : is_bound(false)
+    identifiert(typet type, bool is_bound)
+      : is_bound(is_bound), type(std::move(type))
     {
-      type.make_nil();
       value.make_nil();
     }
   };

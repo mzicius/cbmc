@@ -14,8 +14,6 @@ Date: February 2016
 #ifndef CPROVER_GOTO_INSTRUMENT_CONTRACTS_CONTRACTS_H
 #define CPROVER_GOTO_INSTRUMENT_CONTRACTS_CONTRACTS_H
 
-#include <goto-programs/goto_convert_class.h>
-
 #include <util/message.h>
 #include <util/namespace.h>
 
@@ -23,6 +21,8 @@ Date: February 2016
 #include <goto-programs/goto_model.h>
 
 #include <goto-instrument/loop_utils.h>
+
+#include "loop_contract_config.h"
 
 #include <map>
 #include <set>
@@ -33,6 +33,11 @@ Date: February 2016
 #define HELP_LOOP_CONTRACTS                                                    \
   " {y--apply-loop-contracts} \t check and use loop contracts when provided\n"
 
+#define FLAG_DISABLE_SIDE_EFFECT_CHECK                                         \
+  "disable-loop-contracts-side-effect-check"
+#define HELP_DISABLE_SIDE_EFFECT_CHECK                                         \
+  " {y--disable-loop-contracts-side-effect-check} \t UNSOUND OPTION.\t "       \
+  " disable the check of side-effect of loop contracts\n"
 #define FLAG_LOOP_CONTRACTS_NO_UNWIND "loop-contracts-no-unwind"
 #define HELP_LOOP_CONTRACTS_NO_UNWIND                                          \
   " {y--loop-contracts-no-unwind} \t do not unwind transformed loops\n"
@@ -57,13 +62,16 @@ class local_may_aliast;
 class code_contractst
 {
 public:
-  code_contractst(goto_modelt &goto_model, messaget &log)
+  code_contractst(
+    goto_modelt &goto_model,
+    messaget &log,
+    const loop_contract_configt &loop_contract_config)
     : ns(goto_model.symbol_table),
       goto_model(goto_model),
       symbol_table(goto_model.symbol_table),
       goto_functions(goto_model.goto_functions),
       log(log),
-      converter(symbol_table, log.get_message_handler())
+      loop_contract_config(loop_contract_config)
   {
   }
 
@@ -139,10 +147,7 @@ public:
     return loop_havoc_set;
   }
 
-  namespacet ns;
-
-  // Unwind transformed loops after applying loop contracts or not.
-  bool unwind_transformed_loops = true;
+  const namespacet ns;
 
 protected:
   goto_modelt &goto_model;
@@ -150,7 +155,6 @@ protected:
   goto_functionst &goto_functions;
 
   messaget &log;
-  goto_convertt converter;
 
   std::unordered_set<irep_idt> summarized;
 
@@ -167,6 +171,9 @@ protected:
   /// Loop havoc instructions instrumented during applying loop contracts.
   std::unordered_set<goto_programt::const_targett, const_target_hash>
     loop_havoc_set;
+
+  // Loop contract configuration
+  loop_contract_configt loop_contract_config;
 
 public:
   /// \brief Enforce contract of a single function

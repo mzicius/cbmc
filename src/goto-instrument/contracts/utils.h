@@ -11,12 +11,12 @@ Date: September 2021
 #ifndef CPROVER_GOTO_INSTRUMENT_CONTRACTS_UTILS_H
 #define CPROVER_GOTO_INSTRUMENT_CONTRACTS_UTILS_H
 
-#include <goto-programs/goto_convert_class.h>
+#include <ansi-c/goto-conversion/goto_convert_class.h>
 
-#include <goto-programs/goto_model.h>
 #include <goto-programs/loop_ids.h>
 
 #include <goto-instrument/havoc_utils.h>
+#include <goto-instrument/loop_utils.h>
 
 #include <vector>
 
@@ -41,9 +41,12 @@ public:
   {
   }
 
-  void clean(exprt &guard, goto_programt &dest, const irep_idt &mode)
+  [[nodiscard]] std::list<irep_idt>
+  clean(exprt &guard, goto_programt &dest, const irep_idt &mode)
   {
-    goto_convertt::clean_expr(guard, dest, mode, true);
+    auto clean_result = goto_convertt::clean_expr(guard, mode, true);
+    dest.destructive_append(clean_result.side_effects);
+    return clean_result.temporaries;
   }
 
   void do_havoc_slice(
@@ -194,13 +197,13 @@ void insert_before_and_update_jumps(
 
 /// Turns goto instructions `IF cond GOTO label` where the condition
 /// statically simplifies to `false` into SKIP instructions.
-void simplify_gotos(goto_programt &goto_program, namespacet &ns);
+void simplify_gotos(goto_programt &goto_program, const namespacet &ns);
 
 /// Returns true iff the given program is loop-free,
 /// i.e. if each SCC of its CFG contains a single element.
 bool is_loop_free(
   const goto_programt &goto_program,
-  namespacet &ns,
+  const namespacet &ns,
   messaget &log);
 
 /// Returns an \ref irep_idt that essentially says that
@@ -214,21 +217,18 @@ irep_idt make_assigns_clause_replacement_tracking_comment(
 /// \ref make_assigns_clause_replacement_tracking_comment.
 bool is_assigns_clause_replacement_tracking_comment(const irep_idt &comment);
 
+/// Infer loop assigns using alias analysis result `local_may_alias`.
+void infer_loop_assigns(
+  const local_may_aliast &local_may_alias,
+  const loopt &loop,
+  assignst &assigns);
+
 /// Widen expressions in \p assigns with the following strategy.
 /// If an expression is an array index or object dereference expression,
 /// with a non-constant offset, e.g. a[i] or *(b+i) with a non-constant `i`,
 /// then replace it by the entire underlying object. Otherwise, e.g. for a[i] or
 /// *(b+i) when `i` is a known constant, keep the expression in the result.
 void widen_assigns(assignst &assigns, const namespacet &ns);
-
-/// This function recursively searches \p expression to find nested or
-/// non-nested quantified expressions. When a quantified expression is found,
-/// a fresh quantified variable is added to the symbol table and \p expression
-/// is updated to use this fresh variable.
-void add_quantified_variable(
-  symbol_table_baset &symbol_table,
-  exprt &expression,
-  const irep_idt &mode);
 
 struct replace_history_parametert
 {
@@ -304,6 +304,23 @@ get_loop_end(const unsigned int loop_number, goto_functiont &function);
 /// `loop_number` in `function`. loop_end -> loop_head
 goto_programt::targett
 get_loop_head(const unsigned int loop_number, goto_functiont &function);
+
+/// Extract loop invariants from annotated loop end.
+/// Will check if the loop invariant is side-effect free if
+/// \p check_side_effect` is set.
+exprt get_loop_invariants(
+  const goto_programt::const_targett &loop_end,
+  const bool check_side_effect = true);
+
+/// Extract loop assigns from annotated loop end.
+exprt get_loop_assigns(const goto_programt::const_targett &loop_end);
+
+/// Extract loop decreases from annotated loop end.
+/// Will check if the loop decreases is side-effect free if
+/// \p check_side_effect` is set.
+exprt get_loop_decreases(
+  const goto_programt::const_targett &loop_end,
+  const bool check_side_effect = true);
 
 /// Annotate the invariants in `invariant_map` to their corresponding
 /// loops. Corresponding loops are specified by keys of `invariant_map`

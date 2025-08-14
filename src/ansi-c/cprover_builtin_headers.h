@@ -44,6 +44,7 @@ void __CPROVER_fence(const char *kind, ...);
 // contract-related functions
 __CPROVER_bool __CPROVER_is_freeable(const void *mem);
 __CPROVER_bool __CPROVER_was_freed(const void *mem);
+__CPROVER_bool __CPROVER_pointer_equals(void *p, void *q);
 __CPROVER_bool __CPROVER_is_fresh(const void *mem, __CPROVER_size_t size);
 __CPROVER_bool __CPROVER_obeys_contract(void (*)(void), void (*)(void));
 // same as pointer_in_range with experimental support in contracts
@@ -93,6 +94,9 @@ int __CPROVER_islessgreaterf(float f, float g);
 int __CPROVER_islessgreaterd(double f, double g);
 int __CPROVER_isunorderedf(float f, float g);
 int __CPROVER_isunorderedd(double f, double g);
+float __CPROVER_round_to_integralf(float, int);
+double __CPROVER_round_to_integrald(double, int);
+long double __CPROVER_round_to_integralld(long double, int);
 
 // absolute value
 int __CPROVER_abs(int x);

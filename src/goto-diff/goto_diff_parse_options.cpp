@@ -18,7 +18,6 @@ Author: Peter Schrammel
 #include <util/version.h>
 
 #include <goto-programs/initialize_goto_model.h>
-#include <goto-programs/link_to_library.h>
 #include <goto-programs/loop_ids.h>
 #include <goto-programs/process_goto_program.h>
 #include <goto-programs/remove_skip.h>
@@ -27,6 +26,7 @@ Author: Peter Schrammel
 
 #include <ansi-c/cprover_library.h>
 #include <ansi-c/gcc_version.h>
+#include <ansi-c/goto-conversion/link_to_library.h>
 #include <assembler/remove_asm.h>
 #include <cpp/cprover_library.h>
 #include <goto-instrument/cover.h>
@@ -85,7 +85,7 @@ int goto_diff_parse_optionst::doit()
   optionst options;
   get_command_line_options(options);
   messaget::eval_verbosity(
-    cmdline.get_value("verbosity"), messaget::M_STATISTICS, ui_message_handler);
+    cmdline.get_value("verbosity"), messaget::M_STATUS, ui_message_handler);
 
   log_version_and_architecture("GOTO-DIFF");
 

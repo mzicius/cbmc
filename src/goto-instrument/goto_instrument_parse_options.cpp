@@ -27,7 +27,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/goto_inline.h>
 #include <goto-programs/interpreter.h>
 #include <goto-programs/label_function_pointer_call_sites.h>
-#include <goto-programs/link_to_library.h>
 #include <goto-programs/loop_ids.h>
 #include <goto-programs/mm_io.h>
 #include <goto-programs/parameter_assignments.h>
@@ -68,6 +67,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <ansi-c/c_object_factory_parameters.h>
 #include <ansi-c/cprover_library.h>
 #include <ansi-c/gcc_version.h>
+#include <ansi-c/goto-conversion/link_to_library.h>
 #include <assembler/remove_asm.h>
 #include <cpp/cprover_library.h>
 #include <pointer-analysis/add_failed_symbols.h>
@@ -125,7 +125,7 @@ int goto_instrument_parse_optionst::doit()
   }
 
   messaget::eval_verbosity(
-    cmdline.get_value("verbosity"), messaget::M_STATISTICS, ui_message_handler);
+    cmdline.get_value("verbosity"), messaget::M_STATUS, ui_message_handler);
 
   {
     register_languages();
@@ -201,9 +201,11 @@ int goto_instrument_parse_optionst::doit()
             ui_message_handler);
         }
 
-        bool unwinding_assertions=cmdline.isset("unwinding-assertions");
-        bool partial_loops=cmdline.isset("partial-loops");
         bool continue_as_loops=cmdline.isset("continue-as-loops");
+        bool partial_loops = cmdline.isset("partial-loops");
+        bool unwinding_assertions = cmdline.isset("unwinding-assertions") ||
+                                    (!continue_as_loops && !partial_loops &&
+                                     !cmdline.isset("no-unwinding-assertions"));
         if(continue_as_loops)
         {
           if(unwinding_assertions)
@@ -239,8 +241,8 @@ int goto_instrument_parse_optionst::doit()
 
         if(cmdline.isset("log"))
         {
-          std::string filename=cmdline.get_value("log");
-          bool have_file=!filename.empty() && filename!="-";
+          std::string filename = cmdline.value_opt("log").value_or("-");
+          bool have_file = filename != "-";
 
           jsont result=goto_unwind.output_log_json();
 
@@ -1164,6 +1166,27 @@ void goto_instrument_parse_optionst::instrument_goto_program()
       goto_model, file_name, ui_message_handler);
   }
 
+  // Initialize loop contract config from cmdline.
+  loop_contract_configt loop_contract_config = {
+    cmdline.isset(FLAG_LOOP_CONTRACTS),
+    !cmdline.isset(FLAG_LOOP_CONTRACTS_NO_UNWIND),
+    !cmdline.isset(FLAG_DISABLE_SIDE_EFFECT_CHECK)};
+
+  if(
+    cmdline.isset(FLAG_LOOP_CONTRACTS) &&
+    cmdline.isset(FLAG_LOOP_CONTRACTS_NO_UNWIND))
+  {
+    // After instrumentation, all annotated loops will be transformed to
+    // loops execute exactly once. CBMC by default unwinds transformed loops
+    // by twice.
+    // Users may want to disable the default unwinding to avoid duplicate
+    // assertions.
+    log.warning() << "**** WARNING: transformed loops will not be unwound "
+                  << "after applying loop contracts. Note that transformed "
+                  << "loops require at least unwinding bounds 2 to pass "
+                  << "the unwinding assertions." << messaget::eom;
+  }
+
   bool use_dfcc = cmdline.isset(FLAG_DFCC);
   if(use_dfcc)
   {
@@ -1207,22 +1230,6 @@ void goto_instrument_parse_optionst::instrument_goto_program()
       cmdline.get_values("nondet-static-exclude").begin(),
       cmdline.get_values("nondet-static-exclude").end());
 
-    if(
-      cmdline.isset(FLAG_LOOP_CONTRACTS) &&
-      cmdline.isset(FLAG_LOOP_CONTRACTS_NO_UNWIND))
-    {
-      // When the model is produced by Kani, we must not automatically unwind
-      // the backjump introduced by the loop transformation.
-      // Automatic unwinding duplicates assertions found in the loop body, and
-      // since Kani expects property identifiers to remain unique. Having
-      // duplicate instances of the assertions makes Kani fail to handle the
-      // analysis results.
-      log.warning() << "**** WARNING: transformed loops will not be unwound "
-                    << "after applying loop contracts. Remember to unwind "
-                    << "them at least twice to pass unwinding-assertions."
-                    << messaget::eom;
-    }
-
     dfcc(
       options,
       goto_model,
@@ -1231,8 +1238,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
                          : std::optional<irep_idt>{to_enforce.front()},
       allow_recursive_calls,
       to_replace,
-      cmdline.isset(FLAG_LOOP_CONTRACTS),
-      !cmdline.isset(FLAG_LOOP_CONTRACTS_NO_UNWIND),
+      loop_contract_config,
       to_exclude_from_nondet_static,
       log.get_message_handler());
   }
@@ -1243,7 +1249,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     do_indirect_call_and_rtti_removal();
     log.status() << "Trying to force one backedge per target" << messaget::eom;
     ensure_one_backedge_per_target(goto_model);
-    code_contractst contracts(goto_model, log);
+    code_contractst contracts(goto_model, log, loop_contract_config);
 
     std::set<std::string> to_replace(
       cmdline.get_values(FLAG_REPLACE_CALL).begin(),
@@ -1266,20 +1272,6 @@ void goto_instrument_parse_optionst::instrument_goto_program()
 
     if(cmdline.isset(FLAG_LOOP_CONTRACTS))
     {
-      if(cmdline.isset(FLAG_LOOP_CONTRACTS_NO_UNWIND))
-      {
-        contracts.unwind_transformed_loops = false;
-        // When the model is produced by Kani, we must not automatically unwind
-        // the backjump introduced by the loop transformation.
-        // Automatic unwinding duplicates assertions found in the loop body, and
-        // since Kani expects property identifiers to remain unique. Having
-        // duplicate instances of the assertions makes Kani fail to handle the
-        // analysis results.
-        log.warning() << "**** WARNING: transformed loops will not be unwound "
-                      << "after applying loop contracts. Remember to unwind "
-                      << "them at least twice to pass unwinding-assertions."
-                      << messaget::eom;
-      }
       contracts.apply_loop_contracts(to_exclude_from_nondet_static);
     }
   }
@@ -1327,8 +1319,8 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     }
     else
     {
-      std::string filename=cmdline.get_value("log");
-      bool have_file=!filename.empty() && filename!="-";
+      std::string filename = cmdline.value_opt("log").value_or("-");
+      bool have_file = filename != "-";
 
       jsont result = goto_function_inline_and_log(
         goto_model, function, ui_message_handler, true, caching);
@@ -1996,7 +1988,9 @@ void goto_instrument_parse_optionst::help()
     HELP_UNWINDSET
     " {y--unwindset-file_<file>} \t read unwindset from file\n"
     " {y--partial-loops} \t permit paths with partial loops\n"
-    " {y--unwinding-assertions} \t generate unwinding assertions\n"
+    " {y--unwinding-assertions} \t generate unwinding assertions"
+    " (enabled by default)\n"
+    " {y--no-unwinding-assertions} \t do not generate unwinding assertions\n"
     " {y--continue-as-loops} \t add loop for remaining iterations after"
     " unwound part\n"
     " {y--k-induction} {uk} \t check loops with k-induction\n"
@@ -2036,6 +2030,7 @@ void goto_instrument_parse_optionst::help()
     "Code contracts:\n"
     HELP_DFCC
     HELP_LOOP_CONTRACTS
+    HELP_DISABLE_SIDE_EFFECT_CHECK
     HELP_LOOP_CONTRACTS_NO_UNWIND
     HELP_LOOP_CONTRACTS_FILE
     HELP_REPLACE_CALL

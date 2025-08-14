@@ -13,7 +13,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/c_types.h>
 #include <util/config.h>
 #include <util/cprover_prefix.h>
-#include <util/expr_util.h>
 #include <util/find_symbols.h>
 #include <util/fixedbv.h>
 #include <util/floatbv_expr.h>
@@ -213,16 +212,16 @@ void expr2ct::get_shorthands(const exprt &expr)
 
 std::string expr2ct::convert(const typet &src)
 {
-  return convert_rec(src, c_qualifierst(), "");
+  return convert_with_identifier(src, "");
 }
 
 std::string expr2ct::convert_rec(
   const typet &src,
-  const qualifierst &qualifiers,
+  const c_qualifierst &qualifiers,
   const std::string &declarator)
 {
-  std::unique_ptr<qualifierst> clone = qualifiers.clone();
-  c_qualifierst &new_qualifiers = dynamic_cast<c_qualifierst &>(*clone);
+  std::unique_ptr<c_qualifierst> clone = qualifiers.clone();
+  c_qualifierst &new_qualifiers = *clone;
   new_qualifiers.read(src);
 
   std::string q=new_qualifiers.as_string();
@@ -379,7 +378,7 @@ std::string expr2ct::convert_rec(
       for(const auto &c : union_type.components())
       {
         dest += ' ';
-        dest += convert_rec(c.type(), c_qualifierst(), id2string(c.get_name()));
+        dest += convert_with_identifier(c.type(), id2string(c.get_name()));
         dest += ';';
       }
 
@@ -538,7 +537,7 @@ std::string expr2ct::convert_rec(
         {
           std::string arg_declarator=
             convert(symbol_exprt(it->get_identifier(), it->type()));
-          dest+=convert_rec(it->type(), c_qualifierst(), arg_declarator);
+          dest += convert_with_identifier(it->type(), arg_declarator);
         }
       }
 
@@ -618,6 +617,19 @@ std::string expr2ct::convert_rec(
   {
     return q+"__attribute__(("+id2string(src.id())+")) void"+d;
   }
+  else if(src.id() == ID_bv)
+  {
+    // annotated?
+    irep_idt c_type = src.get(ID_C_c_type);
+    if(c_type == ID_c_signed_bitint)
+    {
+      return "_BitInt(" + src.get_string(ID_C_c_bitint_width) + ")";
+    }
+    else if(c_type == ID_c_unsigned_bitint)
+    {
+      return "unsigned _BitInt(" + src.get_string(ID_C_c_bitint_width) + ")";
+    }
+  }
 
   {
     lispexprt lisp;
@@ -692,10 +704,8 @@ std::string expr2ct::convert_struct_type(
       }
 
       dest+=' ';
-      dest+=convert_rec(
-        component.type(),
-        c_qualifierst(),
-        id2string(component.get_name()));
+      dest += convert_with_identifier(
+        component.type(), id2string(component.get_name()));
       dest+=';';
     }
 
@@ -715,7 +725,7 @@ std::string expr2ct::convert_struct_type(
 /// \return A C-like type declaration of an array
 std::string expr2ct::convert_array_type(
   const typet &src,
-  const qualifierst &qualifiers,
+  const c_qualifierst &qualifiers,
   const std::string &declarator_str)
 {
   return convert_array_type(
@@ -732,7 +742,7 @@ std::string expr2ct::convert_array_type(
 /// \return A C-like type declaration of an array
 std::string expr2ct::convert_array_type(
   const typet &src,
-  const qualifierst &qualifiers,
+  const c_qualifierst &qualifiers,
   const std::string &declarator_str,
   bool inc_size_if_possible)
 {
@@ -890,13 +900,11 @@ std::string expr2ct::convert_with(
       const irep_idt &component_name=
         src.operands()[i].get(ID_component_name);
 
-      const typet &full_type = ns.follow(old.type());
-
-      const struct_union_typet &struct_union_type=
-        to_struct_union_type(full_type);
-
-      const struct_union_typet::componentt &comp_expr=
-        struct_union_type.get_component(component_name);
+      const struct_union_typet::componentt &comp_expr =
+        (old.type().id() == ID_struct_tag || old.type().id() == ID_union_tag)
+          ? ns.follow_tag(to_struct_or_union_tag_type(old.type()))
+              .get_component(component_name)
+          : to_struct_union_type(old.type()).get_component(component_name);
       CHECK_RETURN(comp_expr.is_not_nil());
 
       irep_idt display_component_name;
@@ -1148,24 +1156,30 @@ std::string expr2ct::convert_allocate(const exprt &src, unsigned &precedence)
   if(src.operands().size() != 2)
     return convert_norep(src, precedence);
 
-  unsigned p0;
-  std::string op0 = convert_with_precedence(to_binary_expr(src).op0(), p0);
+  const binary_exprt &binary_expr = to_binary_expr(src);
 
   unsigned p1;
-  std::string op1 = convert_with_precedence(to_binary_expr(src).op1(), p1);
+  std::string op1 = convert_with_precedence(binary_expr.op1(), p1);
 
-  std::string dest = "ALLOCATE";
+  std::string dest = CPROVER_PREFIX "allocate";
   dest += '(';
 
+  const typet &type =
+    static_cast<const typet &>(binary_expr.op0().find(ID_C_c_sizeof_type));
   if(
     src.type().id() == ID_pointer &&
-    to_pointer_type(src.type()).base_type().id() != ID_empty)
+    to_pointer_type(src.type()).base_type() == type)
   {
-    dest += convert(to_pointer_type(src.type()).base_type());
+    dest += "sizeof(" + convert(to_pointer_type(src.type()).base_type()) + ')';
     dest+=", ";
   }
+  else
+  {
+    unsigned p0;
+    dest += convert_with_precedence(binary_expr.op0(), p0);
+  }
 
-  dest += op0 + ", " + op1;
+  dest += ", " + op1;
   dest += ')';
 
   return dest;
@@ -1551,14 +1565,19 @@ std::string expr2ct::convert_member(
     dest+='.';
   }
 
-  const typet &full_type = ns.follow(compound.type());
-
-  if(full_type.id()!=ID_struct &&
-     full_type.id()!=ID_union)
+  if(
+    compound.type().id() != ID_struct && compound.type().id() != ID_union &&
+    compound.type().id() != ID_struct_tag &&
+    compound.type().id() != ID_union_tag)
+  {
     return convert_norep(src, precedence);
+  }
 
-  const struct_union_typet &struct_union_type=
-    to_struct_union_type(full_type);
+  const struct_union_typet &struct_union_type =
+    (compound.type().id() == ID_struct_tag ||
+     compound.type().id() == ID_union_tag)
+      ? ns.follow_tag(to_struct_or_union_tag_type(compound.type()))
+      : to_struct_union_type(compound.type());
 
   irep_idt component_name=src.get_component_name();
 
@@ -1822,8 +1841,24 @@ std::string expr2ct::convert_constant(
     return convert_norep(src, precedence);
   else if(type.id()==ID_bv)
   {
-    // not C
-    dest=id2string(value);
+    // used for _BitInt
+    irep_idt c_type = src.get(ID_C_c_type);
+    if(c_type == ID_c_signed_bitint)
+    {
+      auto as_int = bvrep2integer(value, to_bv_type(type).width(), false);
+      auto width = src.get_int(ID_C_c_bitint_width);
+      auto binary = integer2binary(as_int, width); // drops padding
+      return integer2string(binary2integer(binary, true));
+    }
+    else if(c_type == ID_c_unsigned_bitint)
+    {
+      auto as_int = bvrep2integer(value, to_bv_type(type).width(), false);
+      auto width = src.get_int(ID_C_c_bitint_width);
+      auto binary = integer2binary(as_int, width); // drops padding
+      return integer2string(binary2integer(binary, false));
+    }
+    else
+      return convert_norep(src, precedence);
   }
   else if(type.id()==ID_bool)
   {
@@ -1912,7 +1947,7 @@ std::string expr2ct::convert_constant(
   }
   else if(type.id()==ID_floatbv)
   {
-    dest=ieee_floatt(to_constant_expr(src)).to_ansi_c_string();
+    dest = ieee_float_valuet(to_constant_expr(src)).to_ansi_c_string();
 
     if(!dest.empty() && isdigit(dest[dest.size() - 1]))
     {
@@ -1982,7 +2017,7 @@ std::string expr2ct::convert_constant(
   }
   else if(type.id()==ID_pointer)
   {
-    if(is_null_pointer(src))
+    if(src.is_null_pointer())
     {
       if(configuration.use_library_macros)
         dest = "NULL";
@@ -2056,13 +2091,13 @@ std::string expr2ct::convert_struct(
   unsigned &precedence,
   bool include_padding_components)
 {
-  const typet full_type=ns.follow(src.type());
-
-  if(full_type.id()!=ID_struct)
+  if(src.type().id() != ID_struct && src.type().id() != ID_struct_tag)
     return convert_norep(src, precedence);
 
-  const struct_typet &struct_type=
-    to_struct_type(full_type);
+  const struct_typet &struct_type =
+    src.type().id() == ID_struct_tag
+      ? ns.follow_tag(to_struct_tag_type(src.type()))
+      : to_struct_type(src.type());
 
   const struct_typet::componentst &components=
     struct_type.components();
@@ -2847,7 +2882,7 @@ expr2ct::convert_code_frontend_decl(const codet &src, unsigned indent)
       dest+="inline ";
   }
 
-  dest+=convert_rec(src.op0().type(), c_qualifierst(), declarator);
+  dest += convert_with_identifier(src.op0().type(), declarator);
 
   if(src.operands().size()==2)
     dest+="="+convert(src.op1());
@@ -3494,9 +3529,18 @@ expr2ct::convert_extractbits(const extractbits_exprt &src, unsigned precedence)
 {
   std::string dest = convert_with_precedence(src.src(), precedence);
   dest+='[';
-  dest += convert_with_precedence(src.upper(), precedence);
+  auto expr_width_opt = pointer_offset_bits(src.type(), ns);
+  if(expr_width_opt.has_value())
+  {
+    auto upper = plus_exprt{
+      src.index(),
+      from_integer(expr_width_opt.value() - 1, src.index().type())};
+    dest += convert_with_precedence(upper, precedence);
+  }
+  else
+    dest += "?";
   dest+=", ";
-  dest += convert_with_precedence(src.lower(), precedence);
+  dest += convert_with_precedence(src.index(), precedence);
   dest+=']';
 
   return dest;

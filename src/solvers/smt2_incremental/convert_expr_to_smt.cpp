@@ -6,7 +6,6 @@
 #include <util/config.h>
 #include <util/expr.h>
 #include <util/expr_cast.h>
-#include <util/expr_util.h>
 #include <util/floatbv_expr.h>
 #include <util/mathematical_expr.h>
 #include <util/pointer_expr.h>
@@ -176,14 +175,14 @@ static smt_termt make_bitvector_resize_cast(
   const bitvector_typet &from_type,
   const bitvector_typet &to_type)
 {
-  if(const auto to_fixedbv_type = type_try_dynamic_cast<fixedbv_typet>(to_type))
+  if(type_try_dynamic_cast<fixedbv_typet>(to_type))
   {
     UNIMPLEMENTED_FEATURE(
       "Generation of SMT formula for type cast to fixed-point bitvector "
       "type: " +
       to_type.pretty());
   }
-  if(const auto to_floatbv_type = type_try_dynamic_cast<floatbv_typet>(to_type))
+  if(type_try_dynamic_cast<floatbv_typet>(to_type))
   {
     UNIMPLEMENTED_FEATURE(
       "Generation of SMT formula for type cast to floating-point bitvector "
@@ -259,7 +258,7 @@ static smt_termt convert_expr_to_smt(
   const auto &from_term = converted.at(cast.op());
   const typet &from_type = cast.op().type();
   const typet &to_type = cast.type();
-  if(const auto bool_type = type_try_dynamic_cast<bool_typet>(to_type))
+  if(type_try_dynamic_cast<bool_typet>(to_type))
     return make_not_zero(from_term, cast.op().type());
   if(const auto c_bool_type = type_try_dynamic_cast<c_bool_typet>(to_type))
     return convert_c_bool_cast(from_term, from_type, *c_bool_type);
@@ -329,7 +328,7 @@ struct sort_based_literal_convertert : public smt_sort_const_downcast_visitort
 
 static smt_termt convert_expr_to_smt(const constant_exprt &constant_literal)
 {
-  if(is_null_pointer(constant_literal))
+  if(constant_literal.is_null_pointer())
   {
     const size_t bit_width =
       type_checked_cast<pointer_typet>(constant_literal.type()).get_width();
@@ -894,9 +893,7 @@ static smt_termt convert_expr_to_smt(
     "Pointer should be wider than object_bits in order to allow for offset "
     "encoding.");
   const size_t offset_bits = type->get_width() - object_bits;
-  if(
-    const auto symbol =
-      expr_try_dynamic_cast<symbol_exprt>(address_of.object()))
+  if(expr_try_dynamic_cast<symbol_exprt>(address_of.object()))
   {
     const smt_bit_vector_constant_termt offset{0, offset_bits};
     return smt_bit_vector_theoryt::concat(object_bit_vector, offset);
@@ -1008,12 +1005,9 @@ static smt_termt convert_array_update_to_smt(
   const sub_expression_mapt &converted)
 {
   smt_termt array = converted.at(with.old());
-  for(auto it = ++with.operands().begin(); it != with.operands().end(); it += 2)
-  {
-    const smt_termt &index_term = converted.at(it[0]);
-    const smt_termt &value_term = converted.at(it[1]);
-    array = smt_array_theoryt::store(array, index_term, value_term);
-  }
+  const smt_termt &index_term = converted.at(with.where());
+  const smt_termt &value_term = converted.at(with.new_value());
+  array = smt_array_theoryt::store(array, index_term, value_term);
   return array;
 }
 
@@ -1111,10 +1105,14 @@ static smt_termt convert_expr_to_smt(
   const sub_expression_mapt &converted)
 {
   const smt_termt &from = converted.at(extract_bits.src());
-  const auto upper_value = numeric_cast<std::size_t>(extract_bits.upper());
-  const auto lower_value = numeric_cast<std::size_t>(extract_bits.lower());
-  if(upper_value && lower_value)
-    return smt_bit_vector_theoryt::extract(*upper_value, *lower_value)(from);
+  const auto bit_vector_sort =
+    convert_type_to_smt_sort(extract_bits.type()).cast<smt_bit_vector_sortt>();
+  INVARIANT(
+    bit_vector_sort, "Extract can only be applied to bit vector terms.");
+  const auto index_value = numeric_cast<std::size_t>(extract_bits.index());
+  if(index_value)
+    return smt_bit_vector_theoryt::extract(
+      *index_value + bit_vector_sort->bit_width() - 1, *index_value)(from);
   UNIMPLEMENTED_FEATURE(
     "Generation of SMT formula for extract bits expression: " +
     extract_bits.pretty());
@@ -1464,6 +1462,15 @@ static smt_termt convert_expr_to_smt(
   UNIMPLEMENTED_FEATURE(
     "Generation of SMT formula for count trailing zeros expression: " +
     count_trailing_zeros.pretty());
+}
+
+static smt_termt convert_expr_to_smt(
+  const zero_extend_exprt &zero_extend,
+  const sub_expression_mapt &converted)
+{
+  UNREACHABLE_BECAUSE(
+    "zero_extend expression should have been lowered by the decision "
+    "procedure before conversion to smt terms");
 }
 
 static smt_termt convert_expr_to_smt(
@@ -1818,6 +1825,10 @@ static smt_termt dispatch_expr_to_smt_conversion(
       expr_try_dynamic_cast<count_trailing_zeros_exprt>(expr))
   {
     return convert_expr_to_smt(*count_trailing_zeros, converted);
+  }
+  if(const auto zero_extend = expr_try_dynamic_cast<zero_extend_exprt>(expr))
+  {
+    return convert_expr_to_smt(*zero_extend, converted);
   }
   if(
     const auto prophecy_r_or_w_ok =

@@ -12,12 +12,12 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "symex_assign.h"
 
 #include <util/byte_operators.h>
-#include <util/expr_util.h>
 #include <util/pointer_expr.h>
 #include <util/range.h>
 
 #include "expr_skeleton.h"
 #include "goto_symex_state.h"
+#include "simplify_expr_with_value_set.h"
 #include "symex_config.h"
 
 // We can either use with_exprt or update_exprt when building expressions that
@@ -168,7 +168,10 @@ void symex_assignt::assign_from_struct(
   const struct_exprt &rhs,
   const exprt::operandst &guard)
 {
-  const auto &components = to_struct_type(ns.follow(lhs.type())).components();
+  const auto &components =
+    lhs.type().id() == ID_struct_tag
+      ? ns.follow_tag(to_struct_tag_type(lhs.type())).components()
+      : to_struct_type(lhs.type()).components();
   PRECONDITION(rhs.operands().size() == components.size());
 
   for(const auto &comp_rhs : make_range(components).zip(rhs.operands()))
@@ -203,7 +206,10 @@ void symex_assignt::assign_non_struct_symbol(
   assignmentt assignment{lhs, full_lhs, l2_rhs};
 
   if(symex_config.simplify_opt)
-    assignment.rhs = simplify_expr(std::move(assignment.rhs), ns);
+  {
+    simplify_expr_with_value_sett{state.value_set, language_mode, ns}.simplify(
+      assignment.rhs);
+  }
 
   const ssa_exprt l2_lhs = state
                              .assignment(
@@ -235,7 +241,7 @@ void symex_assignt::assign_non_struct_symbol(
       : assignment_type;
 
   target.assignment(
-    make_and(state.guard.as_expr(), conjunction(guard)),
+    conjunction(state.guard.as_expr(), conjunction(guard)),
     l2_lhs,
     l2_full_lhs,
     get_original_name(l2_full_lhs),

@@ -13,7 +13,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/c_types.h>
 #include <util/config.h>
 #include <util/exception_utils.h>
-#include <util/expr_util.h>
 #include <util/namespace.h>
 #include <util/pointer_expr.h>
 #include <util/pointer_offset_size.h>
@@ -312,7 +311,6 @@ std::optional<bvt> bv_pointerst::convert_address_of_rec(const exprt &expr)
   {
     const member_exprt &member_expr=to_member_expr(expr);
     const exprt &struct_op = member_expr.compound();
-    const typet &struct_op_type=ns.follow(struct_op.type());
 
     // recursive call
     auto bv_opt = convert_address_of_rec(struct_op);
@@ -320,10 +318,16 @@ std::optional<bvt> bv_pointerst::convert_address_of_rec(const exprt &expr)
       return {};
 
     bvt bv = std::move(*bv_opt);
-    if(struct_op_type.id()==ID_struct)
+    if(
+      struct_op.type().id() == ID_struct ||
+      struct_op.type().id() == ID_struct_tag)
     {
-      auto offset = member_offset(
-        to_struct_type(struct_op_type), member_expr.get_component_name(), ns);
+      const struct_typet &struct_op_type =
+        struct_op.type().id() == ID_struct_tag
+          ? ns.follow_tag(to_struct_tag_type(struct_op.type()))
+          : to_struct_type(struct_op.type());
+      auto offset =
+        member_offset(struct_op_type, member_expr.get_component_name(), ns);
       CHECK_RETURN(offset.has_value());
 
       // add offset
@@ -333,7 +337,8 @@ std::optional<bvt> bv_pointerst::convert_address_of_rec(const exprt &expr)
     else
     {
       INVARIANT(
-        struct_op_type.id() == ID_union,
+        struct_op.type().id() == ID_union ||
+          struct_op.type().id() == ID_union_tag,
         "member expression should operate on struct or union");
       // nothing to do, all members have offset 0
     }
@@ -437,7 +442,7 @@ bvt bv_pointerst::convert_pointer_type(const exprt &expr)
   {
     const constant_exprt &c = to_constant_expr(expr);
 
-    if(is_null_pointer(c))
+    if(c.is_null_pointer())
       return encode(pointer_logic.get_null_object(), type);
     else
     {
@@ -551,21 +556,26 @@ bvt bv_pointerst::convert_pointer_type(const exprt &expr)
   else if(expr.id() == ID_field_address)
   {
     const auto &field_address_expr = to_field_address_expr(expr);
-    const typet &compound_type = ns.follow(field_address_expr.compound_type());
+    const typet &compound_type = field_address_expr.compound_type();
 
     // recursive call
     auto bv = convert_bitvector(field_address_expr.base());
 
-    if(compound_type.id() == ID_struct)
+    if(compound_type.id() == ID_struct || compound_type.id() == ID_struct_tag)
     {
-      auto offset = member_offset(
-        to_struct_type(compound_type), field_address_expr.component_name(), ns);
+      const struct_typet &struct_type =
+        compound_type.id() == ID_struct_tag
+          ? ns.follow_tag(to_struct_tag_type(compound_type))
+          : to_struct_type(compound_type);
+      auto offset =
+        member_offset(struct_type, field_address_expr.component_name(), ns);
       CHECK_RETURN(offset.has_value());
 
       // add offset
       bv = offset_arithmetic(field_address_expr.type(), bv, *offset);
     }
-    else if(compound_type.id() == ID_union)
+    else if(
+      compound_type.id() == ID_union || compound_type.id() == ID_union_tag)
     {
       // nothing to do, all fields have offset 0
     }
@@ -655,39 +665,8 @@ bvt bv_pointerst::convert_bitvector(const exprt &expr)
           difference, element_size_bv, bv_utilst::representationt::SIGNED);
       }
 
-      // test for null object (integer constants)
-      const exprt null_object = ::null_object(minus_expr.lhs());
-      literalt in_bounds = convert(null_object);
-
-      if(!in_bounds.is_true())
-      {
-        // compute the object size (again, possibly using cached results)
-        const exprt object_size = ::object_size(minus_expr.lhs());
-        const bvt object_size_bv =
-          bv_utils.zero_extension(convert_bv(object_size), width);
-
-        const literalt lhs_in_bounds = prop.land(
-          !bv_utils.sign_bit(lhs_offset),
-          bv_utils.rel(
-            lhs_offset,
-            ID_le,
-            object_size_bv,
-            bv_utilst::representationt::UNSIGNED));
-
-        const literalt rhs_in_bounds = prop.land(
-          !bv_utils.sign_bit(rhs_offset),
-          bv_utils.rel(
-            rhs_offset,
-            ID_le,
-            object_size_bv,
-            bv_utilst::representationt::UNSIGNED));
-
-        in_bounds =
-          prop.lor(in_bounds, prop.land(lhs_in_bounds, rhs_in_bounds));
-      }
-
-      prop.l_set_to_true(prop.limplies(
-        prop.land(same_object_lit, in_bounds), bv_utils.equal(difference, bv)));
+      prop.l_set_to_true(
+        prop.limplies(same_object_lit, bv_utils.equal(difference, bv)));
     }
 
     return bv;

@@ -11,18 +11,20 @@ Date: April 2023
 \*******************************************************************/
 
 #include "dfcc_instrument_loop.h"
-#include <goto-programs/goto_convert_class.h>
+#include <ansi-c/goto-conversion/goto_convert_class.h>
 
-#include <util/format_expr.h>
-#include <util/fresh_symbol.h>
+#include <util/arith_tools.h>
+#include <util/c_types.h>
+#include <util/expr_util.h>
 
 #include <goto-instrument/contracts/utils.h>
 
 #include "dfcc_cfg_info.h"
 #include "dfcc_contract_clauses_codegen.h"
-#include "dfcc_instrument.h"
+#include "dfcc_library.h"
 #include "dfcc_loop_tags.h"
 #include "dfcc_spec_functions.h"
+#include "dfcc_utils.h"
 
 dfcc_instrument_loopt::dfcc_instrument_loopt(
   goto_modelt &goto_model,
@@ -121,6 +123,7 @@ void dfcc_instrument_loopt::operator()(
     function_id,
     write_set_populate_instrs,
     loop.addr_of_write_set_var,
+    dfcc_ptr_havoc_modet::NONDET,
     havoc_instrs,
     nof_targets);
   spec_functions.to_spec_assigns_instructions(
@@ -235,9 +238,6 @@ dfcc_instrument_loopt::add_prehead_instructions(
   //   GOTO HEAD;
   // ```
 
-  // Replace bound variables by fresh instances in quantified formulas.
-  if(has_subexpr(invariant, ID_exists) || has_subexpr(invariant, ID_forall))
-    add_quantified_variable(symbol_table, invariant, language_mode);
   // initialize loop_entry history vars;
   auto replace_history_result = replace_history_loop_entry(
     symbol_table, invariant, loop_head_location, language_mode);
@@ -428,13 +428,24 @@ dfcc_instrument_loopt::add_step_instructions(
   const irep_idt &language_mode =
     dfcc_utilst::get_function_symbol(symbol_table, function_id).mode;
   {
-    // Assume the loop invariant after havocing the state.
-    // Replace bound variables by fresh instances in quantified formulas.
-    if(has_subexpr(invariant, ID_exists) || has_subexpr(invariant, ID_forall))
-      add_quantified_variable(symbol_table, invariant, language_mode);
-    code_assumet assumption{invariant};
-    assumption.add_source_location() = loop_head_location;
-    converter.goto_convert(assumption, step_instrs, language_mode);
+    // Assume the loop invariant after havocing the state; produce one
+    // assumption per conjunct to ease analysis of counterexamples, and possibly
+    // also improve solver performance (observed with Bitwuzla)
+    if(invariant.id() == ID_and)
+    {
+      for(const auto &op : invariant.operands())
+      {
+        code_assumet assumption{op};
+        assumption.add_source_location() = loop_head_location;
+        converter.goto_convert(assumption, step_instrs, language_mode);
+      }
+    }
+    else
+    {
+      code_assumet assumption{invariant};
+      assumption.add_source_location() = loop_head_location;
+      converter.goto_convert(assumption, step_instrs, language_mode);
+    }
   }
 
   {
@@ -512,13 +523,24 @@ void dfcc_instrument_loopt::add_body_instructions(
       "Check invariant after step for loop " +
       id2string(check_location.get_function()) + "." +
       std::to_string(cbmc_loop_id));
-    // Assume the loop invariant after havocing the state.
-    // Replace bound variables by fresh instances in quantified formulas.
-    if(has_subexpr(invariant, ID_exists) || has_subexpr(invariant, ID_forall))
-      add_quantified_variable(symbol_table, invariant, language_mode);
-    code_assertt assertion{invariant};
-    assertion.add_source_location() = check_location;
-    converter.goto_convert(assertion, pre_loop_latch_instrs, language_mode);
+    // Assert the loop invariant after havocing the state; produce one assertion
+    // per conjunct to ease analysis of counterexamples, and possibly also
+    // improve solver performance (observed with Bitwuzla)
+    if(invariant.id() == ID_and)
+    {
+      for(const auto &op : invariant.operands())
+      {
+        code_assertt assertion{op};
+        assertion.add_source_location() = check_location;
+        converter.goto_convert(assertion, pre_loop_latch_instrs, language_mode);
+      }
+    }
+    else
+    {
+      code_assertt assertion{invariant};
+      assertion.add_source_location() = check_location;
+      converter.goto_convert(assertion, pre_loop_latch_instrs, language_mode);
+    }
   }
 
   {

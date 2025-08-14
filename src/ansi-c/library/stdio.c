@@ -72,35 +72,12 @@ __CPROVER_HIDE:;
 
 void fclose_cleanup(void *stream);
 __CPROVER_bool __VERIFIER_nondet___CPROVER_bool(void);
+FILE *fopen64(const char *filename, const char *mode);
 
 FILE *fopen(const char *filename, const char *mode)
 {
-  __CPROVER_HIDE:;
-  (void)*filename;
-  (void)*mode;
-#ifdef __CPROVER_STRING_ABSTRACTION
-  __CPROVER_assert(__CPROVER_is_zero_string(filename), "fopen zero-termination of 1st argument");
-  __CPROVER_assert(__CPROVER_is_zero_string(mode), "fopen zero-termination of 2nd argument");
-#endif
-
-  FILE *fopen_result;
-
-  __CPROVER_bool fopen_error=__VERIFIER_nondet___CPROVER_bool();
-
-#if !defined(__linux__) || defined(__GLIBC__)
-  fopen_result=fopen_error?NULL:malloc(sizeof(FILE));
-#else
-  // libraries need to expose the definition of FILE; this is the
-  // case for musl
-  fopen_result=fopen_error?NULL:malloc(sizeof(int));
-#endif
-
-#ifdef __CPROVER_CUSTOM_BITVECTOR_ANALYSIS
-  __CPROVER_set_must(fopen_result, "open");
-  __CPROVER_cleanup(fopen_result, fclose_cleanup);
-#endif
-
-  return fopen_result;
+__CPROVER_HIDE:;
+  return fopen64(filename, mode);
 }
 
 /* FUNCTION: _fopen */
@@ -152,6 +129,54 @@ __CPROVER_HIDE:;
 }
 #endif
 
+/* FUNCTION: fopen64 */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDLIB_H_INCLUDED
+#  include <stdlib.h>
+#  define __CPROVER_STDLIB_H_INCLUDED
+#endif
+
+void fclose_cleanup(void *stream);
+__CPROVER_bool __VERIFIER_nondet___CPROVER_bool(void);
+
+FILE *fopen64(const char *filename, const char *mode)
+{
+__CPROVER_HIDE:;
+  (void)*filename;
+  (void)*mode;
+#ifdef __CPROVER_STRING_ABSTRACTION
+  __CPROVER_assert(
+    __CPROVER_is_zero_string(filename),
+    "fopen zero-termination of 1st argument");
+  __CPROVER_assert(
+    __CPROVER_is_zero_string(mode), "fopen zero-termination of 2nd argument");
+#endif
+
+  FILE *fopen_result;
+
+  __CPROVER_bool fopen_error = __VERIFIER_nondet___CPROVER_bool();
+
+#if !defined(__linux__) || defined(__GLIBC__)
+  fopen_result = fopen_error ? NULL : malloc(sizeof(FILE));
+#else
+  // libraries need to expose the definition of FILE; this is the
+  // case for musl
+  fopen_result = fopen_error ? NULL : malloc(sizeof(int));
+#endif
+
+#ifdef __CPROVER_CUSTOM_BITVECTOR_ANALYSIS
+  __CPROVER_set_must(fopen_result, "open");
+  __CPROVER_cleanup(fopen_result, fclose_cleanup);
+#endif
+
+  return fopen_result;
+}
+
 /* FUNCTION: freopen */
 
 #ifndef __CPROVER_STDIO_H_INCLUDED
@@ -159,7 +184,22 @@ __CPROVER_HIDE:;
 #define __CPROVER_STDIO_H_INCLUDED
 #endif
 
+FILE *freopen64(const char *filename, const char *mode, FILE *f);
+
 FILE *freopen(const char *filename, const char *mode, FILE *f)
+{
+__CPROVER_HIDE:;
+  return freopen64(filename, mode, f);
+}
+
+/* FUNCTION: freopen64 */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+FILE *freopen64(const char *filename, const char *mode, FILE *f)
 {
   __CPROVER_HIDE:;
   (void)*filename;
@@ -1094,14 +1134,23 @@ int vfscanf(FILE *restrict stream, const char *restrict format, va_list arg)
   }
 
   (void)*format;
-  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(*(void **)&arg) <
+#  if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg.__stack) <
+        __CPROVER_OBJECT_SIZE(arg.__stack))
+  {
+    void *a = va_arg(arg, void *);
+    __CPROVER_havoc_object(a);
+  }
+#  else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg) <
         __CPROVER_OBJECT_SIZE(arg))
   {
     void *a = va_arg(arg, void *);
     __CPROVER_havoc_object(a);
   }
+#  endif
 
-#ifdef __CPROVER_CUSTOM_BITVECTOR_ANALYSIS
+#  ifdef __CPROVER_CUSTOM_BITVECTOR_ANALYSIS
   __CPROVER_assert(__CPROVER_get_must(stream, "open"),
                    "vfscanf file must be open");
 #endif
@@ -1143,12 +1192,21 @@ __CPROVER_HIDE:;
   }
 
   (void)*format;
-  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(*(void **)&arg) <
-        __CPROVER_OBJECT_SIZE(*(void **)&arg))
+#if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg.__stack) <
+        __CPROVER_OBJECT_SIZE(arg.__stack))
   {
     void *a = va_arg(arg, void *);
     __CPROVER_havoc_object(a);
   }
+#else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg) <
+        __CPROVER_OBJECT_SIZE(arg))
+  {
+    void *a = va_arg(arg, void *);
+    __CPROVER_havoc_object(a);
+  }
+#endif
 
 #ifdef __CPROVER_CUSTOM_BITVECTOR_ANALYSIS
   __CPROVER_assert(
@@ -1192,12 +1250,21 @@ int __stdio_common_vfscanf(
   }
 
   (void)*format;
-  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(*(void **)&args) <
+#  if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(args.__stack) <
+        __CPROVER_OBJECT_SIZE(args.__stack))
+  {
+    void *a = va_arg(args, void *);
+    __CPROVER_havoc_object(a);
+  }
+#  else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(args) <
         __CPROVER_OBJECT_SIZE(args))
   {
     void *a = va_arg(args, void *);
     __CPROVER_havoc_object(a);
   }
+#  endif
 
 #  ifdef __CPROVER_CUSTOM_BITVECTOR_ANALYSIS
   __CPROVER_assert(
@@ -1271,12 +1338,21 @@ __CPROVER_HIDE:;
   int result = __VERIFIER_nondet_int();
   (void)*s;
   (void)*format;
-  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(*(void **)&arg) <
+#  if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg.__stack) <
+        __CPROVER_OBJECT_SIZE(arg.__stack))
+  {
+    void *a = va_arg(arg, void *);
+    __CPROVER_havoc_object(a);
+  }
+#  else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg) <
         __CPROVER_OBJECT_SIZE(arg))
   {
     void *a = va_arg(arg, void *);
     __CPROVER_havoc_object(a);
   }
+#  endif
 
   return result;
 }
@@ -1306,12 +1382,21 @@ __CPROVER_HIDE:;
   int result = __VERIFIER_nondet_int();
   (void)*s;
   (void)*format;
-  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(*(void **)&arg) <
-        __CPROVER_OBJECT_SIZE(*(void **)&arg))
+#if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg.__stack) <
+        __CPROVER_OBJECT_SIZE(arg.__stack))
   {
     void *a = va_arg(arg, void *);
     __CPROVER_havoc_object(a);
   }
+#else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(arg) <
+        __CPROVER_OBJECT_SIZE(arg))
+  {
+    void *a = va_arg(arg, void *);
+    __CPROVER_havoc_object(a);
+  }
+#endif
 
   return result;
 }
@@ -1347,12 +1432,21 @@ int __stdio_common_vsscanf(
 
   (void)*s;
   (void)*format;
-  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(*(void **)&args) <
+#  if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(args.__stack) <
+        __CPROVER_OBJECT_SIZE(args.__stack))
+  {
+    void *a = va_arg(args, void *);
+    __CPROVER_havoc_object(a);
+  }
+#  else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(args) <
         __CPROVER_OBJECT_SIZE(args))
   {
     void *a = va_arg(args, void *);
     __CPROVER_havoc_object(a);
   }
+#  endif
 
   return result;
 }
@@ -1540,6 +1634,75 @@ __CPROVER_HIDE:;
   return result;
 }
 
+/* FUNCTION: asprintf */
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+// declare here instead of relying on stdio.h as even those platforms that do
+// have it at all may require _GNU_SOURCE to be set
+int vasprintf(char **ptr, const char *fmt, va_list ap);
+
+int asprintf(char **ptr, const char *fmt, ...)
+{
+  va_list list;
+  va_start(list, fmt);
+  int result = vasprintf(ptr, fmt, list);
+  va_end(list);
+  return result;
+}
+
+/* FUNCTION: dprintf */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+int dprintf(int fd, const char *restrict format, ...)
+{
+__CPROVER_HIDE:;
+  va_list list;
+  va_start(list, format);
+  int result = vdprintf(fd, format, list);
+  va_end(list);
+  return result;
+}
+
+/* FUNCTION: vdprintf */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+int __VERIFIER_nondet_int(void);
+
+int vdprintf(int fd, const char *restrict format, va_list arg)
+{
+__CPROVER_HIDE:;
+
+  int result = __VERIFIER_nondet_int();
+
+  (void)fd;
+  (void)*format;
+  (void)arg;
+
+  return result;
+}
+
 /* FUNCTION: vasprintf */
 
 #ifndef __CPROVER_STDIO_H_INCLUDED
@@ -1570,6 +1733,8 @@ int vasprintf(char **ptr, const char *fmt, va_list ap)
     return -1;
 
   *ptr=malloc(result_buffer_size);
+  if(!*ptr)
+    return -1;
   int i=0;
   for( ; i<result_buffer_size; ++i)
   {
@@ -1580,6 +1745,178 @@ int vasprintf(char **ptr, const char *fmt, va_list ap)
   }
 
   __CPROVER_assume(i<result_buffer_size);
+
+  return i;
+}
+
+/* FUNCTION: snprintf */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+#undef snprintf
+
+int snprintf(char *str, size_t size, const char *fmt, ...)
+{
+  va_list list;
+  va_start(list, fmt);
+  int result = vsnprintf(str, size, fmt, list);
+  va_end(list);
+  return result;
+}
+
+/* FUNCTION: __builtin___snprintf_chk */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+int __builtin___vsnprintf_chk(
+  char *str,
+  size_t size,
+  int flag,
+  size_t bufsize,
+  const char *fmt,
+  va_list ap);
+
+int __builtin___snprintf_chk(
+  char *str,
+  size_t size,
+  int flag,
+  size_t bufsize,
+  const char *fmt,
+  ...)
+{
+  va_list list;
+  va_start(list, fmt);
+  int result = __builtin___vsnprintf_chk(str, size, flag, bufsize, fmt, list);
+  va_end(list);
+  return result;
+}
+
+/* FUNCTION: vsnprintf */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+#undef vsnprintf
+
+char __VERIFIER_nondet_char(void);
+
+int vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
+{
+  (void)*fmt;
+
+#if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(ap.__stack) <
+        __CPROVER_OBJECT_SIZE(ap.__stack))
+
+  {
+    (void)va_arg(ap, int);
+    __CPROVER_precondition(
+      __CPROVER_POINTER_OBJECT(str) != __CPROVER_POINTER_OBJECT(ap.__stack),
+      "vsnprintf object overlap");
+  }
+#else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(ap) <
+        __CPROVER_OBJECT_SIZE(ap))
+
+  {
+    (void)va_arg(ap, int);
+    __CPROVER_precondition(
+      __CPROVER_POINTER_OBJECT(str) != __CPROVER_POINTER_OBJECT(ap),
+      "vsnprintf object overlap");
+  }
+#endif
+
+  size_t i = 0;
+  for(; i < size; ++i)
+  {
+    char c = __VERIFIER_nondet_char();
+    str[i] = c;
+    if(c == '\0')
+      break;
+  }
+
+  return i;
+}
+
+/* FUNCTION: __builtin___vsnprintf_chk */
+
+#ifndef __CPROVER_STDIO_H_INCLUDED
+#  include <stdio.h>
+#  define __CPROVER_STDIO_H_INCLUDED
+#endif
+
+#ifndef __CPROVER_STDARG_H_INCLUDED
+#  include <stdarg.h>
+#  define __CPROVER_STDARG_H_INCLUDED
+#endif
+
+char __VERIFIER_nondet_char(void);
+
+int __builtin___vsnprintf_chk(
+  char *str,
+  size_t size,
+  int flag,
+  size_t bufsize,
+  const char *fmt,
+  va_list ap)
+{
+  (void)flag;
+  (void)bufsize;
+  (void)*fmt;
+
+#if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(__APPLE__)
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(ap.__stack) <
+        __CPROVER_OBJECT_SIZE(ap.__stack))
+
+  {
+    (void)va_arg(ap, int);
+    __CPROVER_precondition(
+      __CPROVER_POINTER_OBJECT(str) != __CPROVER_POINTER_OBJECT(ap.__stack),
+      "vsnprintf object overlap");
+  }
+#else
+  while((__CPROVER_size_t)__CPROVER_POINTER_OFFSET(ap) <
+        __CPROVER_OBJECT_SIZE(ap))
+
+  {
+    (void)va_arg(ap, int);
+    __CPROVER_precondition(
+      __CPROVER_POINTER_OBJECT(str) != __CPROVER_POINTER_OBJECT(ap),
+      "vsnprintf object overlap");
+  }
+#endif
+
+  size_t i = 0;
+  for(; i < size; ++i)
+  {
+    char c = __VERIFIER_nondet_char();
+    str[i] = c;
+    if(c == '\0')
+      break;
+  }
 
   return i;
 }
@@ -1641,6 +1978,49 @@ int __stdio_common_vfprintf(
   if(stream == __acrt_iob_func(1))
     __CPROVER_printf(format, args);
   return 0;
+}
+
+#endif
+
+/* FUNCTION: __stdio_common_vsprintf */
+
+#ifdef _WIN32
+
+#  ifndef __CPROVER_STDIO_H_INCLUDED
+#    include <stdio.h>
+#    define __CPROVER_STDIO_H_INCLUDED
+#  endif
+
+#  ifndef __CPROVER_STDARG_H_INCLUDED
+#    include <stdarg.h>
+#    define __CPROVER_STDARG_H_INCLUDED
+#  endif
+
+char __VERIFIER_nondet_char(void);
+
+int __stdio_common_vsprintf(
+  unsigned __int64 options,
+  char *str,
+  size_t size,
+  char const *fmt,
+  _locale_t locale,
+  va_list args)
+{
+  (void)options;
+  (void)*fmt;
+  (void)locale;
+  (void)args;
+
+  size_t i = 0;
+  for(; i < size; ++i)
+  {
+    char c = __VERIFIER_nondet_char();
+    str[i] = c;
+    if(c == '\0')
+      break;
+  }
+
+  return i;
 }
 
 #endif

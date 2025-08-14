@@ -25,8 +25,10 @@ Author: Remi Delmas, delmasrd@amazon.com
 
 #include "dfcc_contract_functions.h"
 #include "dfcc_instrument.h"
+#include "dfcc_is_cprover_symbol.h"
 #include "dfcc_library.h"
 #include "dfcc_lift_memory_predicates.h"
+#include "dfcc_pointer_equals.h"
 #include "dfcc_utils.h"
 
 /// Generate the contract write set
@@ -114,30 +116,30 @@ static symbol_exprt create_addr_of_ensures_write_set(
 }
 
 /// Generate object set used to support is_fresh predicates
-static symbol_exprt create_is_fresh_set(
+static symbol_exprt create_ptr_pred_ctx(
   symbol_table_baset &symbol_table,
   dfcc_libraryt &library,
   const symbolt &wrapper_symbol)
 {
   return dfcc_utilst::create_symbol(
     symbol_table,
-    library.dfcc_type[dfcc_typet::OBJ_SET],
+    library.dfcc_type[dfcc_typet::PTR_PRED_CTX],
     wrapper_symbol.name,
-    "__is_fresh_set",
+    "__ptr_pred_ctx",
     wrapper_symbol.location);
 }
 
 /// Generate object set pointer used to support is_fresh predicates
-static symbol_exprt create_addr_of_is_fresh_set(
+static symbol_exprt create_addr_of_ptr_pred_ctx(
   symbol_table_baset &symbol_table,
   dfcc_libraryt &library,
   const symbolt &wrapper_symbol)
 {
   return dfcc_utilst::create_symbol(
     symbol_table,
-    library.dfcc_type[dfcc_typet::OBJ_SET_PTR],
+    library.dfcc_type[dfcc_typet::PTR_PRED_CTX_PTR],
     wrapper_symbol.name,
-    "__address_of_is_fresh_set",
+    "__address_of_ptr_pred_ctx",
     wrapper_symbol.location);
 }
 
@@ -185,9 +187,9 @@ dfcc_wrapper_programt::dfcc_wrapper_programt(
       goto_model.symbol_table,
       library,
       wrapper_symbol)),
-    is_fresh_set(
-      create_is_fresh_set(goto_model.symbol_table, library, wrapper_symbol)),
-    addr_of_is_fresh_set(create_addr_of_is_fresh_set(
+    ptr_pred_ctx(
+      create_ptr_pred_ctx(goto_model.symbol_table, library, wrapper_symbol)),
+    addr_of_ptr_pred_ctx(create_addr_of_ptr_pred_ctx(
       goto_model.symbol_table,
       library,
       wrapper_symbol)),
@@ -225,7 +227,7 @@ dfcc_wrapper_programt::dfcc_wrapper_programt(
   // encode all contract clauses
   encode_requires_write_set();
   encode_ensures_write_set();
-  encode_is_fresh_set();
+  encode_ptr_pred_ctx();
   encode_requires_clauses();
   encode_contract_write_set();
   encode_function_call();
@@ -245,7 +247,7 @@ void dfcc_wrapper_programt::add_to_dest(goto_programt &dest)
 {
   // add code to dest in the right order
   dest.destructive_append(preamble);
-  dest.destructive_append(link_is_fresh);
+  dest.destructive_append(link_ptr_pred_ctx);
   dest.destructive_append(preconditions);
   dest.destructive_append(history);
   dest.destructive_append(write_set_checks);
@@ -499,39 +501,136 @@ void dfcc_wrapper_programt::encode_contract_write_set()
     goto_programt::make_dead(addr_of_contract_write_set, wrapper_sl));
 }
 
-void dfcc_wrapper_programt::encode_is_fresh_set()
+void dfcc_wrapper_programt::encode_ptr_pred_ctx()
 {
-  preamble.add(goto_programt::make_decl(is_fresh_set, wrapper_sl));
+  preamble.add(goto_programt::make_decl(ptr_pred_ctx, wrapper_sl));
 
-  preamble.add(goto_programt::make_decl(addr_of_is_fresh_set, wrapper_sl));
+  preamble.add(goto_programt::make_decl(addr_of_ptr_pred_ctx, wrapper_sl));
   preamble.add(goto_programt::make_assignment(
-    addr_of_is_fresh_set, address_of_exprt(is_fresh_set), wrapper_sl));
+    addr_of_ptr_pred_ctx, address_of_exprt(ptr_pred_ctx), wrapper_sl));
 
-  // CALL obj_set_create_indexed_by_object_id(is_fresh_set) in preamble
+  // CALL ptr_pred_ctx_init(ptr_pred_ctx) in preamble
   preamble.add(goto_programt::make_function_call(
-    library.obj_set_create_indexed_by_object_id_call(
-      addr_of_is_fresh_set, wrapper_sl),
+    library.ptr_pred_ctx_init_call(addr_of_ptr_pred_ctx, wrapper_sl),
     wrapper_sl));
 
   // link to requires write set
-  link_is_fresh.add(goto_programt::make_function_call(
-    library.link_is_fresh_call(
-      addr_of_requires_write_set, addr_of_is_fresh_set, wrapper_sl),
+  link_ptr_pred_ctx.add(goto_programt::make_function_call(
+    library.link_ptr_pred_ctx_call(
+      addr_of_requires_write_set, addr_of_ptr_pred_ctx, wrapper_sl),
     wrapper_sl));
 
   // link to ensures write set
-  link_is_fresh.add(goto_programt::make_function_call(
-    library.link_is_fresh_call(
-      addr_of_ensures_write_set, addr_of_is_fresh_set, wrapper_sl),
+  link_ptr_pred_ctx.add(goto_programt::make_function_call(
+    library.link_ptr_pred_ctx_call(
+      addr_of_ensures_write_set, addr_of_ptr_pred_ctx, wrapper_sl),
     wrapper_sl));
 
-  // release call in postamble
-  postamble.add(goto_programt::make_function_call(
-    library.obj_set_release_call(addr_of_is_fresh_set, wrapper_sl),
+  // reset tracking of target pointers to allow ensures clause to
+  // post different predicates.
+  link_deallocated_contract.add(goto_programt::make_function_call(
+    library.ptr_pred_ctx_reset_call(addr_of_ptr_pred_ctx, wrapper_sl),
     wrapper_sl));
 
   // DEAD instructions in postamble
-  postamble.add(goto_programt::make_dead(is_fresh_set, wrapper_sl));
+  postamble.add(goto_programt::make_dead(ptr_pred_ctx, wrapper_sl));
+}
+
+/// Recursively traverses expression, adding "no_fail" attributes to pointer
+/// predicates that we know cannot fail when invoked in an assume context:
+/// Starting from the root with "no_fail" true, we recurse over the boolean
+/// structure, setting the "no_fail" false for all but the last operand
+/// disjunctive operators like `||` and `==>`, and distributing the current
+/// "no_fail" status over disjunctions.
+///
+/// For instance:
+/// ```
+/// (len > 0):no_fail=false ==> is_fresh(p, len):no_fail=true
+/// ```
+///
+/// ```
+/// is_fresh(p, len):no_fail=true && is_fresh(q, len):no_fail=true
+/// ```
+///
+/// ```
+/// is_fresh(p, len):no_fail=false ||
+/// is_fresh(q, len):no_fail=false ||
+/// is_fresh(r, len):no_fail=true
+/// ```
+///
+/// ```
+/// is_fresh(p, len):no_fail=false ||
+/// (
+///    is_fresh(q, len):no_fail=true &&
+///    (
+///      (len>0):no_fail=true ==> is_fresh(r, len):no_fail=true
+///    )
+/// )
+/// ```
+/// \param expr The expression to traverse
+/// \param no_fail The current no_fail value based on logical context
+void disable_may_fail_rec(exprt &expr, bool no_fail)
+{
+  if(expr.id() == ID_side_effect)
+  {
+    // Base case: pointer predicate function call
+    side_effect_exprt &side_effect = to_side_effect_expr(expr);
+    if(side_effect.get_statement() == ID_function_call)
+    {
+      exprt &function = side_effect.operands()[0];
+      if(function.id() == ID_symbol)
+      {
+        const irep_idt &func_name = to_symbol_expr(function).get_identifier();
+        if(dfcc_is_cprover_pointer_predicate(func_name))
+        {
+          function.add_source_location().set("no_fail", no_fail);
+        }
+      }
+    }
+    return;
+  }
+  else if(expr.id() == ID_and)
+  {
+    // Shortcutting AND: propagate current no_fail value to all operands
+    for(auto &op : expr.operands())
+    {
+      disable_may_fail_rec(op, no_fail);
+    }
+  }
+  else if(expr.id() == ID_or)
+  {
+    // Shortcutting OR: set no_fail=false for all but last operand
+    auto &ops = expr.operands();
+    // Process all operands except the last one with no_fail=false
+    for(std::size_t i = 0; i < ops.size() - 1; ++i)
+    {
+      disable_may_fail_rec(ops[i], false);
+    }
+    // Process last operand with current no_fail value
+    if(!ops.empty())
+    {
+      disable_may_fail_rec(ops.back(), no_fail);
+    }
+  }
+  else if(expr.id() == ID_implies)
+  {
+    // Shortcutting implies: false for antecedent, current value for consequent
+    INVARIANT(
+      expr.operands().size() == 2,
+      "Implication expression must have two operands");
+    disable_may_fail_rec(expr.operands()[0], false);
+    disable_may_fail_rec(expr.operands()[1], no_fail);
+  }
+  else
+  {
+    // bail on other types of expressions
+    return;
+  }
+}
+
+void disable_may_fail(exprt &expr)
+{
+  disable_may_fail_rec(expr, true);
 }
 
 void dfcc_wrapper_programt::encode_requires_clauses()
@@ -555,13 +654,9 @@ void dfcc_wrapper_programt::encode_requires_clauses()
   {
     exprt requires_lmbd =
       to_lambda_expr(r).application(contract_lambda_parameters);
-    requires_lmbd.add_source_location() = r.source_location();
-    if(
-      has_subexpr(requires_lmbd, ID_exists) ||
-      has_subexpr(requires_lmbd, ID_forall))
-      add_quantified_variable(
-        goto_model.symbol_table, requires_lmbd, language_mode);
 
+    // add "no_fail" suffix to predicates required as units
+    disable_may_fail(requires_lmbd);
     source_locationt sl(r.source_location());
     if(statement_type == ID_assert)
     {
@@ -570,6 +665,8 @@ void dfcc_wrapper_programt::encode_requires_clauses()
         "Check requires clause of contract " + id2string(contract_symbol.name) +
         " for function " + id2string(wrapper_id));
     }
+    // // rewrite pointer equalities before goto conversion
+    // TODO rewrite_equal_exprt_to_pointer_equals(requires_lmbd);
     codet requires_statement(statement_type, {std::move(requires_lmbd)}, sl);
     converter.goto_convert(requires_statement, requires_program, language_mode);
   }
@@ -609,8 +706,8 @@ void dfcc_wrapper_programt::encode_ensures_clauses()
                       .application(contract_lambda_parameters)
                       .with_source_location(e);
 
-    if(has_subexpr(ensures, ID_exists) || has_subexpr(ensures, ID_forall))
-      add_quantified_variable(goto_model.symbol_table, ensures, language_mode);
+    // add "no_fail" suffix to unit pointer predicates
+    disable_may_fail(ensures);
 
     // this also rewrites ID_old expressions to fresh variables
     generate_history_variables_initialization(
@@ -624,7 +721,8 @@ void dfcc_wrapper_programt::encode_ensures_clauses()
         "Check ensures clause of contract " + id2string(contract_symbol.name) +
         " for function " + id2string(wrapper_id));
     }
-
+    // // rewrite pointer equalities before goto conversion
+    // TODO rewrite_equal_exprt_to_pointer_equals(ensures);
     codet ensures_statement(statement_type, {std::move(ensures)}, sl);
     converter.goto_convert(ensures_statement, ensures_program, language_mode);
   }

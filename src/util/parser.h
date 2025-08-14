@@ -12,12 +12,12 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_UTIL_PARSER_H
 #define CPROVER_UTIL_PARSER_H
 
-#include "deprecate.h"
 #include "expr.h"
 #include "message.h"
 
 #include <filesystem>
 #include <iosfwd>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -30,16 +30,11 @@ public:
 
   std::vector<exprt> stack;
 
-  DEPRECATED(SINCE(2023, 12, 20, "use parsert(message_handler) instead"))
-  parsert() : in(nullptr), line_no(0), previous_line_no(0), column(1)
-  {
-  }
-
   explicit parsert(message_handlert &message_handler)
     : in(nullptr),
       log(message_handler),
       line_no(0),
-      previous_line_no(0),
+      previous_line_no(std::numeric_limits<unsigned int>::max()),
       column(1)
   {
   }
@@ -88,14 +83,14 @@ public:
 
   void set_file(const irep_idt &file)
   {
-    source_location.set_file(file);
-    source_location.set_working_directory(
+    _source_location.set_file(file);
+    _source_location.set_working_directory(
       std::filesystem::current_path().string());
   }
 
   irep_idt get_file() const
   {
-    return source_location.get_file();
+    return _source_location.get_file();
   }
 
   unsigned get_line_no() const
@@ -113,21 +108,31 @@ public:
     column=_column;
   }
 
-  void set_source_location(exprt &e)
+  const source_locationt &source_location()
   {
     // Only set line number when needed, as this destroys sharing.
     if(previous_line_no!=line_no)
     {
       previous_line_no=line_no;
-      source_location.set_line(line_no);
+
+      // for the case of a file with no newlines
+      if(line_no == 0)
+        _source_location.set_line(1);
+      else
+        _source_location.set_line(line_no);
     }
 
-    e.add_source_location()=source_location;
+    return _source_location;
+  }
+
+  void set_source_location(exprt &e)
+  {
+    e.add_source_location() = source_location();
   }
 
   void set_function(const irep_idt &function)
   {
-    source_location.set_function(function);
+    _source_location.set_function(function);
   }
 
   void advance_column(unsigned token_width)
@@ -135,12 +140,9 @@ public:
     column+=token_width;
   }
 
-  // should be protected or even just be a reference to a message handler, but
-  // for now enables a step-by-step transition
-  messaget log;
-
 protected:
-  source_locationt source_location;
+  messaget log;
+  source_locationt _source_location;
   unsigned line_no, previous_line_no;
   unsigned column;
 };

@@ -23,7 +23,7 @@ class symbol_table_baset;
 
 #define OPT_CONFIG_C_CPP                                                       \
   "D:I:(include)(function)"                                                    \
-  "(c89)(c99)(c11)(cpp98)(cpp03)(cpp11)"                                       \
+  "(c89)(c99)(c11)(c17)(c23)(cpp98)(cpp03)(cpp11)"                             \
   "(unsigned-char)"                                                            \
   "(round-to-even)(round-to-nearest)"                                          \
   "(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)"                     \
@@ -33,7 +33,7 @@ class symbol_table_baset;
   " {y-I} {upath} \t set include path (C/C++)\n"                               \
   " {y--include} {ufile} \t set include file (C/C++)\n"                        \
   " {y-D} {umacro} \t define preprocessor macro (C/C++)\n"                     \
-  " {y--c89}, {y--c99}, {y--c11} \t "                                          \
+  " {y--c89}, {y--c99}, {y--c11},\n {y--c17}, {y--c23} \t "                    \
   "set C language standard (default: " +                                       \
     std::string(                                                               \
       configt::ansi_ct::default_c_standard() ==                                \
@@ -45,6 +45,12 @@ class symbol_table_baset;
       : configt::ansi_ct::default_c_standard() ==                              \
           configt::ansi_ct::c_standardt::C11                                   \
         ? "c11"                                                                \
+      : configt::ansi_ct::default_c_standard() ==                              \
+          configt::ansi_ct::c_standardt::C17                                   \
+        ? "c17"                                                                \
+      : configt::ansi_ct::default_c_standard() ==                              \
+          configt::ansi_ct::c_standardt::C23                                   \
+        ? "c23"                                                                \
         : "") +                                                                \
     ")\n"                                                                      \
     " {y--cpp98}, {y--cpp03}, {y--cpp11} \t "                                  \
@@ -72,7 +78,9 @@ class symbol_table_baset;
 #define OPT_CONFIG_LIBRARY                                                     \
   "(malloc-fail-assert)(malloc-fail-null)(malloc-may-fail)"                    \
   "(no-malloc-may-fail)"                                                       \
-  "(string-abstraction)"
+  "(string-abstraction)"                                                       \
+  "(dfcc-debug-lib)"                                                           \
+  "(dfcc-simple-invalid-pointer-model)"
 
 #define HELP_CONFIG_LIBRARY                                                    \
   " {y--malloc-may-fail} \t allow malloc calls to return a null pointer\n"     \
@@ -80,7 +88,11 @@ class symbol_table_baset;
   " {y--malloc-fail-assert} \t "                                               \
   "set malloc failure mode to assert-then-assume\n"                            \
   " {y--malloc-fail-null} \t set malloc failure mode to return null\n"         \
-  " {y--string-abstraction} \t track C string lengths and zero-termination\n"
+  " {y--string-abstraction} \t track C string lengths and zero-termination\n"  \
+  " {y--dfcc-debug-lib} \t enable debug assertions in the cprover contracts "  \
+  "library\n"                                                                  \
+  " {y--dfcc-simple-invalid-pointer-model} \t use simplified invalid pointer " \
+  "model in the cprover contracts library (faster, unsound)\n"
 
 #define OPT_CONFIG_JAVA "(classpath)(cp)(main-class)"
 
@@ -107,7 +119,7 @@ class symbol_table_baset;
     "set operating system (default: " +                                        \
     id2string(configt::this_operating_system()) +                              \
     ") to one of: {yfreebsd}, {ylinux}, {ymacos}, {ynetbsd}, {yopenbsd}, "     \
-    "{ysolaris}, or {ywindows}\n"                                              \
+    "{ysolaris}, {yhurd}, or {ywindows}\n"                                     \
     " {y--i386-linux}, {y--i386-win32}, {y--i386-macos}, {y--ppc-macos}, "     \
     "{y--win32}, {y--winx64} \t "                                              \
     "set architecture and operating system\n"                                  \
@@ -151,14 +163,18 @@ public:
     bool for_has_scope;
     bool ts_18661_3_Floatn_types; // ISO/IEC TS 18661-3:2015
     bool gcc__float128_type;      // __float128, a gcc extension since 4.3/4.5
+    bool __float128_is_keyword;   // __float128 as a keyword (and not typedef)
     bool float16_type;            // _Float16 (Clang >= 15, GCC >= 12)
     bool bf16_type;               // __bf16 (Clang >= 15, GCC >= 13)
+    bool fp16_type;               // __fp16 (GCC >= 4.5 on ARM, Clang >= 6)
     bool single_precision_constant;
     enum class c_standardt
     {
       C89,
       C99,
-      C11
+      C11,
+      C17,
+      C23
     } c_standard;
     static c_standardt default_c_standard();
 
@@ -175,6 +191,16 @@ public:
     void set_c11()
     {
       c_standard = c_standardt::C11;
+      for_has_scope = true;
+    }
+    void set_c17()
+    {
+      c_standard = c_standardt::C17;
+      for_has_scope = true;
+    }
+    void set_c23()
+    {
+      c_standard = c_standardt::C23;
       for_has_scope = true;
     }
 
@@ -238,6 +264,8 @@ public:
     void set_arch_spec_v850();
     void set_arch_spec_hppa();
     void set_arch_spec_sh4();
+    void set_arch_spec_loongarch64();
+    void set_arch_spec_emscripten();
 
     enum class flavourt
     {
@@ -277,6 +305,12 @@ public:
 
     bool string_abstraction;
     bool malloc_may_fail = true;
+
+    /// enable debug code in cprover_contracts library
+    bool dfcc_debug_lib = false;
+
+    /// use simplified invalid pointer model in cprover_contracts library
+    bool simple_invalid_pointer_model = false;
 
     enum malloc_failure_modet
     {
@@ -363,6 +397,7 @@ public:
 
   void set_object_bits_from_symbol_table(const symbol_table_baset &);
   std::string object_bits_info();
+  mp_integer max_malloc_size() const;
 
   static irep_idt this_architecture();
   static irep_idt this_operating_system();

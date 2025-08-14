@@ -29,40 +29,15 @@ Date: March 2023
 #include "dfcc_root_object.h"
 #include "dfcc_utils.h"
 
-/// Extracts the assigns clause expression from the latch condition
-static const exprt::operandst &
-get_assigns(const goto_programt::const_targett &latch_target)
-{
-  return static_cast<const exprt &>(
-           latch_target->condition().find(ID_C_spec_assigns))
-    .operands();
-}
-
-/// Extracts the invariant clause expression from the latch condition
-static const exprt::operandst &
-get_invariants(const goto_programt::const_targett &latch_target)
-{
-  return static_cast<const exprt &>(
-           latch_target->condition().find(ID_C_spec_loop_invariant))
-    .operands();
-}
-
-/// Extracts the decreases clause expression from the latch condition
-static const exprt::operandst &
-get_decreases(const goto_programt::const_targett &latch_target)
-{
-  return static_cast<const exprt &>(
-           latch_target->condition().find(ID_C_spec_decreases))
-    .operands();
-}
-
 /// Returns true iff some contract clause expression is attached
 /// to the latch condition of this loop
-static bool has_contract(const goto_programt::const_targett &latch_target)
+static bool has_contract(
+  const goto_programt::const_targett &latch_target,
+  const bool check_side_effect)
 {
-  return !get_assigns(latch_target).empty() ||
-         !get_invariants(latch_target).empty() ||
-         !get_decreases(latch_target).empty();
+  return get_loop_assigns(latch_target).is_not_nil() ||
+         get_loop_invariants(latch_target, check_side_effect).is_not_nil() ||
+         get_loop_decreases(latch_target, check_side_effect).is_not_nil();
 }
 
 void dfcc_loop_infot::output(std::ostream &out) const
@@ -155,16 +130,20 @@ dfcc_loop_infot::find_latch(goto_programt &goto_program) const
 static std::optional<goto_programt::targett> check_has_contract_rec(
   const dfcc_loop_nesting_grapht &loop_nesting_graph,
   const std::size_t loop_idx,
-  const bool must_have_contract)
+  const bool must_have_contract,
+  const bool check_side_effect)
 {
   const auto &node = loop_nesting_graph[loop_idx];
-  if(must_have_contract && !has_contract(node.latch))
+  if(must_have_contract && !has_contract(node.latch, check_side_effect))
     return node.head;
 
   for(const auto pred_idx : loop_nesting_graph.get_predecessors(loop_idx))
   {
     auto result = check_has_contract_rec(
-      loop_nesting_graph, pred_idx, has_contract(node.latch));
+      loop_nesting_graph,
+      pred_idx,
+      has_contract(node.latch, check_side_effect),
+      check_side_effect);
     if(result.has_value())
       return result;
   }
@@ -175,13 +154,15 @@ static std::optional<goto_programt::targett> check_has_contract_rec(
 /// loops nested in loops that have contracts also have contracts.
 /// Return the head of the first offending loop if it exists, nothing otherwise.
 static std::optional<goto_programt::targett> check_inner_loops_have_contracts(
-  const dfcc_loop_nesting_grapht &loop_nesting_graph)
+  const dfcc_loop_nesting_grapht &loop_nesting_graph,
+  const bool check_side_effect)
 {
   for(std::size_t idx = 0; idx < loop_nesting_graph.size(); idx++)
   {
     if(loop_nesting_graph.get_successors(idx).empty())
     {
-      auto result = check_has_contract_rec(loop_nesting_graph, idx, false);
+      auto result = check_has_contract_rec(
+        loop_nesting_graph, idx, false, check_side_effect);
       if(result.has_value())
         return result;
     }
@@ -272,26 +253,6 @@ static bool is_assigned(dirtyt &dirty, const irep_idt &ident, assignst assigns)
   return false;
 }
 
-/// Collect identifiers that are local to this loop only
-/// (excluding nested loop).
-static std::unordered_set<irep_idt> gen_loop_locals_set(
-  const dfcc_loop_nesting_grapht &loop_nesting_graph,
-  const std::size_t loop_id)
-{
-  std::unordered_set<irep_idt> loop_locals;
-  for(const auto &target : loop_nesting_graph[loop_id].instructions)
-  {
-    auto loop_id_opt = dfcc_get_loop_id(target);
-    if(
-      target->is_decl() && loop_id_opt.has_value() &&
-      loop_id_opt.value() == loop_id)
-    {
-      loop_locals.insert(target->decl_symbol().get_identifier());
-    }
-  }
-  return loop_locals;
-}
-
 /// Compute subset of locals that must be tracked in the loop's write set.
 /// A local must be tracked if it is dirty or if it may be assigned by one
 /// of the inner loops.
@@ -348,7 +309,8 @@ static struct contract_clausest default_loop_contract_clauses(
   const dfcc_loop_nesting_grapht &loop_nesting_graph,
   const std::size_t loop_id,
   const irep_idt &function_id,
-  local_may_aliast &local_may_alias,
+  const assignst &inferred_assigns,
+  const bool check_side_effect,
   message_handlert &message_handler,
   const namespacet &ns)
 {
@@ -356,11 +318,13 @@ static struct contract_clausest default_loop_contract_clauses(
   const auto &loop = loop_nesting_graph[loop_id];
 
   // Process loop contract clauses
-  exprt::operandst invariant_clauses = get_invariants(loop.latch);
-  exprt::operandst assigns_clauses = get_assigns(loop.latch);
+  exprt::operandst invariant_clauses =
+    get_loop_invariants(loop.latch, check_side_effect).operands();
+  exprt::operandst assigns_clauses = get_loop_assigns(loop.latch).operands();
 
   // Initialise defaults
-  struct contract_clausest result(get_decreases(loop.latch));
+  struct contract_clausest result(
+    get_loop_decreases(loop.latch, check_side_effect).operands());
 
   // Generate defaults for all clauses if at least one type of clause is defined
   if(
@@ -396,33 +360,31 @@ static struct contract_clausest default_loop_contract_clauses(
     else
     {
       // infer assigns clause targets if none given
-      auto inferred = dfcc_infer_loop_assigns(
-        local_may_alias, loop.instructions, loop.head->source_location(), ns);
-      log.warning() << "No assigns clause provided for loop " << function_id
-                    << "." << loop.latch->loop_number << " at "
-                    << loop.head->source_location() << ". The inferred set {";
+      log.debug() << "No assigns clause provided for loop " << function_id
+                  << "." << loop.latch->loop_number << " at "
+                  << loop.head->source_location() << ". The inferred set {";
       bool first = true;
-      for(const auto &expr : inferred)
+      for(const auto &expr : inferred_assigns)
       {
         if(!first)
         {
-          log.warning() << ", ";
+          log.debug() << ", ";
         }
         first = false;
-        log.warning() << format(expr);
+        log.debug() << format(expr);
       }
-      log.warning() << "} might be incomplete or imprecise, please provide an "
-                       "assigns clause if the analysis fails."
-                    << messaget::eom;
-      result.assigns.swap(inferred);
+      log.debug() << "} might be incomplete or imprecise, please provide an "
+                     "assigns clause if the analysis fails."
+                  << messaget::eom;
+      result.assigns = inferred_assigns;
     }
 
     if(result.decreases_clauses.empty())
     {
-      log.warning() << "No decrease clause provided for loop " << function_id
-                    << "." << loop.latch->loop_number << " at "
-                    << loop.head->source_location()
-                    << ". Termination will not be checked." << messaget::eom;
+      log.debug() << "No decrease clause provided for loop " << function_id
+                  << "." << loop.latch->loop_number << " at "
+                  << loop.head->source_location()
+                  << ". Termination will not be checked." << messaget::eom;
     }
   }
   return result;
@@ -432,15 +394,34 @@ static dfcc_loop_infot gen_dfcc_loop_info(
   const dfcc_loop_nesting_grapht &loop_nesting_graph,
   const std::size_t loop_id,
   const irep_idt &function_id,
+  goto_functiont &goto_function,
   const std::map<std::size_t, dfcc_loop_infot> &loop_info_map,
   dirtyt &dirty,
-  local_may_aliast &local_may_alias,
+  const assignst &inferred_assigns,
+  const bool check_side_effect,
   message_handlert &message_handler,
   dfcc_libraryt &library,
   symbol_table_baset &symbol_table)
 {
-  std::unordered_set<irep_idt> loop_locals =
-    gen_loop_locals_set(loop_nesting_graph, loop_id);
+  const namespacet ns(symbol_table);
+  std::unordered_set<irep_idt> loop_locals = gen_loop_locals_set(
+    function_id,
+    goto_function,
+    loop_nesting_graph[loop_id],
+    message_handler,
+    ns);
+
+  // Exclude locals of inner nested loops.
+  for(const auto &inner_loop : loop_nesting_graph.get_predecessors(loop_id))
+  {
+    INVARIANT(
+      loop_info_map.find(inner_loop) != loop_info_map.end(),
+      "DFCC should gen_dfcc_loop_info for inner loops first.");
+    for(const auto &inner_local : loop_info_map.at(inner_loop).local)
+    {
+      loop_locals.erase(inner_local);
+    }
+  }
 
   std::unordered_set<irep_idt> loop_tracked = gen_tracked_set(
     loop_nesting_graph.get_predecessors(loop_id),
@@ -448,12 +429,12 @@ static dfcc_loop_infot gen_dfcc_loop_info(
     dirty,
     loop_info_map);
 
-  const namespacet ns(symbol_table);
   struct contract_clausest contract_clauses = default_loop_contract_clauses(
     loop_nesting_graph,
     loop_id,
     function_id,
-    local_may_alias,
+    inferred_assigns,
+    check_side_effect,
     message_handler,
     ns);
 
@@ -503,10 +484,11 @@ static dfcc_loop_infot gen_dfcc_loop_info(
 }
 
 dfcc_cfg_infot::dfcc_cfg_infot(
+  goto_modelt &goto_model,
   const irep_idt &function_id,
   goto_functiont &goto_function,
   const exprt &top_level_write_set,
-  const dfcc_loop_contract_modet loop_contract_mode,
+  const loop_contract_configt &loop_contract_config,
   symbol_table_baset &symbol_table,
   message_handlert &message_handler,
   dfcc_libraryt &library)
@@ -517,13 +499,21 @@ dfcc_cfg_infot::dfcc_cfg_infot(
 {
   dfcc_loop_nesting_grapht loop_nesting_graph;
   goto_programt &goto_program = goto_function.body;
-  if(loop_contract_mode != dfcc_loop_contract_modet::NONE)
+
+  // Clean up possible fake loops that are due to do { ... } while(0);
+  simplify_gotos(goto_program, ns);
+
+  // From loop number to the inferred loop assigns.
+  std::map<std::size_t, assignst> inferred_loop_assigns_map;
+
+  if(loop_contract_config.apply_loop_contracts)
   {
     messaget log(message_handler);
     dfcc_check_loop_normal_form(goto_program, log);
     loop_nesting_graph = build_loop_nesting_graph(goto_program);
 
-    const auto head = check_inner_loops_have_contracts(loop_nesting_graph);
+    const auto head = check_inner_loops_have_contracts(
+      loop_nesting_graph, loop_contract_config.check_side_effect);
     if(head.has_value())
     {
       throw invalid_source_file_exceptiont(
@@ -536,9 +526,23 @@ dfcc_cfg_infot::dfcc_cfg_infot(
 
     auto topsorted = loop_nesting_graph.topsort();
 
+    bool has_loops_with_contracts = false;
     for(const auto idx : topsorted)
     {
       topsorted_loops.push_back(idx);
+      has_loops_with_contracts |= has_contract(
+        loop_nesting_graph[idx].latch, loop_contract_config.check_side_effect);
+    }
+
+    // We infer loop assigns for all loops in the function.
+    if(has_loops_with_contracts)
+    {
+      dfcc_infer_loop_assigns_for_function(
+        inferred_loop_assigns_map,
+        goto_model.goto_functions,
+        goto_function,
+        message_handler,
+        ns);
     }
   }
 
@@ -558,19 +562,22 @@ dfcc_cfg_infot::dfcc_cfg_infot(
 
   // generate dfcc_cfg_loop_info for loops and add to loop_info_map
   dirtyt dirty(goto_function);
-  local_may_aliast local_may_alias(goto_function);
 
   for(const auto &loop_id : topsorted_loops)
   {
+    auto inferred_loop_assigns =
+      inferred_loop_assigns_map[loop_nesting_graph[loop_id].latch->loop_number];
     loop_info_map.insert(
       {loop_id,
        gen_dfcc_loop_info(
          loop_nesting_graph,
          loop_id,
          function_id,
+         goto_function,
          loop_info_map,
          dirty,
-         local_may_alias,
+         inferred_loop_assigns,
+         loop_contract_config.check_side_effect,
          message_handler,
          library,
          symbol_table)});
@@ -640,6 +647,17 @@ void dfcc_cfg_infot::output(std::ostream &out) const
   }
 }
 
+std::size_t dfcc_cfg_infot::get_first_id_not_skipped_or_top_level_id(
+  const std::size_t loop_id) const
+{
+  if(is_top_level_id(loop_id) || !get_loop_info(loop_id).must_skip())
+  {
+    return loop_id;
+  }
+  return get_first_id_not_skipped_or_top_level_id(
+    get_outer_loop_identifier(loop_id).value_or(top_level_id()));
+}
+
 const exprt &
 dfcc_cfg_infot::get_write_set(goto_programt::const_targett target) const
 {
@@ -647,7 +665,7 @@ dfcc_cfg_infot::get_write_set(goto_programt::const_targett target) const
   PRECONDITION(
     loop_id_opt.has_value() &&
     is_valid_loop_or_top_level_id(loop_id_opt.value()));
-  auto loop_id = loop_id_opt.value();
+  auto loop_id = get_first_id_not_skipped_or_top_level_id(loop_id_opt.value());
   if(is_top_level_id(loop_id))
   {
     return top_level_write_set;
@@ -746,6 +764,11 @@ bool dfcc_cfg_infot::is_top_level_id(const std::size_t id) const
   return id == loop_info_map.size();
 }
 
+size_t dfcc_cfg_infot::top_level_id() const
+{
+  return loop_info_map.size();
+}
+
 bool dfcc_cfg_infot::must_track_decl_or_dead(
   goto_programt::const_targett target) const
 {
@@ -755,7 +778,6 @@ bool dfcc_cfg_infot::must_track_decl_or_dead(
   auto &tracked = get_tracked_set(target);
   return tracked.find(ident) != tracked.end();
 }
-#include <iostream>
 
 /// Returns true if the lhs to an assignment must be checked against its write
 /// set. The set of locally declared identifiers and the subset of that that

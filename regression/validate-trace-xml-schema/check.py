@@ -23,6 +23,7 @@ ExcludedTests = list(map(lambda s: os.path.join(test_base_dir, s[0], s[1]), [
     ['xml-interface1', 'test_wrong_flag.desc'],
     # these want --show-goto-functions instead of producing a trace
     ['integer-assignments1', 'integer-typecheck.desc'],
+    ['declaration-goto', 'no-duplicate-decl.desc'],
     ['destructors', 'compound_literal.desc'],
     ['destructors', 'enter_lexical_block.desc'],
     ['enum_is_in_range', 'enum_test3-simplified.desc'],
@@ -34,9 +35,14 @@ ExcludedTests = list(map(lambda s: os.path.join(test_base_dir, s[0], s[1]), [
     ['show_properties1', 'test.desc'],
     # program-only instead of trace
     ['vla1', 'program-only.desc'],
+    ['Array_operations4', 'program-only.desc'],
     ['Pointer_Arithmetic19', 'test.desc'],
     ['Quantifiers-simplify', 'simplify_not_forall.desc'],
     ['array-cell-sensitivity15', 'test.desc'],
+    ['havoc_slice', 'functional_assign.desc'],
+    ['havoc_slice', 'functional_assign_direct.desc'],
+    ['havoc_slice', 'functional_slice_bytes.desc'],
+    ['havoc_slice', 'functional_slice_typed.desc'],
     ['saturating_arithmetric', 'output-formula.desc'],
     # these test for invalid command line handling
     ['bad_option', 'test_multiple.desc'],
@@ -73,7 +79,8 @@ ExcludedTests = list(map(lambda s: os.path.join(test_base_dir, s[0], s[1]), [
     # the SAT back-end only
     ['integer-assignments1', 'test.desc'],
     # this test is expected to abort, thus producing invalid XML
-    ['String_Abstraction17', 'test.desc']
+    ['String_Abstraction17', 'test.desc'],
+    ['Quantifiers1', 'quantifier-with-side-effect.desc']
 ]))
 
 # TODO maybe consider looking them up on PATH, but direct paths are

@@ -243,6 +243,7 @@ protected:
   bool rLinkageSpec(cpp_linkage_spect &);
   bool rNamespaceSpec(cpp_namespace_spect &);
   bool rUsing(cpp_usingt &);
+  bool rUsingOrTypedef(cpp_itemt &);
   bool rStaticAssert(cpp_static_assertt &);
   bool rLinkageBody(cpp_linkage_spect::itemst &);
   bool rTemplateDecl(cpp_declarationt &);
@@ -581,14 +582,8 @@ bool Parser::rDefinition(cpp_itemt &item)
     return rNamespaceSpec(item.make_namespace_spec());
   else if(t==TOK_INLINE && lex.LookAhead(1)==TOK_NAMESPACE)
     return rNamespaceSpec(item.make_namespace_spec());
-  else if(
-    t == TOK_USING && is_identifier(lex.LookAhead(1)) &&
-    lex.LookAhead(2) == '=')
-  {
-    return rTypedefUsing(item.make_declaration());
-  }
   else if(t==TOK_USING)
-    return rUsing(item.make_using());
+    return rUsingOrTypedef(item);
   else if(t==TOK_STATIC_ASSERT)
     return rStaticAssert(item.make_static_assert());
   else
@@ -667,6 +662,9 @@ bool Parser::rTypedefUsing(cpp_declarationt &declaration)
 #ifdef DEBUG
   std::cout << std::string(__indent, ' ') << "Parser::rTypedefUsing 2\n";
 #endif
+
+  if(!optAttribute(declaration.type()))
+    return false;
 
   if(lex.get_token(tk)!='=')
     return false;
@@ -774,11 +772,12 @@ bool Parser::isTypeSpecifier()
          || t == TOK_SIGNED || t == TOK_UNSIGNED || t == TOK_FLOAT ||
          t == TOK_DOUBLE || t == TOK_INT8 || t == TOK_INT16 || t == TOK_INT32 ||
          t == TOK_INT64 || t == TOK_GCC_INT128 || t == TOK_PTR32 ||
-         t == TOK_PTR64 || t == TOK_GCC_FLOAT80 || t == TOK_GCC_FLOAT128 ||
-         t == TOK_VOID || t == TOK_BOOL || t == TOK_CPROVER_BOOL ||
-         t == TOK_CLASS || t == TOK_STRUCT || t == TOK_UNION || t == TOK_ENUM ||
-         t == TOK_INTERFACE || t == TOK_TYPENAME || t == TOK_TYPEOF ||
-         t == TOK_DECLTYPE || t == TOK_UNDERLYING_TYPE;
+         t == TOK_PTR64 || t == TOK_GCC_FLOAT16 || t == TOK_GCC_FLOAT80 ||
+         t == TOK_GCC_FLOAT128 || t == TOK_VOID || t == TOK_BOOL ||
+         t == TOK_CPROVER_BOOL || t == TOK_CLASS || t == TOK_STRUCT ||
+         t == TOK_UNION || t == TOK_ENUM || t == TOK_INTERFACE ||
+         t == TOK_TYPENAME || t == TOK_TYPEOF || t == TOK_DECLTYPE ||
+         t == TOK_UNDERLYING_TYPE;
 }
 
 /*
@@ -901,10 +900,41 @@ bool Parser::rUsing(cpp_usingt &cpp_using)
   if(!rName(cpp_using.name()))
     return false;
 
+  // We will eventually need to record this attribute as Clang's
+  // __using_if_exists__ affects type checking.
+  typet discard;
+  if(!optAttribute(discard))
+    return false;
+
   if(lex.get_token(tk)!=';')
     return false;
 
   return true;
+}
+
+/*
+  USING Identifier '=' type.specifier ';'
+  | using.declaration
+*/
+bool Parser::rUsingOrTypedef(cpp_itemt &item)
+{
+  cpp_token_buffert::post pos = lex.Save();
+
+  cpp_tokent tk;
+  if(lex.get_token(tk) != TOK_USING)
+    return false;
+
+  typet discard;
+  if(
+    is_identifier(lex.get_token(tk)) && optAttribute(discard) &&
+    lex.LookAhead(0) == '=')
+  {
+    lex.Restore(pos);
+    return rTypedefUsing(item.make_declaration());
+  }
+
+  lex.Restore(pos);
+  return rUsing(item.make_using());
 }
 
 /*
@@ -2122,9 +2152,8 @@ bool Parser::optAlignas(typet &cv)
 
   typet tname;
   cpp_tokent op, cp;
-
-  cpp_token_buffert::post pos=lex.Save();
   lex.get_token(op);
+  cpp_token_buffert::post pos = lex.Save();
 
   if(rTypeName(tname))
   {
@@ -2391,6 +2420,8 @@ bool Parser::optAttribute(typet &t)
     switch(tk.kind)
     {
     case ']':
+      if(lex.LookAhead(0) != ']')
+        return false;
       lex.get_token();
       return true;
 
@@ -2402,7 +2433,17 @@ bool Parser::optAttribute(typet &t)
         break;
       }
 
+      case TOK_NODISCARD:
+      {
+        typet attr(ID_nodiscard);
+        set_location(attr, tk);
+        merge_types(attr, t);
+        break;
+      }
+
     default:
+      // TODO: way may wish to change this: GCC, Clang, Visual Studio merely
+      // warn when they see an attribute that they don't recognize
       return false;
     }
   }
@@ -2470,6 +2511,9 @@ bool Parser::optIntegralTypeOrClassSpec(typet &p)
     case TOK_INT32: type_id=ID_int32; break;
     case TOK_INT64: type_id=ID_int64; break;
     case TOK_GCC_INT128: type_id=ID_gcc_int128; break;
+    case TOK_GCC_FLOAT16:
+      type_id = ID_gcc_float16;
+      break;
     case TOK_GCC_FLOAT80: type_id=ID_gcc_float80; break;
     case TOK_GCC_FLOAT128: type_id=ID_gcc_float128; break;
     case TOK_BOOL:
@@ -4017,8 +4061,8 @@ bool Parser::rTemplateArgs(irept &template_args)
       tk2.text='>';
       lex.Replace(tk2);
       lex.Insert(tk2);
+      lex.get_token();
       DATA_INVARIANT(lex.LookAhead(0) == '>', "should be >");
-      DATA_INVARIANT(lex.LookAhead(1) == '>', "should be >");
       return true;
 
     default:
@@ -4486,6 +4530,12 @@ bool Parser::rClassSpec(typet &spec)
   std::cout << std::string(__indent, ' ') << "Parser::rClassSpec 3\n";
 #endif
 
+  if(!optAlignas(spec))
+    return false;
+
+  if(!optAttribute(spec))
+    return false;
+
   if(lex.LookAhead(0)=='{')
   {
     // no tag
@@ -4495,12 +4545,6 @@ bool Parser::rClassSpec(typet &spec)
   }
   else
   {
-    if(!optAlignas(spec))
-      return false;
-
-    if(!optAttribute(spec))
-      return false;
-
     irept name;
 
     if(!rName(name))
@@ -4731,14 +4775,8 @@ bool Parser::rClassMember(cpp_itemt &member)
     return rTypedef(member.make_declaration());
   else if(t==TOK_TEMPLATE)
     return rTemplateDecl(member.make_declaration());
-  else if(
-    t == TOK_USING && is_identifier(lex.LookAhead(1)) &&
-    lex.LookAhead(2) == '=')
-  {
-    return rTypedefUsing(member.make_declaration());
-  }
   else if(t==TOK_USING)
-    return rUsing(member.make_using());
+    return rUsingOrTypedef(member);
   else if(t==TOK_STATIC_ASSERT)
     return rStaticAssert(member.make_static_assert());
   else

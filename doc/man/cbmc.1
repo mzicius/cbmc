@@ -79,7 +79,7 @@ allow malloc calls to return a null pointer
 \fB\-\-malloc\-fail\-null\fR
 set malloc failure mode to return null
 .TP
-\fB\-\-unwinding\-assertions\fR (\fBcbmc\fR\-only)
+\fB\-\-unwinding\-assertions\fR
 generate unwinding assertions (cannot be
 used with \fB\-\-cover\fR)
 .PP
@@ -108,9 +108,8 @@ disable signed arithmetic over\- and underflow checks
 \fB\-\-no\-malloc\-may\-fail\fR
 do not allow malloc calls to fail by default
 .TP
-\fB\-\-no\-unwinding\-assertions\fR (\fBcbmc\fR\-only)
-do not generate unwinding assertions (cannot be
-used with \fB\-\-cover\fR)
+\fB\-\-no\-unwinding\-assertions\fR
+do not generate unwinding assertions
 .PP
 If an already set flag is re-set, like calling \fB\-\-pointer\-check\fR
 when default checks are already on, the flag is simply ignored.
@@ -155,7 +154,7 @@ set include file (C/C++)
 \fB\-D\fR macro
 define preprocessor macro (C/C++)
 .TP
-\fB\-\-c89\fR, \fB\-\-c99\fR, \fB\-\-c11\fR
+\fB\-\-c89\fR, \fB\-\-c99\fR, \fB\-\-c11\fR, \fB\-\-c17\fR, \fB\-\-c23\fR
 set C language standard (default: c11)
 .TP
 \fB\-\-cpp98\fR, \fB\-\-cpp03\fR, \fB\-\-cpp11\fR
@@ -202,7 +201,7 @@ Set analysis architecture, which defaults to the host architecture. Use one of:
 \fB\-\-os\fR \fIos\fR
 Set analysis operating system, which defaults to the host operating system. Use
 one of: \fBfreebsd\fR, \fBlinux\fR, \fBmacos\fR, \fBnetbsd\fR, \fBopenbsd\fR,
-\fBsolaris\fR, or \fBwindows\fR.
+\fBsolaris\fR, \fBhurd\fR, or \fBwindows\fR.
 .TP
 \fB\-\-i386\-linux\fR, \fB\-\-i386\-win32\fR, \fB\-\-i386\-macos\fR, \fB\-\-ppc\-macos\fR, \fB\-\-win32\fR, \fB\-\-winx64\fR
 Set analysis architecture and operating system.
@@ -335,6 +334,13 @@ set malloc failure mode to return null
 \fB\-\-string\-abstraction\fR
 track C string lengths and zero\-termination
 .TP
+\fB\-\-dfcc\-debug\-lib\fR
+enable debug assertions in the cprover contracts library
+.TP
+\fB\-\-dfcc\-simple\-invalid\-pointer\-model\fR
+use simplified invalid pointer model in the cprover contracts library
+(faster, unsound)
+.TP
 \fB\-\-reachability\-slice\fR
 remove instructions that cannot appear on a trace
 from entry point to a property
@@ -348,10 +354,6 @@ run full slicer (experimental)
 .TP
 \fB\-\-drop\-unused\-functions\fR
 drop functions trivially unreachable from main function
-.TP
-\fB\-\-havoc\-undefined\-functions\fR
-for any function that has no body, assign non\-deterministic values to
-any parameters passed as non\-const pointers and the return value
 .SS "Semantic transformations:"
 .TP
 \fB\-\-nondet\-static\fR
@@ -394,13 +396,13 @@ sensitivity size for arrays to 0
 \fB\-\-show\-loops\fR
 show the loops in the program
 .TP
-\fB\-\-unwind\fR nr
-unwind nr times
+\fB\-\-unwind\fR \fInr\fR
+unwind all loops at most \fInr\fR times
 .TP
-\fB\-\-unwindset\fR [T:]L:B,...
-unwind loop L with a bound of B
-(optionally restricted to thread T)
-(use \fB\-\-show\-loops\fR to get the loop IDs)
+\fB\-\-unwindset\fR [\fIT\fR:]\fIL\fR:\fIB\fR,...
+unwind loop \fIL\fR with a bound of \fIB\fR, optionally restricted to thread
+\fIT\fR, and overriding what may be set as default unwinding via
+\fB\-\-unwind\fR (use \fB\-\-show\-loops\fR to get the loop IDs)
 .TP
 \fB\-\-incremental\-loop\fR L
 check properties after each unwinding
@@ -429,11 +431,14 @@ show the verification conditions
 remove assignments unrelated to property
 .TP
 \fB\-\-unwinding\-assertions\fR
-generate unwinding assertions (cannot be
-used with \fB\-\-cover\fR)
+generate unwinding assertions (which are enabled by default; overrides
+\fB\-\-no\-unwinding\-assertions\fR when both of these are given); cannot be
+used with \fB\-\-cover\fR
 .TP
 \fB\-\-partial\-loops\fR
-permit paths with partial loops
+permit paths that execute loops only partially (up to the given unwinding bound)
+and then continue beyond the loop even when the loop condition would still hold
+(such paths may be spurious, resulting in false alarms)
 .TP
 \fB\-\-no\-self\-loops\-to\-assumptions\fR
 do not simplify while(1){} to assume(0)

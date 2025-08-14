@@ -917,15 +917,24 @@ public:
     set_width(width);
   }
 
+  bitvector_typet(const irep_idt &_id, mp_integer _width) : typet(_id)
+  {
+    width(_width);
+  }
+
   std::size_t get_width() const
   {
     return get_size_t(ID_width);
   }
 
+  std::size_t width() const;
+
   void set_width(std::size_t width)
   {
     set_size_t(ID_width, width);
   }
+
+  void width(const mp_integer &);
 
   static void check(
     const typet &type,
@@ -1003,6 +1012,9 @@ public:
 
   mp_integer get_from() const;
   mp_integer get_to() const;
+  bool includes(const mp_integer &) const;
+  constant_exprt zero_expr() const;
+  constant_exprt one_expr() const;
 
   void set_from(const mp_integer &_from);
   void set_to(const mp_integer &to);

@@ -82,8 +82,8 @@ operator()(propertiest &properties)
     worklist->pop();
   }
 
-  log.status() << "Runtime Symex: " << symex_runtime.count() << "s"
-               << messaget::eom;
+  log.statistics() << "Runtime Symex: " << symex_runtime.count() << "s"
+                   << messaget::eom;
 
   final_update_properties(properties, result.updated_properties);
 
@@ -144,7 +144,7 @@ goto_tracet single_path_symex_checkert::build_shortest_trace() const
   {
     // NOLINTNEXTLINE(whitespace/braces)
     counterexample_beautificationt{ui_message_handler}(
-      dynamic_cast<boolbvt &>(property_decider->get_stack_decision_procedure()),
+      property_decider->get_boolbv_decision_procedure(),
       property_decider->get_equation());
   }
 

@@ -77,6 +77,10 @@ void gcc_versiont::get(const std::string &executable)
           default_c_standard = configt::ansi_ct::c_standardt::C99;
         else if(split[1] == "201112L")
           default_c_standard = configt::ansi_ct::c_standardt::C11;
+        else if(split[1] == "201710L")
+          default_c_standard = configt::ansi_ct::c_standardt::C17;
+        else if(split[1] == "202000L" || split[1] == "202311L")
+          default_c_standard = configt::ansi_ct::c_standardt::C23;
       }
     }
 
@@ -162,6 +166,12 @@ void configure_gcc(const gcc_versiont &gcc_version)
   config.ansi_c.gcc__float128_type =
     gcc_version.flavor == gcc_versiont::flavort::GCC &&
     gcc_version.is_at_least(4u, gcc_float128_minor_version);
+  config.ansi_c.__float128_is_keyword =
+    gcc_version.flavor == gcc_versiont::flavort::CLANG ||
+    (gcc_version.flavor == gcc_versiont::flavort::GCC &&
+     config.ansi_c.arch == "arm64" &&
+     config.ansi_c.os == configt::ansi_ct::ost::OS_MACOS &&
+     config.ansi_c.gcc__float128_type);
 
   config.ansi_c.float16_type =
     (gcc_version.flavor == gcc_versiont::flavort::GCC &&
@@ -174,4 +184,11 @@ void configure_gcc(const gcc_versiont &gcc_version)
      gcc_version.is_at_least(13u)) ||
     (gcc_version.flavor == gcc_versiont::flavort::CLANG &&
      gcc_version.is_at_least(15u));
+
+  config.ansi_c.fp16_type =
+    (gcc_version.flavor == gcc_versiont::flavort::GCC &&
+     gcc_version.is_at_least(4u, 5u) &&
+     (config.ansi_c.arch == "arm" || config.ansi_c.arch == "arm64")) ||
+    (gcc_version.flavor == gcc_versiont::flavort::CLANG &&
+     gcc_version.is_at_least(6u));
 }

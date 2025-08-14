@@ -8,13 +8,14 @@ website</a>; contributors should use the
 <a href="https://github.com/diffblue/cbmc">repository</a> hosted on GitHub. CBMC
 is part of CProver.
 
-CBMC is a Bounded Model Checker for C and C++ programs. It supports C89, C99,
-most of C11 and most compiler extensions provided by gcc and Visual Studio. It
-also supports SystemC using Scoot. It allows verifying array bounds (buffer
-overflows), pointer safety, arithmetic exceptions and user-specified assertions.
-Furthermore, it can check C and C++ for consistency with other languages, such
-as Verilog. The verification is performed by unwinding the loops in the program
-and passing the resulting equation to a decision procedure.
+CBMC is a Bounded Model Checker for C and C++ programs.  It supports C89,
+C99, most of C11, C17, C23 and most compiler extensions provided by gcc and
+Visual Studio.  It also supports SystemC using Scoot.  It allows verifying
+array bounds (buffer overflows), pointer safety, arithmetic exceptions and
+user-specified assertions.  Furthermore, it can check C and C++ for
+consistency with other languages, such as Verilog.  The verification is
+performed by unwinding the loops in the program and passing the resulting
+equation to a decision procedure.
 
 For further information see [cprover.org](http://www.cprover.org/cbmc).
 
@@ -54,7 +55,7 @@ license</a>.
 Overview of Documentation
 =======
 
-### For users:
+## For users:
 
 * The [CPROVER User Manual](http://www.cprover.org/cprover-manual/) details the
   capabilities of CBMC and describes how to install and use these tools. It
@@ -68,7 +69,7 @@ you can access it <a href=
 * \subpage memory-bounds-checking
 * \subpage satabs
 
-### For contributors:
+## For contributors:
 
 The following pages attempt to provide the information that a developer needs to
 work on CBMC, in a sensible order. In many cases they link to the appropriate

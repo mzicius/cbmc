@@ -16,9 +16,10 @@ Author: Diffblue Ltd.
 #include <util/string_utils.h>
 #include <util/ui_message.h>
 
-#include <goto-programs/allocate_objects.h>
-#include <goto-programs/goto_convert_functions.h>
 #include <goto-programs/goto_model.h>
+
+#include <ansi-c/allocate_objects.h>
+#include <ansi-c/goto-conversion/goto_convert_functions.h>
 
 #include "function_harness_generator_options.h"
 #include "goto_harness_generator_factory.h"
@@ -390,8 +391,7 @@ void function_call_harness_generatort::validate_options(
         "--" COMMON_HARNESS_GENERATOR_FUNCTION_POINTER_CAN_BE_NULL_OPT};
     }
 
-    const auto &function_pointer_type =
-      ns.follow(function_pointer_symbol_pointer->type);
+    const auto &function_pointer_type = function_pointer_symbol_pointer->type;
 
     if(!can_cast_type<pointer_typet>(function_pointer_type))
     {

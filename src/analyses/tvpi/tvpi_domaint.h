@@ -15,7 +15,7 @@ public:
   tvpi_domaint();
 
   //static int result_call;
-  //static std::chrono::milliseconds total_duration;
+  //static std::chrono::milliseconds total_duration; 
   //static std::size_t input_sys_size;
   //static std::size_t output_sys_size;
 
@@ -73,6 +73,9 @@ public:
   virtual bool ai_simplify(
     exprt &condition,
     const namespacet &ns) const override;
+
+  //loop fix
+  int loop_round;
 
 protected:
   tvpi_systemt sys;

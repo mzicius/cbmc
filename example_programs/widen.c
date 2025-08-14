@@ -1,12 +1,11 @@
-int main(void){
-   
-    int x = 3;
+int main(void)
+{
+  int x = 3;
 
-    while(x<11){
+  while(x < 11)
+  {
+    x = x + 3;
+  }
 
-    x = x + 2;
-
-    }
-
-    return 0;
+  return 0;
 }

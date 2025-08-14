@@ -40,6 +40,8 @@ void tvpi_domaint::make_top()
   //describes everything
   sys = tvpi_systemt();
   bind = tvpi_bindingt();
+  //loop fix
+  loop_round = 0;
 }
 
 void tvpi_domaint::make_entry()
@@ -102,6 +104,7 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
   {
     std::cout << "we met a constant" << std::endl;
     tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
+    //this->bind.add_tmp_ref(c);
     mp_integer const_e = numeric_cast_v<mp_integer>(to_constant_expr(e));
     this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", const_e);
     this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", -const_e);
@@ -666,6 +669,8 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cerr << "MERGE CASE 2: A IS BOTTOM" << std::endl;
     this->sys.constraints = b.sys.constraints;
     this->bind = b.bind;
+    //loop fix
+    this->loop_round = b.loop_round;
     return true;
   }
 
@@ -700,21 +705,13 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   print_cons(this->sys.constraints);
 
   std::cerr << "the left binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : this->bind.binding)
-  {
-    std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
-              << bind_pair.second << std::endl;
-  }
+  this->bind.print_binding();
 
   std::cerr << "the right system for CONVEX UNION:" << std::endl;
   print_cons(b.sys.constraints);
 
   std::cerr << "the right binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : b.bind.binding)
-  {
-    std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
-              << bind_pair.second << std::endl;
-  }
+  b.bind.print_binding();
 
   align_bindings(this->bind.binding, b.bind.binding, this->sys, b.sys);
 
@@ -722,21 +719,13 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   print_cons(this->sys.constraints);
 
   std::cerr << "after align: left binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : this->bind.binding)
-  {
-    std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
-              << bind_pair.second << std::endl;
-  }
+  this->bind.print_binding();
 
   std::cerr << "after align: right system for CONVEX UNION:" << std::endl;
   print_cons(b.sys.constraints);
 
   std::cerr << "after align: right binding for CONVEX UNION:" << std::endl;
-  for(const auto &bind_pair : b.bind.binding)
-  {
-    std::cout << id2string(bind_pair.first.get_identifier()) << " -> "
-              << bind_pair.second << std::endl;
-  }
+  b.bind.print_binding();
 
   std::set<std::string> existing_relations = find_relations(this->sys, b.sys);
 
@@ -800,11 +789,23 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   auto widen_mode =
     from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
+  std::cerr << "the loop round is: " << loop_round << std::endl;
+
   if(
-    widen_mode == widen_modet::could_widen &&
     from->current_location()->is_backwards_goto() &&
     from->current_location()->get_target() == to->current_location())
   {
+    loop_round = loop_round + 1;
+    std::cerr << "the loop was updated to: " << loop_round << std::endl;
+  }
+
+  if(
+    widen_mode == widen_modet::could_widen &&
+    from->current_location()->is_backwards_goto() &&
+    from->current_location()->get_target() == to->current_location() &&
+    loop_round >= 2)
+  {
+    /*
     std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
     auto copy_a = this->sys.constraints;
     auto copy_b = b.sys.constraints;
@@ -817,51 +818,13 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cout << "for inter right: " << std::endl;
     print_cons(this->sys.constraints);
 
-    /*
-    for(auto con_a : convex_union)
-    {
-      for(auto con_b : this->sys.constraints)
-      {
-        if(con_a->to_string() == con_b->to_string())
-        {
-          intersection.push_back(con_a);
-        }
-      }
-  
-
-    }
-    */
-
     intersection = this->sys.intersect(convex_union);
 
-    /*
-    std::cerr << "intersection is:" << std::endl;
-    print_cons(intersection);
-
-    std::cout << "the main flow system now is: " << std::endl;
+    std::cout << "the main system for now is: " << std::endl;
     print_cons(this->sys.constraints);
 
-    std::cout << "is_equal inter to main: "
-              << std::equal(
-                   intersection.begin(),
-                   intersection.end(),
-                   this->sys.constraints.begin())
-              << std::endl;
-    */
-
-    //cautious
-    //should go at least twice around the loop before starting widening
-    //control flow
-    //check the flags
-    //in two points
-    //print flags
-    //custom check for equiv of containers
-    //if(intersection != this->sys.constraints){
-    //the size dif dif systems then
-
-    //if(!std::equal(
-    //intersection.begin(),
-    //this->sys.constraints.begin()))
+    std::cerr << "intersection is:" << std::endl;
+    print_cons(intersection);
 
     if(!this->sys.is_equal(intersection))
     {
@@ -869,28 +832,10 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       this->sys.constraints = intersection;
       is_modified = true;
     }
+    */
   }
   else
   {
-    /*
-    std::cout << "the convex union is: " << std::endl;
-    print_cons(convex_union);
-
-    std::cout << "the main flow system is: " << std::endl;
-    print_cons(this->sys.constraints);
-
-    std::cout << "is_equal convex to main: "
-              << std::equal(
-                   convex_union.begin(),
-                   convex_union.end(),
-                   this->sys.constraints.begin())
-              << std::endl;
-    */
-    //!std::equal(
-    // convex_union.begin(),
-    // convex_union.end(),
-    // this->sys.constraints.begin())
-
     if(!this->sys.is_equal(convex_union))
     {
       std::cerr << "system is updated with convex union" << std::endl;

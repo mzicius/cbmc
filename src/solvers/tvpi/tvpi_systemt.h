@@ -56,6 +56,13 @@ public:
 
   std::vector<std::shared_ptr<inequality>> to_canon();
 
+ //is canon method should be precondition
+ //run troough projections
+ //all 2d projections should be canonical
+ //is canon should be postcondition
+ //lifting to mult dimensions should be still right after doing intermediate projections
+ 
+
 private:
   static dimensiont dim_counter;
 };

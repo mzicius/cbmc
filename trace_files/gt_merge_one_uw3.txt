@@ -1,0 +1,87 @@
+Storage not specified, defaulting to --one-domain-per-history
+GOTO-ANALYZER version 6.0.0-preview (abe1f6f5fc-dirty) 64-bit arm64 macos
+Parsing ../../test_programs/merge_one.c
+Converting
+Type-checking merge_one
+file ../../test_programs/merge_one.c line 4 function main: function 'assert' is not declared
+Generating GOTO Program
+Adding CPROVER library (arm64)
+Removal of function pointers and virtual functions
+Partial Inlining
+Generic Property Instrumentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER__start /* __CPROVER__start */
+        // 24 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+        // 25 file <built-in-additions> line 24
+        CALL __CPROVER_initialize()
+        // 26 file ../../test_programs/merge_one.c line 1
+        CALL main()
+        // 27 file ../../test_programs/merge_one.c line 1
+        ASSIGN return' := main#return_value
+        // 28 file ../../test_programs/merge_one.c line 1
+        DEAD main#return_value
+        // 29 file ../../test_programs/merge_one.c line 1
+        OUTPUT address_of("return'"[0])
+        // 30 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER_initialize /* __CPROVER_initialize */
+        // 17 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+        // 18 file <built-in-additions> line 8
+        ASSIGN __CPROVER_dead_object := NULL
+        // 19 file <built-in-additions> line 7
+        ASSIGN __CPROVER_deallocated := NULL
+        // 20 file <built-in-additions> line 12
+        ASSIGN __CPROVER_max_malloc_size := 36028797018963968
+        // 21 file <built-in-additions> line 9
+        ASSIGN __CPROVER_memory_leak := NULL
+        // 22 file <built-in-additions> line 16
+        ASSIGN __CPROVER_rounding_mode := 0
+        // 23 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+main /* main */
+        // 0 file ../../test_programs/merge_one.c line 3 function main
+        DECL main::1::x : signedbv[32]
+        // 1 file ../../test_programs/merge_one.c line 3 function main
+        ASSIGN main::1::x := 4
+        // 2 file ../../test_programs/merge_one.c line 4 function main
+        ASSERT main::1::x ≥ 4 // assertion x >= 4
+        // 3 file ../../test_programs/merge_one.c line 5 function main
+        ASSERT main::1::x ≤ 4 // assertion x <= 4
+        // 4 file ../../test_programs/merge_one.c line 7 function main
+     1: IF ¬(main::1::x < 12) THEN GOTO 2
+        // 5 file ../../test_programs/merge_one.c line 9 function main
+        ASSERT main::1::x ≥ 4 // assertion x >= 4
+        // 6 file ../../test_programs/merge_one.c line 10 function main
+        ASSERT main::1::x ≤ 11 // assertion x <= 11
+        // 7 file ../../test_programs/merge_one.c line 11 function main
+        ASSERT ¬(overflow-+(main::1::x, 1)) // arithmetic overflow on signed + in x + 1
+        // 8 file ../../test_programs/merge_one.c line 11 function main
+        ASSIGN main::1::x := main::1::x + 1
+        // 9 file ../../test_programs/merge_one.c line 12 function main
+        ASSERT main::1::x ≥ 5 // assertion x >= 5
+        // 10 file ../../test_programs/merge_one.c line 13 function main
+        ASSERT main::1::x ≤ 12 // assertion x <= 12
+        // 11 file ../../test_programs/merge_one.c line 7 function main
+        GOTO 1
+        // 12 file ../../test_programs/merge_one.c line 15 function main
+     2: ASSERT main::1::x ≥ 12 // assertion x >= 12
+        // 13 file ../../test_programs/merge_one.c line 16 function main
+        ASSERT main::1::x ≤ 12 // assertion x <= 12
+        // 14 file ../../test_programs/merge_one.c line 18 function main
+        ASSIGN main#return_value := main::1::x
+        // 15 file ../../test_programs/merge_one.c line 18 function main
+        DEAD main::1::x
+        // 16 file ../../test_programs/merge_one.c line 19 function main
+        END_FUNCTION
+

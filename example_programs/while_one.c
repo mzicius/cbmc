@@ -1,10 +1,11 @@
 int main(void){
    
     int x = 3;
+    int y = 7;
 
-    while(x<8){
+    while(x<y){
 
-    x = x + 2;
+    //x = x + 2;
 
     }
 

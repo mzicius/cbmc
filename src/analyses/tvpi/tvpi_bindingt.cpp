@@ -9,10 +9,14 @@ void tvpi_bindingt::set_binding(
   if(binding.find(symbol) != binding.end())
   {
     std::cout << "binding found" << std::endl;
-    std::cout<<"sym: "<<symbol.get_identifier()<<" at dim: "<<binding[symbol]<<" the ref count is: "<< references[binding[symbol]]<<std::endl;
+    std::cout << "sym: " << symbol.get_identifier()
+              << " at dim: " << binding[symbol]
+              << " the ref count is: " << references[binding[symbol]]
+              << std::endl;
     //fix?
-    if(references[binding[symbol]]>0){
-    references[binding[symbol]] = references[binding[symbol]] - 1;
+    if(references[binding[symbol]] > 0)
+    {
+      references[binding[symbol]] = references[binding[symbol]] - 1;
     }
     binding[symbol] = dim;
   }
@@ -55,10 +59,12 @@ void tvpi_bindingt::print_references() const
   }
 }
 
-void tvpi_bindingt::add_tmp_ref(tvpi_systemt::dimensiont dim) {
-  std::cout<<"the tmp dim ref is: "<<dim<<std::endl;
-  if(references.find(dim)==references.end()){
-    references.insert(std::make_pair(dim,0));
+void tvpi_bindingt::add_tmp_ref(tvpi_systemt::dimensiont dim)
+{
+  std::cout << "the tmp dim ref is: " << dim << std::endl;
+  if(references.find(dim) == references.end())
+  {
+    references.insert(std::make_pair(dim, 0));
   }
 }
 
@@ -70,8 +76,7 @@ tvpi_bindingt::binding_map tvpi_bindingt::copy_map() const
 bool tvpi_bindingt::wipe_binding(tvpi_systemt &sys)
 {
   bool changed = false;
-  for(auto it = references.begin();
-      it != references.end();)
+  for(auto it = references.begin(); it != references.end();)
   {
     const auto &ref = *it;
     if(ref.second == 0)
@@ -89,6 +94,7 @@ bool tvpi_bindingt::wipe_binding(tvpi_systemt &sys)
   return changed;
 }
 
-void tvpi_bindingt::override_binding(const binding_map &new_binding){
-      binding = new_binding;
+void tvpi_bindingt::override_binding(const binding_map &new_binding)
+{
+  binding = new_binding;
 }

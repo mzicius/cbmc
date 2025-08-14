@@ -163,3 +163,6 @@ dist/
 
 # auto generated documentation
 doc/html/
+
+# custom benchmarks
+benchmarks/

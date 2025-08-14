@@ -2,9 +2,9 @@ int main(void)
 {
   int x = 4;
 
-  while(x < 12)
+  if(x + x + x > 23)
   {
-    x = x + 1;
+    x = 10;
   }
 
   return x;

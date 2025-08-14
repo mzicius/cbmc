@@ -1,0 +1,149 @@
+GOTO-ANALYZER version 6.0.0-preview (2da3350caf-dirty) 64-bit arm64 macos
+Parsing ../../test_programs/merge_three.c
+Converting
+Type-checking merge_three
+file ../../test_programs/merge_three.c line 11 function main: function 'assert' is not declared
+Removing unused symbol __uint128_t
+Removing unused symbol __int128_t
+Removing unused symbol __tile
+Removing unused symbol tag-__gcc_atomic_memmodels
+Removing unused symbol __ATOMIC_SEQ_CST
+Removing unused symbol __ATOMIC_ACQ_REL
+Removing unused symbol __ATOMIC_RELEASE
+Removing unused symbol __ATOMIC_ACQUIRE
+Removing unused symbol __ATOMIC_CONSUME
+Removing unused symbol __ATOMIC_RELAXED
+Removing unused symbol __gcc_di
+Removing unused symbol __gcc_v8di
+Removing unused symbol __gcc_v4di
+Removing unused symbol __gcc_v2di
+Removing unused symbol __gcc_v1di
+Removing unused symbol __gcc_v8df
+Removing unused symbol __gcc_v4df
+Removing unused symbol __gcc_v16sf
+Removing unused symbol __gcc_v32hi
+Removing unused symbol __gcc_v4hi
+Removing unused symbol __gcc_v256si
+Removing unused symbol __builtin_va_list
+Removing unused symbol __gcc_v2df
+Removing unused symbol tag-__CPROVER_pipet
+Removing unused symbol __gcc_v8sf
+Removing unused symbol __PRETTY_FUNCTION__
+Removing unused symbol __gcc_v4sf
+Removing unused symbol __FUNCTION__
+Removing unused symbol __gcc_v2sf
+Removing unused symbol __func__
+Removing unused symbol __gcc_v16hi
+Removing unused symbol __gcc_v16si
+Removing unused symbol __CPROVER_allocate
+Removing unused symbol __gcc_v8si
+Removing unused symbol __gcc_v4si
+Removing unused symbol __gcc_v2si
+Removing unused symbol __gcc_v64qi
+Removing unused symbol __gcc_v32qi
+Removing unused symbol __CPROVER_rational
+Removing unused symbol __gcc_v16qi
+Removing unused symbol __CPROVER_integer
+Removing unused symbol __gcc_v8hi
+Removing unused symbol __CPROVER_deallocate
+Removing unused symbol __gcc_v8qi
+Removing unused symbol __gcc_m64
+Removing unused symbol __CPROVER_ssize_t
+Removing unused symbol __builtin_ms_va_list
+Generating GOTO Program
+Adding CPROVER library (arm64)
+Removal of function pointers and virtual functions
+Partial Inlining
+Generic Property Instrumentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER__start /* __CPROVER__start */
+        // 23 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+        // 24 file <built-in-additions> line 24
+        CALL __CPROVER_initialize()
+        // 25 file ../../test_programs/merge_three.c line 1
+        CALL main()
+        // 26 file ../../test_programs/merge_three.c line 1
+        ASSIGN return' := main#return_value
+        // 27 file ../../test_programs/merge_three.c line 1
+        DEAD main#return_value
+        // 28 file ../../test_programs/merge_three.c line 1
+        OUTPUT address_of("return'"[0])
+        // 29 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER_initialize /* __CPROVER_initialize */
+        // 16 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+        // 17 file <built-in-additions> line 8
+        ASSIGN __CPROVER_dead_object := NULL
+        // 18 file <built-in-additions> line 7
+        ASSIGN __CPROVER_deallocated := NULL
+        // 19 file <built-in-additions> line 12
+        ASSIGN __CPROVER_max_malloc_size := 36028797018963968
+        // 20 file <built-in-additions> line 9
+        ASSIGN __CPROVER_memory_leak := NULL
+        // 21 file <built-in-additions> line 16
+        ASSIGN __CPROVER_rounding_mode := 0
+        // 22 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+main /* main */
+        // 0 file ../../test_programs/merge_three.c line 3 function main
+        DECL main::1::x : signedbv[32]
+        // 1 file ../../test_programs/merge_three.c line 3 function main
+        ASSIGN main::1::x := 5
+        // 2 file ../../test_programs/merge_three.c line 4 function main
+        DECL main::1::y : signedbv[32]
+        // 3 file ../../test_programs/merge_three.c line 4 function main
+        ASSIGN main::1::y := 7
+        // 4 file ../../test_programs/merge_three.c line 6 function main
+     1: ASSERT ¬(overflow-+(main::1::x, main::1::y)) // arithmetic overflow on signed + in x + y
+        // 5 file ../../test_programs/merge_three.c line 6 function main
+        IF ¬(main::1::x + main::1::y < 15) THEN GOTO 2
+        // 6 file ../../test_programs/merge_three.c line 8 function main
+        ASSERT ¬(overflow-+(main::1::x, 1)) // arithmetic overflow on signed + in x + 1
+        // 7 file ../../test_programs/merge_three.c line 8 function main
+        ASSIGN main::1::x := main::1::x + 1
+        // 8 file ../../test_programs/merge_three.c line 6 function main
+        GOTO 1
+        // 9 file ../../test_programs/merge_three.c line 11 function main
+     2: ASSERT ¬(overflow-+(main::1::x, main::1::y)) // arithmetic overflow on signed + in x + y
+        // 10 file ../../test_programs/merge_three.c line 11 function main
+        ASSERT main::1::x + main::1::y ≤ 15 // assertion x + y <= 15
+        // 11 file ../../test_programs/merge_three.c line 12 function main
+        ASSERT main::1::x + main::1::y ≥ 15 // assertion x + y >= 15
+        // 12 file ../../test_programs/merge_three.c line 14 function main
+        ASSIGN main#return_value := main::1::x
+        // 13 file ../../test_programs/merge_three.c line 14 function main
+        DEAD main::1::y
+        // 14 file ../../test_programs/merge_three.c line 14 function main
+        DEAD main::1::x
+        // 15 file ../../test_programs/merge_three.c line 15 function main
+        END_FUNCTION
+
+
+main /* main */
+
+        DECL main::1::x : signedbv[32]
+        ASSIGN main::1::x := 5
+        DECL main::1::y : signedbv[32]
+        ASSIGN main::1::y := 7
+     1: ASSERT ¬(overflow-+(main::1::x, main::1::y)) // arithmetic overflow on signed + in x + y
+        IF ¬(main::1::x + main::1::y < 15) THEN GOTO 2
+        ASSIGN main::1::x := main::1::x + 1
+        GOTO 1
+     2: ASSERT ¬(overflow-+(main::1::x, main::1::y)) // arithmetic overflow on signed + in x + y
+        ASSERT main::1::x + main::1::y ≤ 15 // assertion x + y <= 15
+        ASSERT main::1::x + main::1::y ≥ 15 // assertion x + y >= 15
+        ASSIGN main#return_value := main::1::x
+        DEAD main::1::y
+        DEAD main::1::x
+        END_FUNCTION

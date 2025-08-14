@@ -29,6 +29,7 @@ Release/*
 *.obj
 *.a
 *.lib
+
 src/ansi-c/converter_input.txt
 src/util/version.cpp
 src/ansi-c/cprover_builtin_headers.inc
@@ -166,3 +167,4 @@ doc/html/
 
 # custom benchmarks
 benchmarks/
+src/solvers/tvpi/tvpi_math

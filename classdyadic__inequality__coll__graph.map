@@ -1,0 +1,9 @@
+<map id="dyadic_inequality" name="dyadic_inequality">
+<area shape="rect" id="Node000001" title=" " alt="" coords="19,197,156,223"/>
+<area shape="rect" id="Node000002" href="$classinequality.html" title=" " alt="" coords="5,95,92,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="60,132,85,196,80,198,56,134"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="116,95,203,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="145,133,98,199,93,196,141,129"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="90,5,229,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="162,59,162,94,157,94,157,59"/>
+</map>

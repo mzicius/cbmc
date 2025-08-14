@@ -1,0 +1,9 @@
+<map id="unary_inequality" name="unary_inequality">
+<area shape="rect" id="Node000001" title=" " alt="" coords="22,183,153,208"/>
+<area shape="rect" id="Node000002" href="$classinequality.html" title=" " alt="" coords="5,95,92,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,131,84,181,80,183,57,134"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="116,95,203,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="143,132,99,184,95,180,139,129"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="90,5,229,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="162,59,162,94,157,94,157,59"/>
+</map>

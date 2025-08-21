@@ -1,7 +1,7 @@
 include ../config.inc
 
-subdir:
-	$(MAKE) -C tvpi
+#subdir:
+#	$(MAKE) -C tvpi
 
 ifneq ($(CHAFF),)
   CHAFF_SRC=sat/satcheck_zchaff.cpp sat/satcheck_zcore.cpp

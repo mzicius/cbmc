@@ -22,14 +22,12 @@ OBJ += ../../util/util$(LIBEXT) \
 
 INCLUDES= -I ../../
 
-LIBS =
-
 include ../../config.inc
 include ../../common
 
-CLEANFILES = tvpi$(LIBEXT)
+CLEANFILES = tvpi_math$(LIBEXT)
 
-all: tvpi$(LIBEXT)
+all: tvpi_math$(LIBEXT)
 
 ifneq ($(CUDD),)
   OBJ += $(CUDD)/cudd/.libs/libcudd$(LIBEXT) $(CUDD)/cplusplus/.libs/libobj$(LIBEXT)
@@ -37,7 +35,7 @@ endif
 
 ###############################################################################
 
-tvpi$(LIBEXT): $(OBJ)
+tvpi_math$(LIBEXT): $(OBJ)
 	$(LINKLIB)
 
 all: tvpi_math$(EXEEXT)

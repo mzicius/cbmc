@@ -23,7 +23,7 @@ OBJ += ../ansi-c/ansi-c$(LIBEXT) \
       ../json/json$(LIBEXT) \
       ../assembler/assembler$(LIBEXT) \
       ../util/util$(LIBEXT) \
-      ../solvers/tvpi/tvpi$(LIBEXT) \
+      ../solvers/tvpi/tvpi_math$(LIBEXT) \
       # Empty last line
 
 INCLUDES= -I ..

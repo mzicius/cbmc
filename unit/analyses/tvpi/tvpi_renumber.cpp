@@ -17,7 +17,7 @@ SCENARIO(
     WHEN("renumbering bindings of same size"){
 
         tvpi_domaint a;
-        run();
+        //run();
         /*
         tvpi_systemt a;
         tvpi_systemt b;

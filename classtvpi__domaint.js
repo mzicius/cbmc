@@ -14,6 +14,7 @@ var classtvpi__domaint =
     [ "merge", "classtvpi__domaint.html#a6726917201ad635e0617e8659c1910f7", null ],
     [ "output", "classtvpi__domaint.html#a0b6af2e8f64e68abe4a04709d2bbf3ab", null ],
     [ "transform", "classtvpi__domaint.html#ad9696edfe5f2c1a4883c2f3acbbfb77c", null ],
+    [ "arr_mode", "classtvpi__domaint.html#a2d7de550aa558e6f59c6741c4ff83501", null ],
     [ "bind", "classtvpi__domaint.html#ad69c89a15eae0cb0e457abde829b132c", null ],
     [ "loop_round", "classtvpi__domaint.html#a50ae6df37f0432f287c87acc7cdb9c64", null ],
     [ "sys", "classtvpi__domaint.html#a590dd84d491ef7d713b5bae4a22d95c3", null ]

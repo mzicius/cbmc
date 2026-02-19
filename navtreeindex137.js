@@ -1,5 +1,6 @@
 var NAVTREEINDEX137 =
 {
+"string__refinement_8cpp.html#a0781922cc5aa65dddef7d7b466a89375":[8,0,2,27,10,30,28],
 "string__refinement_8cpp.html#a0e03ce13d9c646a358ddb197f2d5fe9c":[8,0,2,27,10,30,21],
 "string__refinement_8cpp.html#a0e73fabc25ec14162a8a5302766081d1":[8,0,2,27,10,30,27],
 "string__refinement_8cpp.html#a129aff44f6131c8a0e2ac21ee44eb5cd":[8,0,2,27,10,30,36],
@@ -248,6 +249,5 @@ var NAVTREEINDEX137 =
 "structabstract__objectt_1_1abstract__object__visitort.html#a4205d30d931cec63a5527ca7c7625c5e":[7,0,28,0,0],
 "structabstract__objectt_1_1combine__result.html":[7,0,28,1],
 "structabstract__objectt_1_1combine__result.html#a497fd14e8a70ee156d8364d715db87b7":[7,0,28,1,1],
-"structabstract__objectt_1_1combine__result.html#ae102a2c90d8a35057df5bb33ec7d3010":[7,0,28,1,0],
-"structacceleration__utilst_1_1polynomial__array__assignmentt.html":[7,0,34,0]
+"structabstract__objectt_1_1combine__result.html#ae102a2c90d8a35057df5bb33ec7d3010":[7,0,28,1,0]
 };

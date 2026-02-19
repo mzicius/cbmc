@@ -1,7 +1,6 @@
 #include "tvpi_domaint.h"
 
 #include <util/arith_tools.h>
-#include <util/mp_arith.h>
 
 #include <solvers/tvpi/join.h>
 #include <solvers/tvpi/smt_printer.h>
@@ -13,33 +12,32 @@
 #include <cstring>
 #include <fstream>
 
+std::string tvpi_domaint::arr_mode = "smsh";
+
 tvpi_domaint::tvpi_domaint()
 {
-  // This must set the domain to bottom i.e. "no possible values"
-  std::cerr << "Constructing domain" << std::endl;
+  // Contruct the domain by setting it to bottom
   make_bottom();
+
+  std::cout << "ARR MODE of the run is: " << arr_mode << std::endl;
 }
 
 tvpi_domaint::~tvpi_domaint()
 {
-  // You probably don't need anything here
+  // The destructor
 }
 
 void tvpi_domaint::make_bottom()
 {
-  //reach flag
-  //this->may_reach = false;
-  //unsat, does not represent any points
+  // The system is unsat and does not represent any points
   sys.make_unsat_system();
 }
 
 void tvpi_domaint::make_top()
 {
-  //reach flag
-  //this->may_reach = true;
-  //describes everything
   sys = tvpi_systemt();
   bind = tvpi_bindingt();
+
   //loop fix
   loop_round = 0;
 }
@@ -52,6 +50,7 @@ void tvpi_domaint::make_entry()
 
 bool tvpi_domaint::is_bottom() const
 {
+  // bot
   bool result = false;
   if(sys.constraints.size() > 0)
   {
@@ -71,6 +70,7 @@ bool tvpi_domaint::is_bottom() const
 
 bool tvpi_domaint::is_top() const
 {
+  // Top is {}
   return this->sys.constraints.size() == 0;
 }
 
@@ -96,8 +96,9 @@ void tvpi_domaint::output(
 //the value of an expression.
 tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 {
-  std::cerr << "inside the eval function" << std::endl;
-  //std::cerr << "evaluating expression: " << e.pretty() << std::endl;
+  std::cerr << "inside eval function" << std::endl;
+  std::cerr << "evaluating expression: " << e.pretty() << std::endl;
+  std::cerr << "evaluating id: " << e.id_string() << std::endl;
   //std::cerr << "evaluating expression: " << e.get_string() << std::endl;
 
   if(e.id() == ID_constant)
@@ -252,6 +253,41 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
     binary_exprt bin_exp = to_binary_expr(e);
     return eval(plus_exprt(bin_exp.lhs(), unary_minus_exprt(bin_exp.rhs())));
   }
+  else if(e.id() == ID_array)
+  {
+    if(arr_mode == "ign")
+    {
+      tvpi_systemt::dimensiont un_d = this->sys.add_new_dimension();
+      std::cout << "EVAL array - ID_array new unbound dim: " << un_d
+                << std::endl;
+      return un_d;
+    }
+  }
+  else if(e.id() == ID_index)
+  {
+    if(arr_mode == "ign")
+    {
+      tvpi_systemt::dimensiont un_d = this->sys.add_new_dimension();
+      std::cout << "EVAL array - ID_index new unbound dim: " << un_d
+                << std::endl;
+      return un_d;
+    }
+    if(arr_mode == "smsh")
+    {
+      auto ie = to_index_expr(e);
+      auto array = ie.array();
+      if(array.id() == ID_symbol)
+      {
+        auto array_name = to_symbol_expr(array);
+        std::cout << "EVAL index - dimension of array returned" << std::endl;
+        std::cout << "index is in dim: "
+                  << this->bind.lookup_binding(array_name) << std::endl;
+        return this->bind.lookup_binding(array_name);
+      }
+      std::cout << "EVAL index - array not found in binding" << std::endl;
+      return -1;
+    }
+  }
   else
   {
     std::cerr << "No evaluation for e:" << id2string(e.id()) << std::endl;
@@ -300,7 +336,7 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 void tvpi_domaint::assume(const exprt &e)
 
 {
-  std::cout << "inside the assume function" << std::endl;
+  std::cout << "inside assume function" << std::endl;
 
   //std::cout << "assuming expression: " << e.pretty() << std::endl;
   //std::cout << "assuming expression: " << e.type() << std::endl;
@@ -446,7 +482,12 @@ void tvpi_domaint::assume(const exprt &e)
 // that over-approximates e
 void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 {
-  std::cerr << "in asign with: " << lhs.get_identifier() << std::endl;
+  if(lhs.get_identifier() == ID_array)
+  {
+    std::cerr << "array is assigned" << std::endl;
+  }
+  std::cerr << "inside assign with: " << lhs.get_identifier() << std::endl;
+
   tvpi_systemt::dimensiont evaluated_dim = eval(e);
   bind.set_binding(lhs, evaluated_dim);
 }
@@ -520,21 +561,337 @@ void tvpi_domaint::transform(
   switch(instruction.type())
   {
   case DECL:
-    this->bind.set_binding(
-      to_code_decl(instruction.code()).symbol(), this->sys.add_new_dimension());
-    break;
+  {
+    typet ins_type = instruction.decl_symbol().type();
 
+    //print the DECL ID being processed
+    std::cout << "The DECL ID is: " << ins_type.id() << std::endl;
+
+    if(ins_type.id() == ID_array)
+    {
+      //create array type
+      array_typet arr_type = to_array_type(ins_type);
+      //strip the size exprt
+      auto declared_size = arr_type.size();
+
+      //cast the exprt to mp_integer
+      mp_integer size_arr =
+        numeric_cast_v<mp_integer>(to_constant_expr(declared_size));
+
+      std::cout << "DECL array size: " << size_arr << std::endl;
+      if(arr_mode == "ign")
+      {
+        std::cout << "DECL array - skipped" << std::endl;
+      }
+      if(arr_mode == "smsh")
+      {
+        std::cout << "DECL array - ID_array bounded " << std::endl;
+        //pick the decl_symbol and put it into binding
+        this->bind.set_binding(
+          instruction.decl_symbol(), this->sys.add_new_dimension());
+      }
+    }
+    else
+    {
+      this->bind.set_binding(
+        instruction.decl_symbol(), this->sys.add_new_dimension());
+    }
+
+    //old
+    //this->bind.set_binding(
+    //to_code_decl(instruction.code()).symbol(), this->sys.add_new_dimension());
+
+    break;
+  }
   case DEAD:
     //existential project
     //reduce refs
+    {
+      symbol_exprt sym = instruction.dead_symbol();
+      typet ins_type = sym.type();
+
+      if(ins_type.id() == ID_array)
+      {
+        std::cout << "DEAD array - ID_array ignored" << std::endl;
+      }
+      else if(ins_type.id() == ID_index)
+      {
+        std::cout << "DEAD array - ID_index ignored" << std::endl;
+      }
+    }
     break;
 
   case ASSIGN:
   {
     exprt e = instruction.assign_lhs();
+    auto et = e.type();
+    std::cout << "ASSIGN ID is: " << e.id_string() << std::endl;
+    std::cout << "ASSIGN type is: " << et.id_string() << std::endl;
+
+    if(e.id() == ID_index)
+    {
+      if(arr_mode == "ign")
+      {
+        std::cout << "ASSIGN array - ID_index ignored" << std::endl;
+      }
+
+      if(arr_mode == "smsh")
+      {
+        auto id_ex = to_index_expr(e);
+
+        auto index_val = id_ex.index();
+
+        auto array_sym = to_symbol_expr(id_ex.array());
+
+        if(index_val.id() == ID_typecast)
+        {
+          auto tce = to_typecast_expr(index_val);
+          auto num = tce.op();
+
+          if(num.id() == ID_constant)
+          {
+            mp_integer current_id =
+              numeric_cast_v<mp_integer>(to_constant_expr(num));
+
+            std::cout << "ASSIGN array indexed item is at position: "
+                      << current_id << std::endl;
+
+            tvpi_systemt::dimensiont found_dim =
+              this->bind.lookup_binding(array_sym);
+
+            std::cout << "ASSIGN array - ID_index assigned to dim: "
+                      << found_dim << std::endl;
+
+            // union here!
+
+            auto lef_sys = this->sys;
+            auto right_part = tvpi_systemt();
+
+            // add the new inequality linked to the array
+
+            mp_integer const_e =
+              numeric_cast_v<mp_integer>(to_constant_expr(num));
+
+            //this is arr[const]
+            std::cout << "this time the constant is: " << const_e << std::endl;
+
+            auto rhs = instruction.assign_rhs();
+
+            auto right_cons = to_constant_expr(rhs);
+
+            mp_integer right_num =
+              numeric_cast_v<mp_integer>(to_constant_expr(right_cons));
+
+            std::cout << "this time the right num is: " << right_num
+                      << std::endl;
+
+            std::cout << "we try to add to right part:" << std::endl;
+
+            //add to right system
+            right_part.add_inequality(
+              1, "d" + integer2string(found_dim), 0, "d", right_num);
+            right_part.add_inequality(
+              -1, "d" + integer2string(found_dim), 0, "d", -right_num);
+
+            std::cout << "we added to right part: " << std::endl;
+
+            //no need to filter the right system
+
+            auto filter_target = "d" + integer2string(found_dim);
+
+            auto left_filtered = this->sys.filter({filter_target});
+
+            auto right_sys = right_part.constraints;
+
+            if(left_filtered.size() == 0)
+            {
+              this->sys.add_inequality(
+                1, "d" + integer2string(found_dim), 0, "d", right_num);
+              this->sys.add_inequality(
+                -1, "d" + integer2string(found_dim), 0, "d", -right_num);
+
+              std::cout
+                << "LEFT SYSTEM EMPTY, BOTH CONSTRAINTS ARE JUST INSERTED"
+                << std::endl;
+            }
+            else if(left_filtered.size() > 0)
+            {
+              std::cout << "left system is: " << std::endl;
+              print_cons(left_filtered);
+              std::cout << "right system is: " << std::endl;
+              print_cons(right_sys);
+
+              //issue ?
+
+              extract_dimensions(left_filtered);
+              extract_dimensions(right_sys);
+
+              // HOW TO PORT EXTRACTION IN C_HULL
+              // IN MERGE you build a new system
+
+              // IN UNION
+              // LET us say we deal with dim7
+              // so we union l(d7) union r(d7)
+
+              auto union_now = join::calc_hull(left_filtered, right_sys);
+
+              //possible extension needed
+
+              std::cout << "UNION was calculated: " << std::endl;
+              std::cout << "UNION is: " << std::endl;
+
+              print_cons(union_now);
+
+              this->sys.constraints = union_now;
+            }
+          }
+        }
+      }
+    }
+
+    if(et.id() == ID_array)
+    {
+      if(arr_mode == "ign")
+      {
+        std::cout << "ASSIGN array - ID_array ignore" << std::endl;
+      }
+
+      else if(arr_mode == "smsh")
+      {
+        std::cout << "ASSIGN array - ID_array INIT  " << std::endl;
+
+        //left hand side
+        array_typet arr_type = to_array_type(instruction.assign_lhs().type());
+
+        //strip the size exprt
+        auto declared_size = arr_type.size();
+
+        //cast the exprt to mp_integer
+        mp_integer arr_size =
+          numeric_cast_v<mp_integer>(to_constant_expr(declared_size));
+
+        std::cout << "array size now: " << arr_size << std::endl;
+
+        //get the expression
+        exprt rhs_e = instruction.assign_rhs();
+
+        //cast to array expression
+        array_exprt my_array = to_array_expr(rhs_e);
+
+        //get the operands of the array
+        auto ops = my_array.operands();
+
+        //let us see how many things are being initialized
+
+        mp_integer ops_length = ops.size();
+
+        if(ops_length > arr_size)
+        {
+          std::cerr << "INIT list exceeds the size of the array" << std::endl;
+        }
+        else if(ops_length < arr_size)
+        {
+          std::cerr << "Partial array INIT, system is TOP" << std::endl;
+          make_top();
+        }
+        else
+        {
+          std::cout << "Full array INIT, special abstraction is applied"
+                    << std::endl;
+
+          mp_integer min_val, max_val;
+          bool first_val = true;
+
+          //further analysis
+          for(const auto &op : ops)
+          {
+            if(op.id() != ID_constant)
+            {
+              std::cerr << "Can't compute special abstraction" << std::endl;
+            }
+            mp_integer value = numeric_cast_v<mp_integer>(to_constant_expr(op));
+
+            if(first_val)
+            {
+              min_val = value;
+              max_val = value;
+              first_val = false;
+            }
+            else
+            {
+              if(value < min_val)
+                min_val = value;
+
+              if(value > max_val)
+                max_val = value;
+            }
+          }
+
+          auto array_name = to_symbol_expr(instruction.assign_lhs());
+          auto arr_dim = this->bind.lookup_binding(array_name);
+
+          std::cout << "the min: " << min_val << " the max: " << max_val
+                    << std::endl;
+
+          // >= min in TVPI
+          this->sys.add_inequality(
+            -1, "d" + integer2string(arr_dim), 0, "d", -min_val);
+          // <= max
+          this->sys.add_inequality(
+            1, "d" + integer2string(arr_dim), 0, "d", max_val);
+        }
+      }
+    }
+
+    /*
+    if(e.id() == ID_index && arr_mode == "ign")
+    {
+      std::cout << "ASSIGN array - processing" << std::endl;
+      //how to pass to assign?
+      //process rhs
+      exprt rhs_e = instruction.assign_rhs();
+      if(rhs_e.id() == ID_index)
+      {
+        std::cout << "READ array - read dim: " << this->sys.add_new_dimension()
+                  << std::endl;
+      }
+      else
+      {
+        std::cout << "ASSIGN array - ignore ASSIGN" << std::endl;
+      }
+    }
+    if(e.id() == ID_index && arr_mode == "smsh")
+    {
+      exprt rhs_e = instruction.assign_rhs();
+
+      if(rhs_e.id() == ID_index)
+      { //get the array symboll
+        index_exprt ie = to_index_expr(rhs_e);
+        symbol_exprt my_array = to_symbol_expr(ie.array());
+        std::cout << "READ array - array in binding: "
+                  << this->bind.lookup_binding(my_array) << std::endl;
+      }
+      else
+      {
+        //assign(to_symbol_expr(e), instruction.assign_rhs());
+        //std::cout << "ASSIGN array - array dim updated: " <<this->bind.lookup_binding(my_array)<<std::endl;
+      }
+    }*/
+
+    //thats the mess
+    //picks array as symbol
+    //but in theory it is something else
     if(e.id() == ID_symbol)
     {
-      assign(to_symbol_expr(e), instruction.assign_rhs());
+      std::cout << "ASSIGN case symbol" << std::endl;
+      if(e.type().id() != ID_array)
+      {
+        assign(to_symbol_expr(e), instruction.assign_rhs());
+      }
+      else
+      {
+        std::cout << "You tried evaluating array as symbol" << std::endl;
+      }
     }
     else if(e.id() == ID_dereference)
     {
@@ -791,6 +1148,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
   std::cerr << "the loop round is: " << loop_round << std::endl;
 
+  //counting backedges, not loop detection
   if(
     from->current_location()->is_backwards_goto() &&
     from->current_location()->get_target() == to->current_location())

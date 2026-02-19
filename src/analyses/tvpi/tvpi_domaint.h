@@ -8,9 +8,26 @@
 #include "../variable-sensitivity/abstract_environment.h"
 #include "../ai_domain.h"
 
+/*
+
+#define OPT_TVPI     \
+  "(tvpi-arr-mode):"  \
+
+#define PARSE_OPTIONS_TVPI(cmdline, options)                          \
+    options.set_option("arr-mode", cmdline.get_value("tvpi-arr-mode"));  \
+    arr_flag = cmdline.get_value("tvpi-arr-mode"); \
+    (void)0
+
+*/
+
+
 class tvpi_domaint : public ai_domain_baset
 {
 public:
+
+
+  //array options
+  static std::string arr_mode;
 
   tvpi_domaint();
 

@@ -171,3 +171,11 @@ doc/html/
 # custom benchmarks
 benchmarks/
 src/solvers/tvpi/tvpi_math
+
+# local files
+local_old_files/
+local_dev_notes/
+
+# SV-COMP
+sv_comp/c
+sv_comp/out

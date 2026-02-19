@@ -363,6 +363,8 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
       //  1. located in cmdline
       //  2. checked and errors reported
       //  3. put into the options object when sanitised
+      // The new parse option
+      //PARSE_OPTIONS_TVPI(cmdline,options);
     }
 
     // Reachability questions, when given with a domain swap from specific

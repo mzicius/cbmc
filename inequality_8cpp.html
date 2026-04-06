@@ -110,12 +110,13 @@ $(document).ready(function(){initNavTree('inequality_8cpp.html',''); initResizab
 <code>#include &quot;<a class="el" href="unary__inequality_8h_source.html">unary_inequality.h</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
+<code>#include &quot;<a class="el" href="tvpi__logt_8h_source.html">../../analyses/tvpi/tvpi_logt.h</a>&quot;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for inequality.cpp:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="inequality_8cpp__incl.svg" width="1634" height="1092"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="inequality_8cpp__incl.svg" width="1896" height="1107"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="inequality_8cpp_source.html">Go to the source code of this file.</a></p>
@@ -139,6 +140,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a989dedd6c26c03288a467562e817e173" id="r_a989dedd6c26c03288a467562e817e173"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classait.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#a989dedd6c26c03288a467562e817e173">print_ineq</a> (std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; i)</td></tr>
 <tr class="memdesc:a989dedd6c26c03288a467562e817e173"><td class="mdescLeft">&#160;</td><td class="mdescRight">prints whole tvpi inequality  <br /></td></tr>
 <tr class="separator:a989dedd6c26c03288a467562e817e173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef3c33ce5c8e6882d71c9431a0abb3e6" id="r_aef3c33ce5c8e6882d71c9431a0abb3e6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classait.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#aef3c33ce5c8e6882d71c9431a0abb3e6">print_val</a> (std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; i)</td></tr>
+<tr class="separator:aef3c33ce5c8e6882d71c9431a0abb3e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3dfcbc9e95a34bf702efd4d89dccc634" id="r_a3dfcbc9e95a34bf702efd4d89dccc634"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classinequality.html#a7bff5c88822aa781b034df43d848e53f">inequality::ordering</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#a3dfcbc9e95a34bf702efd4d89dccc634">cmp_angle</a> (std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; a, std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; b)</td></tr>
+<tr class="separator:a3dfcbc9e95a34bf702efd4d89dccc634"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff82b241c997d72323fc7d6905aedd50" id="r_aff82b241c997d72323fc7d6905aedd50"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classait.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#aff82b241c997d72323fc7d6905aedd50">print_cons</a> (<a class="el" href="classait.html">const</a> std::vector&lt; std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; &gt; &amp;<a class="el" href="classait.html">xs</a>)</td></tr>
 <tr class="memdesc:aff82b241c997d72323fc7d6905aedd50"><td class="mdescLeft">&#160;</td><td class="mdescRight">fully prints vector of tvpi inequalities  <br /></td></tr>
 <tr class="separator:aff82b241c997d72323fc7d6905aedd50"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,8 +153,6 @@ Functions</h2></td></tr>
 <tr class="separator:ab13ee8135454a4505f17c5fffa9448d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a087f9a95a41b5bbf26eeebc0663e1495" id="r_a087f9a95a41b5bbf26eeebc0663e1495"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classait.html">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#a087f9a95a41b5bbf26eeebc0663e1495">print_ordering</a> (<a class="el" href="classinequality.html#a7bff5c88822aa781b034df43d848e53f">inequality::ordering</a> o)</td></tr>
 <tr class="separator:a087f9a95a41b5bbf26eeebc0663e1495"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dfcbc9e95a34bf702efd4d89dccc634" id="r_a3dfcbc9e95a34bf702efd4d89dccc634"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classinequality.html#a7bff5c88822aa781b034df43d848e53f">inequality::ordering</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#a3dfcbc9e95a34bf702efd4d89dccc634">cmp_angle</a> (std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; a, std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; b)</td></tr>
-<tr class="separator:a3dfcbc9e95a34bf702efd4d89dccc634"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b06d799be1f84579b96317e147dfecd" id="r_a5b06d799be1f84579b96317e147dfecd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="smt__terms_8h.html#a68a9c335b3b75c987bf5d42b3cc8b0e0">mp_integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#a5b06d799be1f84579b96317e147dfecd">gcd_vector</a> (std::vector&lt; <a class="el" href="smt__terms_8h.html#a68a9c335b3b75c987bf5d42b3cc8b0e0">mp_integer</a> &gt; v)</td></tr>
 <tr class="separator:a5b06d799be1f84579b96317e147dfecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b649e9ec68d7bc42b3518a83a51600b" id="r_a5b649e9ec68d7bc42b3518a83a51600b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="smt__terms_8h.html#a68a9c335b3b75c987bf5d42b3cc8b0e0">mp_integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="inequality_8cpp.html#a5b649e9ec68d7bc42b3518a83a51600b">determinant</a> (std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; a, std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt; b)</td></tr>
@@ -212,7 +215,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00500">500</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00502">502</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -242,7 +245,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01055">1055</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01103">1103</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -290,7 +293,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01699">1699</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01748">1748</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -338,7 +341,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01585">1585</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01635">1635</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -358,7 +361,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00492">492</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00494">494</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -394,7 +397,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01121">1121</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01169">1169</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -424,7 +427,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00896">896</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00944">944</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -454,7 +457,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00971">971</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01019">1019</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -484,7 +487,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00664">664</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00599">599</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -514,7 +517,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00415">415</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00417">417</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -556,7 +559,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01334">1334</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01382">1382</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -586,7 +589,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00767">767</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00815">815</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -616,7 +619,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00859">859</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00907">907</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -646,7 +649,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00826">826</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00874">874</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -666,7 +669,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00748">748</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00796">796</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -714,7 +717,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01474">1474</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01524">1524</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -734,7 +737,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01189">1189</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01237">1237</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -770,7 +773,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01145">1145</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01193">1193</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -798,7 +801,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01817">1817</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01866">1866</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -842,7 +845,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01800">1800</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01849">1849</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -862,7 +865,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01176">1176</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01224">1224</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -892,7 +895,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00837">837</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00885">885</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -922,7 +925,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00432">432</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00434">434</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -942,7 +945,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00551">551</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00685">685</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -970,7 +973,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00539">539</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00673">673</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -990,7 +993,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00636">636</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00769">769</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1018,7 +1021,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00512">512</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00514">514</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1038,7 +1041,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00025">25</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00027">27</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1058,7 +1061,27 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00651">651</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00784">784</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aef3c33ce5c8e6882d71c9431a0abb3e6" name="aef3c33ce5c8e6882d71c9431a0abb3e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef3c33ce5c8e6882d71c9431a0abb3e6">&#9670;&#160;</a></span>print_val()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classait.html">void</a> print_val </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classinequality.html">inequality</a> &gt;&#160;</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00555">555</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1078,7 +1101,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00013">13</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00015">15</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1098,7 +1121,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01269">1269</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01317">1317</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1118,7 +1141,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01239">1239</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01287">1287</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1138,7 +1161,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01212">1212</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01260">1260</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1204,7 +1227,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01538">1538</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l01588">1588</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>
@@ -1234,7 +1257,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00425">425</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inequality_8cpp_source.html#l00427">427</a> of file <a class="el" href="inequality_8cpp_source.html">inequality.cpp</a>.</p>
 
 </div>
 </div>

@@ -1325,6 +1325,7 @@ var annotated_dup =
     [ "tuple_exprt", "classtuple__exprt.html", "classtuple__exprt" ],
     [ "tvpi_bindingt", "classtvpi__bindingt.html", "classtvpi__bindingt" ],
     [ "tvpi_domaint", "classtvpi__domaint.html", "classtvpi__domaint" ],
+    [ "tvpi_log_flags", "structtvpi__log__flags.html", "structtvpi__log__flags" ],
     [ "tvpi_systemt", "classtvpi__systemt.html", "classtvpi__systemt" ],
     [ "tvt", "classtvt.html", "classtvt" ],
     [ "two_value_array_abstract_objectt", "classtwo__value__array__abstract__objectt.html", "classtwo__value__array__abstract__objectt" ],

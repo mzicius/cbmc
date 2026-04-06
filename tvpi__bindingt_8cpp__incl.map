@@ -1,7 +1,9 @@
 <map id="/home/runner/work/cbmc/cbmc/src/analyses/tvpi/tvpi_bindingt.cpp" name="/home/runner/work/cbmc/cbmc/src/analyses/tvpi/tvpi_bindingt.cpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="449,5,633,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="513,5,697,60"/>
 <area shape="rect" id="Node000002" href="$tvpi__bindingt_8h.html" title=" " alt="" coords="482,108,601,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="544,60,544,94,539,94,539,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="588,62,560,99,556,95,584,58"/>
+<area shape="rect" id="Node000086" href="$tvpi__logt_8h.html" title=" " alt="" coords="625,108,716,133"/>
+<area shape="poly" id="edge124_Node000001_Node000086" title=" " alt="" coords="627,58,656,95,651,99,623,62"/>
 <area shape="rect" id="Node000003" href="$mp__arith_8h.html" title=" " alt="" coords="83,805,200,830"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="482,127,385,133,270,144,163,160,120,171,89,184,55,203,30,222,14,246,8,281,8,657,11,680,18,701,44,740,78,772,111,795,107,800,74,776,40,743,13,704,6,681,3,657,3,280,9,244,26,218,52,198,87,179,119,166,162,155,269,138,384,128,482,122"/>
 <area shape="rect" id="Node000007" href="$tvpi__systemt_8h.html" title=" " alt="" coords="442,189,641,214"/>
@@ -9,9 +11,9 @@
 <area shape="rect" id="Node000009" title=" " alt="" coords="582,885,645,911"/>
 <area shape="poly" id="edge45_Node000002_Node000009" title=" " alt="" coords="482,134,374,154,250,186,195,206,150,229,120,254,112,267,109,281,109,429,125,454,170,500,312,632,591,874,588,878,309,636,166,504,121,457,104,431,104,280,107,265,116,251,147,224,193,201,249,181,372,149,481,128"/>
 <area shape="rect" id="Node000061" href="$ai__domain_8h.html" title="Abstract Interpretation Domain." alt="" coords="957,489,1072,515"/>
-<area shape="poly" id="edge46_Node000002_Node000061" title=" " alt="" coords="601,128,715,147,844,179,903,199,951,223,984,250,993,265,996,280,996,357,1001,421,1011,475,1006,476,996,422,991,357,991,281,988,267,979,253,948,227,901,204,842,184,713,152,600,133"/>
+<area shape="poly" id="edge46_Node000002_Node000061" title=" " alt="" coords="589,131,701,160,835,199,947,241,982,261,992,271,996,280,996,357,1001,421,1011,475,1006,476,996,422,991,357,991,281,988,274,979,265,945,246,833,204,700,165,588,136"/>
 <area shape="rect" id="Node000070" href="$abstract__environment_8h.html" title="An abstract version of a program environment." alt="" coords="1033,181,1215,221"/>
-<area shape="poly" id="edge84_Node000002_Node000070" title=" " alt="" coords="601,126,785,148,1012,179,1020,180,1019,185,1012,184,784,153,601,131"/>
+<area shape="poly" id="edge84_Node000002_Node000070" title=" " alt="" coords="601,129,614,131,813,154,1012,179,1020,180,1019,185,1012,184,812,160,613,136,601,134"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="1045,885,1109,911"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="200,821,1032,890,1031,896,200,826"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="1084,959,1143,984"/>

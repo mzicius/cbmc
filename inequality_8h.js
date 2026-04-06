@@ -30,6 +30,7 @@ var inequality_8h =
     [ "print_ineq", "inequality_8h.html#a989dedd6c26c03288a467562e817e173", null ],
     [ "print_ins", "inequality_8h.html#aa18c375a31118f5eab82ae9c4cd830c7", null ],
     [ "print_ordering", "inequality_8h.html#a087f9a95a41b5bbf26eeebc0663e1495", null ],
+    [ "print_val", "inequality_8h.html#aef3c33ce5c8e6882d71c9431a0abb3e6", null ],
     [ "print_vars", "inequality_8h.html#a50bc764963eec77f8c6a362fc9a97210", null ],
     [ "rm_local_red", "inequality_8h.html#a89b9bed951843080c3c0a44cc534149a", null ],
     [ "rm_syn_red", "inequality_8h.html#aaa32c5afa7a2208da29ac74907ee8ff4", null ],

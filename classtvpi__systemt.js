@@ -14,6 +14,8 @@ var classtvpi__systemt =
     [ "is_equal", "classtvpi__systemt.html#a476214c263c41b29960023f1c5169535", null ],
     [ "make_unsat_system", "classtvpi__systemt.html#a8a48a9fabf48cebb8f9bd0e451e92d97", null ],
     [ "print_system", "classtvpi__systemt.html#a774dab68e6ead7d608952ff18d2843be", null ],
+    [ "project_2D", "classtvpi__systemt.html#a349ef2c444d0bf18ee4c0bfe10ba68cd", null ],
+    [ "remove_duplicates", "classtvpi__systemt.html#abaaec8f51f6f5339c2cb79aa90ee8d14", null ],
     [ "to_canon", "classtvpi__systemt.html#af83bb613b31bf0ea123b427f4cc48f1d", null ],
     [ "constraints", "classtvpi__systemt.html#a2c32e6e632ef509835d22a78441de397", null ],
     [ "dbg_all", "classtvpi__systemt.html#a47be6e5ce3ce1b62e9be369d8e94d265", null ],

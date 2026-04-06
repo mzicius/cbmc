@@ -11,9 +11,9 @@
 <!-- Node0 -->
 <g id="Node000000" class="node">
 <title>Node0</title>
-<g id="a_Node000000"><a xlink:href="classparser.html" target="_top" xlink:title=" ">
+<g id="a_Node000000"><a xlink:href="class_parser.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="47,-19 0,-19 0,0 47,0 47,-19"/>
-<text text-anchor="middle" x="23.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">parser</text>
+<text text-anchor="middle" x="23.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Parser</text>
 </a>
 </g>
 </g>

@@ -1,5 +1,9 @@
 var NAVTREEINDEX136 =
 {
+"stop__on__fail__verifier_8h.html":[8,0,2,11,40],
+"stop__on__fail__verifier_8h_source.html":[8,0,2,11,40],
+"stop__on__fail__verifier__with__fault__localization_8h.html":[8,0,2,11,41],
+"stop__on__fail__verifier__with__fault__localization_8h_source.html":[8,0,2,11,41],
 "string2int_8cpp.html":[8,0,2,30,216],
 "string2int_8cpp.html#a1c8cff1720713d6244e6eee9dae01951":[8,0,2,30,216,3],
 "string2int_8cpp.html#a498ff3c889241cd6ef8b0063acb3d997":[8,0,2,30,216,7],
@@ -245,9 +249,5 @@ var NAVTREEINDEX136 =
 "string__instrumentation_8h.html#a5f57b8d1ae38fae26ed679ebf46f7aa6":[8,0,2,1,1,22,3],
 "string__instrumentation_8h.html#a64a24742fe3e050a0056534d8a452bbd":[8,0,2,1,1,22,2],
 "string__instrumentation_8h.html#aa65dffaf781f21edce980dabb01d5433":[8,0,2,1,1,22,5],
-"string__instrumentation_8h.html#ab66a9d53717f617fc87b77bf50560010":[8,0,2,1,1,22,1],
-"string__instrumentation_8h.html#ade5f51774c6ac2f1e0743e9084c11827":[8,0,2,1,1,22,4],
-"string__instrumentation_8h_source.html":[8,0,2,1,1,22],
-"string__refinement_8cpp.html":[8,0,2,27,10,30],
-"string__refinement_8cpp.html#a01af496995e4473ade1505ec78db6fc1":[8,0,2,27,10,30,18]
+"string__instrumentation_8h.html#ab66a9d53717f617fc87b77bf50560010":[8,0,2,1,1,22,1]
 };

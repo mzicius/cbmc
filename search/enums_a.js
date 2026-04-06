@@ -6,6 +6,7 @@ var searchData=
   ['levelt_3',['levelt',['../renamed_8h.html#a12b6f080eb6cdc36761e4d2ca8cec5f7',1,'renamed.h']]],
   ['libt_4',['libt',['../structconfigt_1_1ansi__ct.html#a8bd80421c0f07dad770cf427a8c465cc',1,'configt::ansi_ct']]],
   ['lifetimet_5',['lifetimet',['../allocate__objects_8h.html#aef2674dc0460f626c48668130d60b964',1,'allocate_objects.h']]],
-  ['lookup_5fkindt_6',['lookup_kindt',['../classcpp__scopet.html#a8f029d55e4b3ea35af09c972a8f81d0c',1,'cpp_scopet']]],
-  ['loop_5fstrategyt_7',['loop_strategyt',['../wmm_8h.html#a68d89d76678bdb6540ab7b01b04feea7',1,'wmm.h']]]
+  ['log_5flevel_6',['log_level',['../tvpi__logt_8h.html#ac91d55174d383848b976a34de843748e',1,'tvpi_logt.h']]],
+  ['lookup_5fkindt_7',['lookup_kindt',['../classcpp__scopet.html#a8f029d55e4b3ea35af09c972a8f81d0c',1,'cpp_scopet']]],
+  ['loop_5fstrategyt_8',['loop_strategyt',['../wmm_8h.html#a68d89d76678bdb6540ab7b01b04feea7',1,'wmm.h']]]
 ];

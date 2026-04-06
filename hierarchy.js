@@ -2147,6 +2147,7 @@ var hierarchy =
       [ "smt_function_application_termt::has_indicest< functiont, std::void_t< decltype(std::declval< functiont >().indices())> >", "structsmt__function__application__termt_1_1has__indicest_3_01functiont_00_01std_1_1void__t_3_01d3decc81de71c84a3e9ed33eb6a5b5091.html", null ]
     ] ],
     [ "tvpi_bindingt", "classtvpi__bindingt.html", null ],
+    [ "tvpi_log_flags", "structtvpi__log__flags.html", null ],
     [ "tvpi_systemt", "classtvpi__systemt.html", null ],
     [ "tvt", "classtvt.html", null ],
     [ "local_safe_pointerst::type_comparet", "structlocal__safe__pointerst_1_1type__comparet.html", null ],

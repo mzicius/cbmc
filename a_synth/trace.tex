@@ -1,0 +1,121 @@
+All domains are after the instruction visits
+
+c -> 6
+dimension of i is constantly changing
+
+visit 2:  ASSUME c>=0
+-1d6≤0 
+
+visit 3: ASSIGN i = 0
+domain in location 4
+-1d6≤0
+1d8≤0
+-1d8≤0
+
+visit 4: branch taken (i>=c)
+domain in location 10
+1d6-1d8≤0 (i>=c)
+1d6≤0
+-1d6≤0
+1d8≤0
+-1d8≤0
+
+visit 4: branch not taken (i<c)
+domain in location 5
+-1d6+1d8≤-1 (i<c)
+-1d6≤-1
+1d8≤0
+-1d8≤0
+
+visits 5 and 6 are ignored (asserts)
+
+visit 7: ASSIGN i=i+1
+domain in location 8
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+
+visit 8 ignored (assert)
+
+visit 9: back jump GOTO
+domain in location 4 after 9 taken 
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+
+loop again
+
+visit 4: branch taken 
+location 10 after 9 taken
+-1d6+1d9≤0 (i<c)
+1d6-1d9≤0 (i>=c)
+1d6≤1
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+
+visit 4: branch not taken 
+location 5 after 9 taken
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+
+visits 5 and 6 ignored (asserts)
+
+visit 7: ASSIGN i=i+1
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+
+visit 8 ignored (assert)
+
+visit 9: back jump GOTO
+
+CONVEX hull is attempted between domain in 
+location 4 after assign (i=0)
+and domain in location 9 (after assert)
+
+before align 
+
+left 
+-1d6≤0
+1d8≤0
+-1d8≤0
+
+right 
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+
+after align 
+left 
+-1d6≤0
+1d11≤0
+-1d11≤0
+
+right
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+
+line 1094 looked at
+
+inter convex hull is: 
+[]
+ on 1118 might be the issue 
+
+ x-y on left  on right nothing here we go!
+
+ constraints are no lonber dropped after indroducing projection 2D, but there are duplicates
+
+ think about how to avoid printing message when printing cprover vars 
+ write a function that will print the convex hull inputs as haskell inputs and check there 
+ print filters left and right so see where the dups are coming from
+
+

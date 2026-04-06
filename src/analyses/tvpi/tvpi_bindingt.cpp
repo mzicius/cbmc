@@ -1,5 +1,7 @@
 #include "tvpi_bindingt.h"
 
+#include "tvpi_logt.h"
+
 void tvpi_bindingt::set_binding(
   symbol_exprt symbol,
   tvpi_systemt::dimensiont dim)
@@ -39,8 +41,15 @@ void tvpi_bindingt::print_binding() const
 {
   for(const auto &[symbol, dimension] : binding)
   {
-    std::cout << id2string(symbol.get_identifier()) << "-> " << dimension
-              << std::endl;
+    if(main_tvpi_log.binding_log == log_level::PARTIAL)
+    {
+      //Skip the __CPROVER variables
+      if(dimension > 4)
+      {
+        std::cout << id2string(symbol.get_identifier()) << "-> " << dimension
+                  << std::endl;
+      }
+    }
   }
 }
 
@@ -50,7 +59,10 @@ void tvpi_bindingt::print_references() const
   {
     if(ref.first >= 0)
     {
+      //Skip the __CPROVER references
+      if(main_tvpi_log.reference_log == log_level::PARTIAL && ref.first>4){
       std::cout << "d" << ref.first << " -> " << ref.second << std::endl;
+      }
     }
     else
     {
@@ -81,6 +93,7 @@ bool tvpi_bindingt::wipe_binding(tvpi_systemt &sys)
     const auto &ref = *it;
     if(ref.second == 0)
     {
+      std::cerr<<"trying to wipe dim: "<<ref.first<<std::endl;
       sys.existential_project(ref.first);
       it = references.erase(it);
       changed = true;

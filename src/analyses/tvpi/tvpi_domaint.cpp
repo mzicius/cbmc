@@ -6,6 +6,8 @@
 #include <solvers/tvpi/smt_printer.h>
 #include <solvers/tvpi/tikz_printer.h>
 
+#include "tvpi_logt.h"
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -18,8 +20,6 @@ tvpi_domaint::tvpi_domaint()
 {
   // Contruct the domain by setting it to bottom
   make_bottom();
-
-  std::cout << "ARR MODE of the run is: " << arr_mode << std::endl;
 }
 
 tvpi_domaint::~tvpi_domaint()
@@ -37,7 +37,6 @@ void tvpi_domaint::make_top()
 {
   sys = tvpi_systemt();
   bind = tvpi_bindingt();
-
   //loop fix
   loop_round = 0;
 }
@@ -79,16 +78,14 @@ void tvpi_domaint::output(
   const ai_baset &ai,
   const namespacet &ns) const
 {
-  out << std::endl;
-  out << "dimension counter: " << this->sys.get_current_dim() << std::endl;
-  out << std::endl;
-  out << "TVPI system:" << std::endl;
-  print_cons(this->sys.constraints);
-  out << std::endl;
-  std::cout << "the binding is: " << std::endl;
+  std::cout << "the binding: " << std::endl;
   this->bind.print_binding();
   out << std::endl;
-  std::cout << "the references are: " << std::endl;
+  out << "the TVPI system: " << std::endl;
+  print_cons(this->sys.constraints);
+  out << std::endl;
+  out << "dimension counter: " << this->sys.get_current_dim() << std::endl;
+  std::cout << "the references: " << std::endl;
   this->bind.print_references();
 }
 
@@ -96,16 +93,15 @@ void tvpi_domaint::output(
 //the value of an expression.
 tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 {
-  std::cerr << "inside eval function" << std::endl;
-  std::cerr << "evaluating expression: " << e.pretty() << std::endl;
-  std::cerr << "evaluating id: " << e.id_string() << std::endl;
+  std::cerr << "inside the eval function" << std::endl;
+  //std::cerr << "evaluating expression: " << e.pretty() << std::endl;
   //std::cerr << "evaluating expression: " << e.get_string() << std::endl;
 
   if(e.id() == ID_constant)
   {
     std::cout << "we met a constant" << std::endl;
     tvpi_systemt::dimensiont c = this->sys.add_new_dimension();
-    //this->bind.add_tmp_ref(c);
+    this->bind.add_tmp_ref(c);
     mp_integer const_e = numeric_cast_v<mp_integer>(to_constant_expr(e));
     this->sys.add_inequality(1, "d" + integer2string(c), 0, "d", const_e);
     this->sys.add_inequality(-1, "d" + integer2string(c), 0, "d", -const_e);
@@ -132,9 +128,15 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
   else if(e.id() == ID_plus)
   {
     std::cout << "we are in plus" << std::endl;
+
+    std::cout << "PLUS OP" << e.operands()[0].type().id() << std::endl;
+
     tvpi_systemt::dimensiont sum_dim = this->sys.add_new_dimension();
     this->bind.add_tmp_ref(sum_dim);
     plus_exprt plus_e = to_plus_expr(e);
+
+    std::cout << "PLUS OP AFTER" << plus_e.operands()[0].type().id()
+              << std::endl;
 
     //TODO: do constant folding
     if(plus_e.op0().is_constant() && plus_e.op1().is_constant())
@@ -336,7 +338,7 @@ tvpi_systemt::dimensiont tvpi_domaint::eval(exprt e)
 void tvpi_domaint::assume(const exprt &e)
 
 {
-  std::cout << "inside assume function" << std::endl;
+  std::cout << "inside the assume function" << std::endl;
 
   //std::cout << "assuming expression: " << e.pretty() << std::endl;
   //std::cout << "assuming expression: " << e.type() << std::endl;
@@ -474,6 +476,65 @@ void tvpi_domaint::assume(const exprt &e)
     }
     return;
   }
+  if(e.id() == ID_overflow_plus)
+  {
+    std::cerr << "PLUS OVERFLOW" << std::endl;
+
+    auto &op0 = e.operands()[0];
+    auto &op1 = e.operands()[1];
+
+    std::cerr << "OP0 type: " << op0.type().id() << std::endl;
+    std::cerr << "OP1 type: " << op1.type().id() << std::endl;
+
+    std::cerr << op0.pretty() << std::endl;
+    std::cerr << op1.pretty() << std::endl;
+
+    tvpi_systemt::dimensiont left = eval(op0);
+    rationalt left_val;
+
+    std::optional<rationalt> u_bound_left = this->sys.get_ub(left);
+    std::optional<rationalt> l_bound_left = this->sys.get_lb(left);
+
+    if(op0.id() == ID_symbol && op1.is_constant())
+    {
+      std::cerr << "BOTH OPS ARE CHECKED" << std::endl;
+
+      if(u_bound_left.has_value())
+      {
+        left_val = u_bound_left.value();
+        std::cout << "overflow u_bound_left: " << u_bound_left.value()
+                  << std::endl;
+      }
+      else
+      {
+        return;
+      }
+
+      rationalt const_right(numeric_cast_v<mp_integer>(to_constant_expr(op1)));
+
+      rationalt sum = left_val + const_right;
+
+      rationalt up_bound(mp_integer{std::numeric_limits<int>::max()});
+      rationalt low_bound(mp_integer{std::numeric_limits<int>::min()});
+
+      if(sum > up_bound || sum < low_bound)
+      {
+        this->sys.make_unsat_system();
+      }
+      else
+      {
+        std::cerr << "PLUS OVERFLOW DID NOT HAPPEN" << std::endl;
+        tvpi_systemt::dimensiont sum_dim = this->sys.add_new_dimension();
+        this->bind.add_tmp_ref(sum_dim);
+        std::cerr << "The sum dim is: " << sum_dim << std::endl;
+        this->sys.add_inequality(
+          1, "d" + integer2string(sum_dim), 0, "d", sum.get_numerator());
+        this->sys.add_inequality(
+          -1, "d" + integer2string(sum_dim), 0, "d", -(sum.get_numerator()));
+      }
+    }
+    return;
+  }
   std::cerr << "If only I knew how to assume a " << id2string(e.id())
             << std::endl;
 }
@@ -482,19 +543,14 @@ void tvpi_domaint::assume(const exprt &e)
 // that over-approximates e
 void tvpi_domaint::assign(symbol_exprt lhs, exprt e)
 {
-  if(lhs.get_identifier() == ID_array)
-  {
-    std::cerr << "array is assigned" << std::endl;
-  }
-  std::cerr << "inside assign with: " << lhs.get_identifier() << std::endl;
-
+  std::cerr << "in asign with: " << lhs.get_identifier() << std::endl;
   tvpi_systemt::dimensiont evaluated_dim = eval(e);
   bind.set_binding(lhs, evaluated_dim);
 }
 
 bool tvpi_domaint::ai_simplify(exprt &condition, const namespacet &ns) const
 {
-  std::cout << "ai_simplify for tvpi!" << std::endl;
+  std::cerr << "TOP LEVEL AI_SIMPLIFY: " << std::endl;
   //std::cout << "the condition is: " << condition.pretty() << std::endl;
   bool unchanged = true;
   tvpi_domaint copy_a(*this);
@@ -624,263 +680,6 @@ void tvpi_domaint::transform(
   case ASSIGN:
   {
     exprt e = instruction.assign_lhs();
-    auto et = e.type();
-    std::cout << "ASSIGN ID is: " << e.id_string() << std::endl;
-    std::cout << "ASSIGN type is: " << et.id_string() << std::endl;
-
-    if(e.id() == ID_index)
-    {
-      if(arr_mode == "ign")
-      {
-        std::cout << "ASSIGN array - ID_index ignored" << std::endl;
-      }
-
-      if(arr_mode == "smsh")
-      {
-        auto id_ex = to_index_expr(e);
-
-        auto index_val = id_ex.index();
-
-        auto array_sym = to_symbol_expr(id_ex.array());
-
-        if(index_val.id() == ID_typecast)
-        {
-          auto tce = to_typecast_expr(index_val);
-          auto num = tce.op();
-
-          if(num.id() == ID_constant)
-          {
-            mp_integer current_id =
-              numeric_cast_v<mp_integer>(to_constant_expr(num));
-
-            std::cout << "ASSIGN array indexed item is at position: "
-                      << current_id << std::endl;
-
-            tvpi_systemt::dimensiont found_dim =
-              this->bind.lookup_binding(array_sym);
-
-            std::cout << "ASSIGN array - ID_index assigned to dim: "
-                      << found_dim << std::endl;
-
-            // union here!
-
-            auto lef_sys = this->sys;
-            auto right_part = tvpi_systemt();
-
-            // add the new inequality linked to the array
-
-            mp_integer const_e =
-              numeric_cast_v<mp_integer>(to_constant_expr(num));
-
-            //this is arr[const]
-            std::cout << "this time the constant is: " << const_e << std::endl;
-
-            auto rhs = instruction.assign_rhs();
-
-            auto right_cons = to_constant_expr(rhs);
-
-            mp_integer right_num =
-              numeric_cast_v<mp_integer>(to_constant_expr(right_cons));
-
-            std::cout << "this time the right num is: " << right_num
-                      << std::endl;
-
-            std::cout << "we try to add to right part:" << std::endl;
-
-            //add to right system
-            right_part.add_inequality(
-              1, "d" + integer2string(found_dim), 0, "d", right_num);
-            right_part.add_inequality(
-              -1, "d" + integer2string(found_dim), 0, "d", -right_num);
-
-            std::cout << "we added to right part: " << std::endl;
-
-            //no need to filter the right system
-
-            auto filter_target = "d" + integer2string(found_dim);
-
-            auto left_filtered = this->sys.filter({filter_target});
-
-            auto right_sys = right_part.constraints;
-
-            if(left_filtered.size() == 0)
-            {
-              this->sys.add_inequality(
-                1, "d" + integer2string(found_dim), 0, "d", right_num);
-              this->sys.add_inequality(
-                -1, "d" + integer2string(found_dim), 0, "d", -right_num);
-
-              std::cout
-                << "LEFT SYSTEM EMPTY, BOTH CONSTRAINTS ARE JUST INSERTED"
-                << std::endl;
-            }
-            else if(left_filtered.size() > 0)
-            {
-              std::cout << "left system is: " << std::endl;
-              print_cons(left_filtered);
-              std::cout << "right system is: " << std::endl;
-              print_cons(right_sys);
-
-              //issue ?
-
-              extract_dimensions(left_filtered);
-              extract_dimensions(right_sys);
-
-              // HOW TO PORT EXTRACTION IN C_HULL
-              // IN MERGE you build a new system
-
-              // IN UNION
-              // LET us say we deal with dim7
-              // so we union l(d7) union r(d7)
-
-              auto union_now = join::calc_hull(left_filtered, right_sys);
-
-              //possible extension needed
-
-              std::cout << "UNION was calculated: " << std::endl;
-              std::cout << "UNION is: " << std::endl;
-
-              print_cons(union_now);
-
-              this->sys.constraints = union_now;
-            }
-          }
-        }
-      }
-    }
-
-    if(et.id() == ID_array)
-    {
-      if(arr_mode == "ign")
-      {
-        std::cout << "ASSIGN array - ID_array ignore" << std::endl;
-      }
-
-      else if(arr_mode == "smsh")
-      {
-        std::cout << "ASSIGN array - ID_array INIT  " << std::endl;
-
-        //left hand side
-        array_typet arr_type = to_array_type(instruction.assign_lhs().type());
-
-        //strip the size exprt
-        auto declared_size = arr_type.size();
-
-        //cast the exprt to mp_integer
-        mp_integer arr_size =
-          numeric_cast_v<mp_integer>(to_constant_expr(declared_size));
-
-        std::cout << "array size now: " << arr_size << std::endl;
-
-        //get the expression
-        exprt rhs_e = instruction.assign_rhs();
-
-        //cast to array expression
-        array_exprt my_array = to_array_expr(rhs_e);
-
-        //get the operands of the array
-        auto ops = my_array.operands();
-
-        //let us see how many things are being initialized
-
-        mp_integer ops_length = ops.size();
-
-        if(ops_length > arr_size)
-        {
-          std::cerr << "INIT list exceeds the size of the array" << std::endl;
-        }
-        else if(ops_length < arr_size)
-        {
-          std::cerr << "Partial array INIT, system is TOP" << std::endl;
-          make_top();
-        }
-        else
-        {
-          std::cout << "Full array INIT, special abstraction is applied"
-                    << std::endl;
-
-          mp_integer min_val, max_val;
-          bool first_val = true;
-
-          //further analysis
-          for(const auto &op : ops)
-          {
-            if(op.id() != ID_constant)
-            {
-              std::cerr << "Can't compute special abstraction" << std::endl;
-            }
-            mp_integer value = numeric_cast_v<mp_integer>(to_constant_expr(op));
-
-            if(first_val)
-            {
-              min_val = value;
-              max_val = value;
-              first_val = false;
-            }
-            else
-            {
-              if(value < min_val)
-                min_val = value;
-
-              if(value > max_val)
-                max_val = value;
-            }
-          }
-
-          auto array_name = to_symbol_expr(instruction.assign_lhs());
-          auto arr_dim = this->bind.lookup_binding(array_name);
-
-          std::cout << "the min: " << min_val << " the max: " << max_val
-                    << std::endl;
-
-          // >= min in TVPI
-          this->sys.add_inequality(
-            -1, "d" + integer2string(arr_dim), 0, "d", -min_val);
-          // <= max
-          this->sys.add_inequality(
-            1, "d" + integer2string(arr_dim), 0, "d", max_val);
-        }
-      }
-    }
-
-    /*
-    if(e.id() == ID_index && arr_mode == "ign")
-    {
-      std::cout << "ASSIGN array - processing" << std::endl;
-      //how to pass to assign?
-      //process rhs
-      exprt rhs_e = instruction.assign_rhs();
-      if(rhs_e.id() == ID_index)
-      {
-        std::cout << "READ array - read dim: " << this->sys.add_new_dimension()
-                  << std::endl;
-      }
-      else
-      {
-        std::cout << "ASSIGN array - ignore ASSIGN" << std::endl;
-      }
-    }
-    if(e.id() == ID_index && arr_mode == "smsh")
-    {
-      exprt rhs_e = instruction.assign_rhs();
-
-      if(rhs_e.id() == ID_index)
-      { //get the array symboll
-        index_exprt ie = to_index_expr(rhs_e);
-        symbol_exprt my_array = to_symbol_expr(ie.array());
-        std::cout << "READ array - array in binding: "
-                  << this->bind.lookup_binding(my_array) << std::endl;
-      }
-      else
-      {
-        //assign(to_symbol_expr(e), instruction.assign_rhs());
-        //std::cout << "ASSIGN array - array dim updated: " <<this->bind.lookup_binding(my_array)<<std::endl;
-      }
-    }*/
-
-    //thats the mess
-    //picks array as symbol
-    //but in theory it is something else
     if(e.id() == ID_symbol)
     {
       std::cout << "ASSIGN case symbol" << std::endl;
@@ -946,7 +745,11 @@ void tvpi_domaint::transform(
       const irep_idt &identifier = to_symbol_expr(function).get_identifier();
       if(identifier == "assume")
       {
-        std::cout << "yes yes yes" << std::endl;
+        std::cout << "it is an assume function" << std::endl;
+      }
+      else
+      {
+        std::cout << "the function id is: " << identifier << std::endl;
       }
     }
 
@@ -1026,8 +829,7 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     std::cerr << "MERGE CASE 2: A IS BOTTOM" << std::endl;
     this->sys.constraints = b.sys.constraints;
     this->bind = b.bind;
-    //loop fix
-    this->loop_round = b.loop_round;
+
     return true;
   }
 
@@ -1058,18 +860,22 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   tvpi_systemt copy_a = this->sys;
   tvpi_systemt copy_b = b.sys;
 
-  std::cerr << "the left system for CONVEX UNION:" << std::endl;
-  print_cons(this->sys.constraints);
+  if(main_tvpi_log.convex_log == log_level::FULL)
+  {
+    std::cerr << "the left system for CONVEX UNION:" << std::endl;
+    print_cons(this->sys.constraints);
 
-  std::cerr << "the left binding for CONVEX UNION:" << std::endl;
-  this->bind.print_binding();
+    std::cerr << "the left binding for CONVEX UNION:" << std::endl;
+    this->bind.print_binding();
 
-  std::cerr << "the right system for CONVEX UNION:" << std::endl;
-  print_cons(b.sys.constraints);
+    std::cerr << "the right system for CONVEX UNION:" << std::endl;
+    print_cons(b.sys.constraints);
 
-  std::cerr << "the right binding for CONVEX UNION:" << std::endl;
-  b.bind.print_binding();
+    std::cerr << "the right binding for CONVEX UNION:" << std::endl;
+    b.bind.print_binding();
+  }
 
+  //is this correct?
   align_bindings(this->bind.binding, b.bind.binding, this->sys, b.sys);
 
   std::cerr << "after align: left system for CONVEX UNION:" << std::endl;
@@ -1083,6 +889,21 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
   std::cerr << "after align: right binding for CONVEX UNION:" << std::endl;
   b.bind.print_binding();
+
+  std::cerr << "LEFT for HASKELL:" << std::endl;
+  for(auto c : this->sys.constraints)
+  {
+    //print_val(c);
+  }
+
+  std::cerr << "RIGHT for HASKELL:" << std::endl;
+  for(auto c : b.sys.constraints)
+  {
+    //print_val(c);
+  }
+
+
+
 
   std::set<std::string> existing_relations = find_relations(this->sys, b.sys);
 
@@ -1112,8 +933,11 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       target_vars = {first_var};
     }
 
-    filter_left = this->sys.filter(target_vars);
-    filter_right = b.sys.filter(target_vars);
+    //filter_left = this->sys.filter(target_vars);
+    //filter_right = b.sys.filter(target_vars);
+
+    filter_left = this->sys.project_2D(target_vars);
+    filter_right = b.sys.project_2D(target_vars);
 
     /*
     std::cout << "the target vars for filter are: :" << std::endl;
@@ -1123,47 +947,59 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     }
     */
 
-    //std::cout << "left filter" << std::endl;
-    //print_cons(filter_left);
-    //std::cout << "right filter" << std::endl;
-    //print_cons(filter_right);
-
     extract_dimensions(filter_left);
     extract_dimensions(filter_right);
 
+    std::cout << "left filter" << std::endl;
+    print_cons(filter_left);
+
+    std::cout << "sorted left filter" << std::endl;
+    sort_by_angle(filter_left);
+    print_cons(filter_left);
+
+    std::cout << "right filter" << std::endl;
+    print_cons(filter_right);
+
+    std::cout << "sorted right filter" << std::endl;
+    sort_by_angle(filter_right);
+    print_cons(filter_right);
+
     interm_union = join::calc_hull(filter_left, filter_right);
 
-    std::cout << "inter convex hull is: " << std::endl;
-    print_cons(interm_union);
+    if(main_tvpi_log.convex_log == log_level::FULL)
+    {
+      std::cout << "inter convex hull is: " << std::endl;
+      print_cons(interm_union);
+    }
     convex_union.insert(
       convex_union.end(), interm_union.begin(), interm_union.end());
   }
 
   //check if the new system is different
   std::cout << "the convex hull is:" << std::endl;
+  convex_union = this->sys.remove_duplicates(convex_union);
   print_cons(convex_union);
 
   auto widen_mode =
     from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
-  std::cerr << "the loop round is: " << loop_round << std::endl;
+  //std::cerr << "the loop round is: " << loop_round << std::endl;
 
   //counting backedges, not loop detection
   if(
     from->current_location()->is_backwards_goto() &&
     from->current_location()->get_target() == to->current_location())
   {
-    loop_round = loop_round + 1;
-    std::cerr << "the loop was updated to: " << loop_round << std::endl;
+    //loop_round = loop_round + 1;
+    //std::cerr << "the loop was updated to: " << loop_round << std::endl;
   }
 
+  //This was using the loop_round >=2
   if(
     widen_mode == widen_modet::could_widen &&
     from->current_location()->is_backwards_goto() &&
-    from->current_location()->get_target() == to->current_location() &&
-    loop_round >= 2)
+    from->current_location()->get_target() == to->current_location())
   {
-    /*
     std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
     auto copy_a = this->sys.constraints;
     auto copy_b = b.sys.constraints;
@@ -1178,10 +1014,10 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
 
     intersection = this->sys.intersect(convex_union);
 
-    std::cout << "the main system for now is: " << std::endl;
-    print_cons(this->sys.constraints);
+    //std::cout << "the main system for now is: " << std::endl;
+    //print_cons(this->sys.constraints);
 
-    std::cerr << "intersection is:" << std::endl;
+    std::cerr << "INTERSECTION:" << std::endl;
     print_cons(intersection);
 
     if(!this->sys.is_equal(intersection))
@@ -1190,7 +1026,6 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
       this->sys.constraints = intersection;
       is_modified = true;
     }
-    */
   }
   else
   {
@@ -1303,7 +1138,6 @@ find_relations(const tvpi_systemt &a, const tvpi_systemt &b)
     {
       auto vars = i->vars();
       std::string label = vars[0] + "-" + vars[1];
-      std::string rev_label = vars[1] + "-" + vars[0];
       auto loc = found.find(label);
       if(loc == found.end())
       {
@@ -1311,7 +1145,7 @@ find_relations(const tvpi_systemt &a, const tvpi_systemt &b)
       }
     }
   }
-  //iterate b
+
   for(auto i : b.constraints)
   {
     if(i->arity() == 1)
@@ -1327,7 +1161,6 @@ find_relations(const tvpi_systemt &a, const tvpi_systemt &b)
     {
       auto vars = i->vars();
       std::string label = vars[0] + "-" + vars[1];
-      std::string rev_label = vars[1] + "-" + vars[0];
       auto loc = found.find(label);
       if(loc == found.end())
       {

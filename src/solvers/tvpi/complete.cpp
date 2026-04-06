@@ -11,6 +11,7 @@
 #include <string>
 
 #include "../../analyses/tvpi/tvpi_domaint.h"
+#include "../../analyses/tvpi/tvpi_logt.h"
 
 std::ofstream complete::detailed_stats;
 int complete::intermediate_result_call;
@@ -511,11 +512,13 @@ complete::result(std::shared_ptr<inequality> i1, std::shared_ptr<inequality> i2)
     intermediate_result_call = 1;
   }
 
-  if(tvpi_systemt::dbg_all || !result.empty())
+  if(main_tvpi_log.result_log == log_level::FULL && !result.empty())
   {
+
     std::cout << "result of: " << i1->to_string() << " " << i2->to_string()
               << " ";
     print_cons(result);
+
   }
 
   return result;

@@ -177,5 +177,10 @@ local_old_files/
 local_dev_notes/
 
 # SV-COMP
+<<<<<<< HEAD
 sv_comp/c
 sv_comp/out
+=======
+sv-comp/c
+sv-comp/out
+>>>>>>> 67d23b60ed (broken merge)

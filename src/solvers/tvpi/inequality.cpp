@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <iostream>
+
+#include "../../analyses/tvpi/tvpi_logt.h"
 void print_vars(const std::vector<std::string> &sts)
 {
   if(sts.empty())
@@ -514,7 +516,13 @@ void print_ineq(std::shared_ptr<inequality> i)
   if(cast_to_unary(i))
   {
     std::shared_ptr<unary_inequality> u = cast_to_unary(i);
-    std::cout << u->a << u->x << "\u2264" << u->c << std::endl;
+    //dim inspection
+    int local_dim = stoi(u->x.substr(1));
+    //Skip the __CPROVER constraints
+    if(main_tvpi_log.system_log == log_level::PARTIAL && local_dim > 4)
+    {
+      std::cout << u->a << u->x << "\u2264" << u->c << std::endl;
+    }
   }
 
   else if(cast_to_dyadic(i))
@@ -522,9 +530,18 @@ void print_ineq(std::shared_ptr<inequality> i)
     std::string sign = "";
     std::shared_ptr<dyadic_inequality> d = cast_to_dyadic(i);
     if(d->b >= 0)
+    {
       sign = "+";
-    std::cout << d->a << d->x << sign << d->b << d->y << "\u2264" << d->c
-              << std::endl;
+    }
+    int local_dim_left = stoi(d->x.substr(1));
+    int local_dim_right = stoi(d->y.substr(1));
+    if(
+      main_tvpi_log.system_log == log_level::PARTIAL && local_dim_left > 4 &&
+      local_dim_right > 4)
+    {
+      std::cout << d->a << d->x << sign << d->b << d->y << "\u2264" << d->c
+                << std::endl;
+    }
   }
 
   else if(cast_to_const(i))
@@ -532,6 +549,123 @@ void print_ineq(std::shared_ptr<inequality> i)
     std::shared_ptr<constant_inequality> c = cast_to_const(i);
     std::cout << (c->sat ? "true" : "false") << std::endl;
   }
+}
+
+
+void print_val(std::shared_ptr<inequality> i)
+{
+  if(cast_to_unary(i))
+  {
+    std::shared_ptr<unary_inequality> u = cast_to_unary(i);
+    //dim inspection
+    int local_dim = stoi(u->x.substr(1));
+    //Skip the __CPROVER constraints
+    if(main_tvpi_log.system_log == log_level::PARTIAL && local_dim > 4)
+    {
+      std::cout<<"x,"<<u->a<<","<<u->c<<std::endl;
+    }
+  }
+
+  else if(cast_to_dyadic(i))
+  {
+    std::string sign = "";
+    std::shared_ptr<dyadic_inequality> d = cast_to_dyadic(i);
+    if(d->b >= 0)
+    {
+      sign = "+";
+    }
+    int local_dim_left = stoi(d->x.substr(1));
+    int local_dim_right = stoi(d->y.substr(1));
+    if(
+      main_tvpi_log.system_log == log_level::PARTIAL && local_dim_left > 4 &&
+      local_dim_right > 4)
+    {
+      std::cout << d->a << d->x << sign << d->b << d->y << "\u2264" << d->c
+                << std::endl;
+
+        std::cout<<"x,y,"<<d->a<<","<<d->b<<","<<d->c<<std::endl;           
+
+    }
+  }
+
+  else if(cast_to_const(i))
+  {
+    std::shared_ptr<constant_inequality> c = cast_to_const(i);
+    std::cout << (c->sat ? "true" : "false") << std::endl;
+  }
+}
+
+inequality::ordering
+cmp_angle(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
+{
+  inequality::ordering res = inequality::EQ;
+  mp_integer a1, b1, a2, b2;
+
+  auto get_ab = [&](std::shared_ptr<inequality> ineq, mp_integer &a, mp_integer &b) {
+    if(cast_to_unary(ineq))
+    {
+      auto u = cast_to_unary(ineq);
+      auto dim_target = dimensions.find(u->x);
+      if(dim_target == dimensions.begin())
+      {
+        a = u->a;
+        b = 0;
+      }
+      else
+      {
+        a = 0;
+        b = u->a;
+      }
+    }
+    else
+    {
+      auto d = cast_to_dyadic(ineq);
+      if(dimensions.find(d->x) == dimensions.begin())
+      {
+        a = d->a;
+        b = d->b;
+      }
+      else
+      {
+        a = d->b;
+        b = d->a;
+      }
+    }
+  };
+
+  get_ab(a, a1, b1);
+  get_ab(b, a2, b2);
+
+  auto calc_dir = [](mp_integer a, mp_integer b) -> inequality::direction {
+    if(a > 0)
+      return (b >= 0) ? inequality::East : inequality::South;
+    else if(a < 0)
+      return (b > 0) ? inequality::North : inequality::West;
+    else
+      return (b > 0) ? inequality::North : inequality::South;
+  };
+
+  inequality::direction dir_a = calc_dir(a1, b1);
+  inequality::direction dir_b = calc_dir(a2, b2);
+
+  if(dir_a == dir_b)
+  {
+    if((a2 * b1) == (a1 * b2))
+      return res;
+    else if((a2 * b1) > (a1 * b2))
+      res = inequality::GT;
+    else
+      res = inequality::LT;
+  }
+  else
+  {
+    if(dir_a > dir_b)
+      res = inequality::GT;
+    else
+      res = inequality::LT;
+  }
+
+  return res;
 }
 
 /// @brief fully prints vector of tvpi inequalities
@@ -593,7 +727,6 @@ inequality::direction inequality::calc_direction()
       }
       dir = (a > 0) ? East : West;
     }
-
     else
     {
       if(tvpi_systemt::dbg_all)
@@ -658,91 +791,6 @@ void print_ordering(inequality::ordering o)
   else if(o == inequality::GT)
     label = "GREATER";
   std::cout << label << std::endl;
-}
-
-inequality::ordering
-cmp_angle(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
-{
-  inequality::ordering res = inequality::EQ;
-  mp_integer a1;
-  mp_integer b1;
-  mp_integer a2;
-  mp_integer b2;
-
-  if(cast_to_unary(a))
-  {
-    std::shared_ptr<unary_inequality> i1;
-    i1 = cast_to_unary(a);
-    auto dim_target = dimensions.find(i1->x);
-    if(dim_target == dimensions.begin())
-    {
-      a1 = i1->a;
-      b1 = 0;
-    }
-    else
-    {
-      a1 = 0;
-      b1 = i1->a;
-    }
-  }
-  else if(cast_to_dyadic(a))
-  {
-    std::shared_ptr<dyadic_inequality> i1;
-    i1 = cast_to_dyadic(a);
-    a1 = i1->a;
-    b1 = i1->b;
-  }
-  if(cast_to_unary(b))
-  {
-    std::shared_ptr<unary_inequality> i2;
-    i2 = cast_to_unary(b);
-    auto dim_target = dimensions.find(i2->x);
-    if(dim_target == dimensions.begin())
-    {
-      a2 = i2->a;
-      b2 = 0;
-    }
-    else
-    {
-      a2 = 0;
-      b2 = i2->a;
-    }
-  }
-  else if(cast_to_dyadic(b))
-  {
-    std::shared_ptr<dyadic_inequality> i2;
-    i2 = cast_to_dyadic(b);
-    a2 = i2->a;
-    b2 = i2->b;
-  }
-
-  inequality::direction dir_a = a->calc_direction();
-  inequality::direction dir_b = b->calc_direction();
-
-  if(dir_a == dir_b)
-  {
-    if((a2 * b1) == (a1 * b2))
-    {
-      return res;
-    }
-    else if((a2 * b1) > (a1 * b2))
-    {
-      res = inequality::GT;
-    }
-    else
-    {
-      res = inequality::LT;
-    }
-  }
-  else
-  {
-    if(dir_a > dir_b)
-      res = inequality::GT;
-    else
-      res = inequality::LT;
-  }
-
-  return res;
 }
 
 mp_integer gcd_vector(std::vector<mp_integer> v)
@@ -1337,6 +1385,8 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
   rationalt fr2,
   std::shared_ptr<inequality> b)
 {
+
+  //std::cout << "delta combination called" << std::endl;
   mp_integer check = (fr1.get_numerator() * fr2.get_numerator()) /
                      (fr1.get_denominator() * fr2.get_denominator());
 
@@ -1482,8 +1532,8 @@ std::vector<std::shared_ptr<inequality>> gen_delta_comb(
   //          << iP->to_string() << std::endl;
   if(mDInner.has_value() && mDOuter.has_value())
   {
-   // std::cout << " mDInner: " << mDInner.value()
-     //         << " mDOuter: " << mDOuter.value() << std::endl;
+    // std::cout << " mDInner: " << mDInner.value()
+    //         << " mDOuter: " << mDOuter.value() << std::endl;
   }
 
   if(cmp_angle(oC, iP) == inequality::EQ)
@@ -1641,7 +1691,6 @@ void advance_outer(
 
         res.push_back(oC);
         os.erase(os.begin());
-
         advance_inner(res, iP, is, oC, os);
       }
       else
@@ -1679,7 +1728,7 @@ void advance_outer(
         //new edge
         if(!new_cons.empty())
         {
-          std::cout << "new edge is:" << std::endl;
+          std::cout << "CH_NEW_OUTER" << std::endl;
           print_ineq(new_cons.back());
         }
 
@@ -1776,8 +1825,8 @@ void advance_inner(
         //new edge
         if(!new_cons.empty())
         {
-          std::cout << "new edge is:" << std::endl;
-          print_ineq(new_cons.back());
+          std::cout << "CH_NEW_INNER:" << std::endl;
+          print_ineq(new_cons.back()); 
         }
 
         advance_outer(res, oP, os, iP, is);

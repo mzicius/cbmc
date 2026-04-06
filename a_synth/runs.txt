@@ -1,0 +1,1 @@
+./goto-analyzer ../../a_synth/current/loop_ex.c  --show --tvpi --verbosity 10 --recursive-interprocedural --loop-unwind 10  --one-domain-per-location > trace_one.txt 2>&1

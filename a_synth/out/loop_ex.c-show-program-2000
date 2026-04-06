@@ -1,0 +1,6499 @@
+GOTO-ANALYZER version 6.7.1 (cbmc-6.7.1-54-g3dc5a905f8-dirty) 64-bit arm64 macos
+Parsing ././current/loop_ex.c
+Converting
+Type-checking loop_ex
+Removing unused symbol __SVFloat64_t
+Removing unused symbol __SVFloat32_t
+Removing unused symbol __Float64x2_t
+Removing unused symbol __Float32x4_t
+Removing unused symbol __tile
+Removing unused symbol tag-__gcc_atomic_memmodels
+Removing unused symbol __ATOMIC_SEQ_CST
+Removing unused symbol __ATOMIC_ACQ_REL
+Removing unused symbol __ATOMIC_RELEASE
+Removing unused symbol __ATOMIC_ACQUIRE
+Removing unused symbol __ATOMIC_CONSUME
+Removing unused symbol __ATOMIC_RELAXED
+Removing unused symbol __gcc_v8udi
+Removing unused symbol __gcc_v4udi
+Removing unused symbol __gcc_v2udi
+Removing unused symbol __gcc_di
+Removing unused symbol __gcc_v16usi
+Removing unused symbol __gcc_v8usi
+Removing unused symbol __gcc_v4usi
+Removing unused symbol __gcc_v32uhi
+Removing unused symbol __gcc_v8di
+Removing unused symbol __gcc_v4di
+Removing unused symbol __gcc_v2di
+Removing unused symbol __gcc_v1di
+Removing unused symbol __gcc_v8df
+Removing unused symbol __gcc_v4df
+Removing unused symbol __gcc_v2df
+Removing unused symbol __gcc_v16sf
+Removing unused symbol __gcc_v4sf
+Removing unused symbol __gcc_v8hf
+Removing unused symbol __gcc_v8hi
+Removing unused symbol __gcc_v4hi
+Removing unused symbol __builtin_ms_va_list
+Removing unused symbol __gcc_v8sf
+Removing unused symbol tag-__CPROVER_pipet
+Removing unused symbol __gcc_v2sf
+Removing unused symbol __PRETTY_FUNCTION__
+Removing unused symbol __gcc_v32hf
+Removing unused symbol __FUNCTION__
+Removing unused symbol __gcc_v16hf
+Removing unused symbol __func__
+Removing unused symbol __gcc_v32hi
+Removing unused symbol __gcc_v256si
+Removing unused symbol __CPROVER_allocate
+Removing unused symbol __gcc_v16si
+Removing unused symbol __gcc_v8si
+Removing unused symbol __gcc_v4si
+Removing unused symbol __gcc_v2si
+Removing unused symbol __gcc_v64qi
+Removing unused symbol __CPROVER_rational
+Removing unused symbol __gcc_v32qi
+Removing unused symbol __builtin_va_list
+Removing unused symbol __CPROVER_integer
+Removing unused symbol __gcc_v16hi
+Removing unused symbol __CPROVER_deallocate
+Removing unused symbol __gcc_v16qi
+Removing unused symbol __uint128_t
+Removing unused symbol __gcc_v8qi
+Removing unused symbol __int128_t
+Removing unused symbol __CPROVER_ssize_t
+Removing unused symbol __gcc_m64
+Removing unused symbol __SVBool_t
+Generating GOTO Program
+Adding CPROVER library (arm64)
+Removal of function pointers and virtual functions
+Partial Inlining
+Generic Property Instrumentation
+Selecting abstract domain
+Computing abstract states
+ai_baset::visit 23 in __CPROVER__start
+TVPI domain @ 0x0x14e623760 transform using instruction 23
+The instruction type is: SKIP
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 23 to 24... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 23 after 23 taken
+the binding: 
+[]
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: -1
+
+to_p = local_control_flow_history : location 24 after 23 taken
+the binding: 
+[]
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: -1
+
+ai_baset::visit 24 in __CPROVER__start
+ai_baset::visit_function_call at 24
+Calling __CPROVER_initialize
+ai_recursive_interproceduralt::visit_edge_function_call from 24 to 25
+TVPI domain @ 0x0x14e6237f0 transform using instruction 24
+The instruction type is: FUNCTION_CALL
+the function id is: __CPROVER_initialize
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 24 to 16... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 24 after 23 taken
+the binding: 
+[]
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: -1
+
+to_p = local_control_flow_history : location 16
+the binding: 
+[]
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: -1
+
+Handle __CPROVER_initialize recursively
+ai_baset::visit 16 in __CPROVER_initialize
+TVPI domain @ 0x0x14e624310 transform using instruction 16
+The instruction type is: SKIP
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 16 to 17... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 16
+the binding: 
+[]
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: -1
+
+to_p = local_control_flow_history : location 17
+the binding: 
+[]
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: -1
+
+ai_baset::visit 17 in __CPROVER_initialize
+TVPI domain @ 0x0x14e6244d0 transform using instruction 17
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: pointer
+ASSIGN case symbol
+TOP LEVEL ASSIGN: __CPROVER_dead_object
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 0
+setting: __CPROVER_dead_object 0
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 17 to 18... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 17
+the binding: 
+[]
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 0
+
+to_p = local_control_flow_history : location 18
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 0
+
+ai_baset::visit 18 in __CPROVER_initialize
+TVPI domain @ 0x0x14e6248f0 transform using instruction 18
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: pointer
+ASSIGN case symbol
+TOP LEVEL ASSIGN: __CPROVER_deallocated
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 1
+setting: __CPROVER_deallocated 1
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 18 to 19... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 18
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 1
+
+to_p = local_control_flow_history : location 19
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 1
+
+ai_baset::visit 19 in __CPROVER_initialize
+TVPI domain @ 0x0x14e630a30 transform using instruction 19
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: unsignedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: __CPROVER_max_malloc_size
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 2
+setting: __CPROVER_max_malloc_size 2
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 19 to 20... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 19
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 2
+
+to_p = local_control_flow_history : location 20
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 2
+
+ai_baset::visit 20 in __CPROVER_initialize
+TVPI domain @ 0x0x14e72e080 transform using instruction 20
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: pointer
+ASSIGN case symbol
+TOP LEVEL ASSIGN: __CPROVER_memory_leak
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 3
+setting: __CPROVER_memory_leak 3
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 20 to 21... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 20
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 3
+
+to_p = local_control_flow_history : location 21
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 3
+
+ai_baset::visit 21 in __CPROVER_initialize
+TVPI domain @ 0x0x14e71f0a0 transform using instruction 21
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: __CPROVER_rounding_mode
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 4
+setting: __CPROVER_rounding_mode 4
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 21 to 22... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 21
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 4
+
+to_p = local_control_flow_history : location 22
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 4
+
+ai_baset::visit 22 in __CPROVER_initialize
+ai_baset::visit_end_function __CPROVER_initialize
+Handle return edges
+TVPI domain @ 0x0x14f8041a0 transform using instruction 22
+The instruction type is: END_FUNCTION
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 22 to 25... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 22
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 4
+
+to_p = local_control_flow_history : location 25 after 23 taken
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 4
+
+ai_baset::visit 25 in __CPROVER__start
+ai_baset::visit_function_call at 25
+Calling main
+ai_recursive_interproceduralt::visit_edge_function_call from 25 to 26
+TVPI domain @ 0x0x14f8042d0 transform using instruction 25
+The instruction type is: FUNCTION_CALL
+the function id is: main
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 25 to 0... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 25 after 23 taken
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 4
+
+to_p = local_control_flow_history : location 0
+the binding: 
+the references: 
+new_values = 
+the TVPI system: 
+
+dimension counter: 4
+
+Handle main recursively
+ai_baset::visit 0 in main
+TVPI domain @ 0x0x14f8049c0 transform using instruction 0
+The instruction type is: DECL
+The DECL ID is: signedbv
+setting: main::1::i 5
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 0 to 1... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 0
+the binding: 
+the references: 
+current = 
+the TVPI system: 
+
+dimension counter: 5
+
+to_p = local_control_flow_history : location 1
+the binding: 
+main::1::i-> 5
+the references: 
+d5 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 5
+
+ai_baset::visit 1 in main
+TVPI domain @ 0x0x14f805cb0 transform using instruction 1
+The instruction type is: DECL
+The DECL ID is: signedbv
+setting: main::1::c 6
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 1 to 2... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 1
+the binding: 
+main::1::i-> 5
+the references: 
+d5 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 6
+
+to_p = local_control_flow_history : location 2
+the binding: 
+main::1::c-> 6
+main::1::i-> 5
+the references: 
+d5 -> 1
+d6 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 6
+
+ai_baset::visit 2 in main
+TVPI domain @ 0x0x14f806680 transform using instruction 2
+The instruction type is: ASSUME
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 7
+greater or equal -> label left: d6 label right: d7
+trying to wipe dim: 7
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 2 to 3... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 2
+the binding: 
+main::1::c-> 6
+main::1::i-> 5
+the references: 
+d5 -> 1
+d6 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 7
+
+to_p = local_control_flow_history : location 3
+the binding: 
+main::1::c-> 6
+main::1::i-> 5
+-1d6≤0
+the references: 
+d5 -> 1
+d6 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 7
+
+ai_baset::visit 3 in main
+TVPI domain @ 0x0x14f806680 transform using instruction 3
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 8
+setting: main::1::i 8
+binding found
+sym: main::1::i at dim: 5 the ref count is: 1
+trying to wipe dim: 5
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 3 to 4... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 3
+the binding: 
+main::1::c-> 6
+main::1::i-> 5
+-1d6≤0
+the references: 
+d5 -> 1
+d6 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 8
+
+to_p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6≤0
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 8
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14f8075e0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 8
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d8 label right: d6
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 4 to 10... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6≤0
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 8
+
+to_p = local_control_flow_history : location 10
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+1d6-1d8≤0
+1d6≤0
+-1d6≤0
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 8
+
+TVPI domain @ 0x0x14f806620 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 13
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 8
+my left label is: 8
+before right 13
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 13
+my right label is: 6
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 4 to 5... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6≤0
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 8
+
+to_p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 8
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14e73e6f0 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 5 to 6... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 8
+
+to_p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 8
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14e71f0a0 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 6 to 7... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 8
+
+to_p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 8
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14e73e6f0 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 9
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 8
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 10
+u_bound_right: 1
+u_bound_left: 0
+l_bound_right: 1
+l_bound_left: 0
+setting: main::1::i 9
+binding found
+sym: main::1::i at dim: 8 the ref count is: 1
+trying to wipe dim: 8
+trying to wipe dim: 10
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 7 to 8... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 8
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14e6315c0 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 8 to 9... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14e631640 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 9 to 4... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14e6315e0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 9
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d9 label right: d6
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 4 to 10... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 10 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+1d6-1d9≤0
+1d6≤1
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+TVPI domain @ 0x0x14fa04160 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 14
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 9
+my left label is: 9
+before right 14
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 14
+my right label is: 6
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 4 to 5... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 5 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14f904330 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 5 to 6... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 6 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14f905120 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 6 to 7... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 10
+
+to_p = local_control_flow_history : location 7 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 10
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14f905160 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 11
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 9
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 12
+u_bound_right: 1
+u_bound_left: 1
+l_bound_right: 1
+l_bound_left: 1
+setting: main::1::i 11
+binding found
+sym: main::1::i at dim: 9 the ref count is: 1
+trying to wipe dim: 9
+trying to wipe dim: 12
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 7 to 8... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 9
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 8 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14e631b50 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 8 to 9... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the references: 
+d6 -> 1
+d11 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 9 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14e631af0 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6≤0
+1d8≤0
+-1d8≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 8
+the right system for CONVEX UNION:
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: left system for CONVEX UNION:
+-1d6≤0
+1d11≤0
+-1d11≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: right system for CONVEX UNION:
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_OUTER
+1d11≤2
+CH_NEW_INNER:
+-1d11≤0
+inter convex hull is: 
+1d11≤2
+-1d11≤0
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d11≤2
+-1d11≤0
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 9 to 4... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 9 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the references: 
+d6 -> 1
+d11 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14e71f0a0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 11
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d11 label right: d6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d6-1d8≤0
+1d6≤0
+-1d6≤0
+1d8≤0
+-1d8≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 8
+the right system for CONVEX UNION:
+-1d11+1d6≤0
+-1d11≤0
+1d11≤2
+1d6≤2
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: left system for CONVEX UNION:
+-1d11+1d6≤0
+1d6≤0
+-1d6≤0
+1d11≤0
+-1d11≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: right system for CONVEX UNION:
+-1d11+1d6≤0
+-1d11≤0
+1d11≤2
+1d6≤2
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d11≤0
+CH_NEW_INNER:
+-1d11≤0
+The redundant inequality is: -1d11≤0
+The redundant inequality is: -1d11≤0
+inter convex hull is: 
+1d11≤2
+CH_NEW_INNER:
+-1d11+1d6≤0
+CH_NEW_INNER:
+-1d11+1d6≤0
+inter convex hull is: 
+-1d11+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤0
+CH_NEW_INNER:
+-1d6≤0
+inter convex hull is: 
+1d6≤2
+-1d6≤0
+the convex hull is:
+1d11≤2
+-1d11+1d6≤0
+1d6≤2
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 4 to 10... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 10
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+-1d11+1d6≤0
+-1d11≤0
+1d11≤2
+1d6≤2
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+TVPI domain @ 0x0x14fa04150 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 13
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 11
+my left label is: 11
+before right 13
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 13
+my right label is: 6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 8
+the right system for CONVEX UNION:
+1d11-1d6≤-1
+1d11≤2
+-1d11≤0
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: left system for CONVEX UNION:
+1d11-1d6≤-1
+-1d6≤-1
+1d11≤0
+-1d11≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: right system for CONVEX UNION:
+1d11-1d6≤-1
+1d11≤2
+-1d11≤0
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d11≤0
+CH_NEW_INNER:
+-1d11≤0
+inter convex hull is: 
+1d11≤2
+-1d11≤0
+CH_NEW_INNER:
+1d11-1d6≤-1
+CH_NEW_INNER:
+1d11-1d6≤-1
+inter convex hull is: 
+1d11-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤-1
+CH_NEW_INNER:
+-1d6≤-1
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 4 to 5... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11-1d6≤-1
+1d11≤2
+-1d11≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14fa04150 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 8
+the right system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: left system for CONVEX UNION:
+1d11-1d6≤-1
+-1d6≤-1
+1d11≤0
+-1d11≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: right system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d11≤0
+CH_NEW_INNER:
+-1d11≤0
+inter convex hull is: 
+1d11≤2
+-1d11≤0
+CH_NEW_INNER:
+1d11-1d6≤-1
+CH_NEW_INNER:
+1d11-1d6≤-1
+inter convex hull is: 
+1d11-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤-1
+CH_NEW_INNER:
+-1d6≤-1
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 5 to 6... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14fd041b0 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d8≤-1
+-1d6≤-1
+1d8≤0
+-1d8≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 8
+the right system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: left system for CONVEX UNION:
+1d11-1d6≤-1
+-1d6≤-1
+1d11≤0
+-1d11≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+after align: right system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d11≤0
+CH_NEW_INNER:
+-1d11≤0
+inter convex hull is: 
+1d11≤2
+-1d11≤0
+CH_NEW_INNER:
+1d11-1d6≤-1
+CH_NEW_INNER:
+1d11-1d6≤-1
+inter convex hull is: 
+1d11-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤-1
+CH_NEW_INNER:
+-1d6≤-1
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 6 to 7... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 12
+
+to_p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 12
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14e70c6d0 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 13
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 11
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 14
+u_bound_right: 1
+u_bound_left: 2
+l_bound_right: 1
+l_bound_left: 0
+setting: main::1::i 13
+binding found
+sym: main::1::i at dim: 11 the ref count is: 0
+trying to wipe dim: 11
+trying to wipe dim: 14
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+1d13-1d6≤0
+1d13≤3
+-1d13≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤0
+-1d6≤-1
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+1d13-1d6≤0
+1d13≤3
+-1d13≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d13≤-1
+CH_NEW_INNER:
+-1d13≤-1
+inter convex hull is: 
+1d13≤3
+-1d13≤-1
+CH_NEW_INNER:
+1d13-1d6≤0
+CH_NEW_INNER:
+1d13-1d6≤0
+inter convex hull is: 
+1d13-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤-1
+CH_NEW_INNER:
+-1d6≤-1
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 7 to 8... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 11
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤0
+1d13≤3
+-1d13≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+d13 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14fb04da0 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤0
+-1d6≤-1
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d13≤-1
+CH_NEW_INNER:
+-1d13≤-1
+inter convex hull is: 
+1d13≤3
+-1d13≤-1
+CH_NEW_INNER:
+1d13-1d6≤0
+CH_NEW_INNER:
+1d13-1d6≤0
+inter convex hull is: 
+1d13-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤-1
+CH_NEW_INNER:
+-1d6≤-1
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 8 to 9... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14e633930 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤0
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤0
+-1d6≤-1
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d13≤-1
+CH_NEW_INNER:
+-1d13≤-1
+inter convex hull is: 
+1d13≤3
+-1d13≤-1
+CH_NEW_INNER:
+1d13-1d6≤0
+CH_NEW_INNER:
+1d13-1d6≤0
+inter convex hull is: 
+1d13-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d6≤-1
+CH_NEW_INNER:
+-1d6≤-1
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+MERGE CASE 4: WIDEN
+INTERSECTION:
+system is updated with inter
+ai_baset::visit_edge from 9 to 4... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14fb04da0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 13
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d13 label right: d6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤0
+1d6-1d9≤0
+1d6≤1
+-1d6≤-1
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+-1d13+1d6≤0
+1d13-1d6≤0
+-1d13≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤0
+-1d13+1d6≤0
+1d6≤1
+-1d6≤-1
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+-1d13+1d6≤0
+1d13-1d6≤0
+-1d13≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d13≤-1
+CH_NEW_INNER:
+1d13-1d6≤0
+CH_NEW_INNER:
+-1d13+1d6≤0
+CH_NEW_INNER:
+-1d13+1d6≤0
+CH_NEW_INNER:
+1d13-1d6≤0
+The redundant inequality is: 1d13-1d6≤0
+The redundant inequality is: 1d13-1d6≤0
+inter convex hull is: 
+-1d13+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+-1d13≤-1
+-1d13+1d6≤0
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 4 to 10... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 10 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+-1d13+1d6≤0
+1d13-1d6≤0
+-1d13≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+TVPI domain @ 0x0x14e7196b0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 12
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 13
+my left label is: 13
+before right 12
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 12
+my right label is: 6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-2
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d13-1d6≤-1
+CH_NEW_INNER:
+1d13-1d6≤-1
+inter convex hull is: 
+1d13-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d13-1d6≤-1
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 4 to 5... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 5 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14e633280 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-2
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d13-1d6≤-1
+CH_NEW_INNER:
+1d13-1d6≤-1
+inter convex hull is: 
+1d13-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d13-1d6≤-1
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 5 to 6... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 6 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14fb05660 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6+1d9≤-1
+-1d6≤-2
+1d9≤1
+-1d9≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 9
+the right system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: left system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-2
+1d13≤1
+-1d13≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+after align: right system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d13-1d6≤-1
+CH_NEW_INNER:
+1d13-1d6≤-1
+inter convex hull is: 
+1d13-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d13-1d6≤-1
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 6 to 7... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 14
+
+to_p = local_control_flow_history : location 7 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 14
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14fb04da0 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 15
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 13
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 16
+u_bound_right: 1
+l_bound_right: 1
+setting: main::1::i 15
+binding found
+sym: main::1::i at dim: 13 the ref count is: 0
+trying to wipe dim: 13
+trying to wipe dim: 16
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15-1d6≤0
+1d15≤2
+-1d15≤-2
+-1d6≤-2
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d15-1d6≤0
+CH_NEW_INNER:
+1d15-1d6≤0
+inter convex hull is: 
+1d15-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d15-1d6≤0
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 7 to 8... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 13
+1d13-1d6≤-1
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 8 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+d15 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14fb04080 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11-1d6≤0
+1d11≤2
+-1d11≤-2
+-1d6≤-2
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15-1d6≤0
+1d15≤2
+-1d15≤-2
+-1d6≤-2
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d15-1d6≤0
+CH_NEW_INNER:
+1d15-1d6≤0
+inter convex hull is: 
+1d15-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤-1
+the convex hull is:
+1d15-1d6≤0
+-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 8 to 9... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d11 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 9 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14fb05660 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15≤2
+-1d15≤0
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 9 to 4... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 9 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d11 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤0
+-1d6≤-1
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14e633930 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 15
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d15 label right: d6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11≤2
+-1d11+1d6≤0
+1d6≤2
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+-1d15+1d6≤0
+-1d15≤0
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15≤2
+-1d15+1d6≤0
+1d6≤2
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+-1d15+1d6≤0
+-1d15≤0
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+-1d15+1d6≤0
+CH_NEW_INNER:
+-1d15+1d6≤0
+inter convex hull is: 
+-1d15+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+-1d15+1d6≤0
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 4 to 10... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 10
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+-1d15+1d6≤0
+-1d15≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+TVPI domain @ 0x0x14e630a30 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 11
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 15
+my left label is: 15
+before right 11
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 11
+my right label is: 6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15≤2
+-1d15≤0
+1d15-1d6≤-1
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d15-1d6≤-1
+CH_NEW_INNER:
+1d15-1d6≤-1
+inter convex hull is: 
+1d15-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d15-1d6≤-1
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 4 to 5... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤-1
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14e7139e0 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15≤2
+-1d15≤0
+1d15-1d6≤-1
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d15-1d6≤-1
+CH_NEW_INNER:
+1d15-1d6≤-1
+inter convex hull is: 
+1d15-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d15-1d6≤-1
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 5 to 6... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤-1
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤-1
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14e71f0a0 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d11≤2
+-1d11≤0
+1d11-1d6≤-1
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 11
+the right system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: left system for CONVEX UNION:
+1d15≤2
+-1d15≤0
+1d15-1d6≤-1
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+after align: right system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d15-1d6≤-1
+CH_NEW_INNER:
+1d15-1d6≤-1
+inter convex hull is: 
+1d15-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d15-1d6≤-1
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 6 to 7... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤-1
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 16
+
+to_p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤-1
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 16
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14fb04ac0 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 17
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 15
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 18
+u_bound_right: 1
+l_bound_right: 1
+setting: main::1::i 17
+binding found
+sym: main::1::i at dim: 15 the ref count is: 0
+trying to wipe dim: 15
+trying to wipe dim: 18
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+1d17≤3
+-1d17≤-1
+1d17-1d6≤0
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d17-1d6≤0
+CH_NEW_INNER:
+1d17-1d6≤0
+inter convex hull is: 
+1d17-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d17-1d6≤0
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 7 to 8... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 15
+1d15-1d6≤-1
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+d17 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14f905440 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d13≤3
+-1d13≤-1
+1d13-1d6≤0
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+1d17≤3
+-1d17≤-1
+1d17-1d6≤0
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+1d17-1d6≤0
+CH_NEW_INNER:
+1d17-1d6≤0
+inter convex hull is: 
+1d17-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d17-1d6≤0
+-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 8 to 9... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14f805d10 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d13-1d6≤0
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d17-1d6≤0
+CH_NEW_INNER:
+1d17-1d6≤0
+inter convex hull is: 
+1d17-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+-1d6≤0
+the convex hull is:
+1d17-1d6≤0
+-1d6≤0
+MERGE CASE 4: WIDEN
+INTERSECTION:
+system is updated with inter
+ai_baset::visit_edge from 9 to 4... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14f8089c0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 17
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d17 label right: d6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d13≤-1
+-1d13+1d6≤0
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+-1d17+1d6≤0
+1d17-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+-1d17≤-1
+-1d17+1d6≤0
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+-1d17+1d6≤0
+1d17-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+-1d17+1d6≤0
+CH_NEW_INNER:
+-1d17+1d6≤0
+inter convex hull is: 
+-1d17+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+-1d17+1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 4 to 10... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 10 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+1d17-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+TVPI domain @ 0x0x14fb04bf0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 11
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 17
+my left label is: 17
+before right 11
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 11
+my right label is: 6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+1d17-1d6≤0
+1d17-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+1d17-1d6≤-1
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+1d17-1d6≤0
+1d17-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d17-1d6≤-1
+The redundant inequality is: 1d17-1d6≤0
+The redundant inequality is: 1d17-1d6≤-1
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+system is updated with convex union
+ai_baset::visit_edge from 4 to 5... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 5 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+1d17-1d6≤0
+1d17-1d6≤-1
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14fb04bf0 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+1d17-1d6≤-1
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+system is updated with convex union
+ai_baset::visit_edge from 5 to 6... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 6 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14fb04bf0 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d13-1d6≤-1
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 13
+the right system for CONVEX UNION:
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: left system for CONVEX UNION:
+1d17-1d6≤-1
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+after align: right system for CONVEX UNION:
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+system is updated with convex union
+ai_baset::visit_edge from 6 to 7... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 18
+
+to_p = local_control_flow_history : location 7 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 18
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14e633190 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 19
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 17
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 20
+u_bound_right: 1
+l_bound_right: 1
+setting: main::1::i 19
+binding found
+sym: main::1::i at dim: 17 the ref count is: 0
+trying to wipe dim: 17
+trying to wipe dim: 20
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+1d19-1d6≤0
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+system is updated with convex union
+ai_baset::visit_edge from 7 to 8... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 8 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d9 -> 1
+d19 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14fb04f10 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d15-1d6≤0
+-1d6≤-1
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+1d19-1d6≤0
+-1d6≤-1
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+system is updated with convex union
+ai_baset::visit_edge from 8 to 9... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d11 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 9 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14fb04b40 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+system is updated with convex union
+ai_baset::visit_edge from 9 to 4... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 9 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d11 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d11 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+ai_baset::visit 4 in main
+TVPI domain @ 0x0x14e633190 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: >=
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 19
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+greater or equal -> label left: d19 label right: d6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d15+1d6≤0
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+-1d19+1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 4 to 10... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 10
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+TVPI domain @ 0x0x14f8089c0 transform using instruction 4
+The instruction type is: GOTO
+inside GOTO
+branch not taken
+TOP LEVEL ASSUME: not
+TOP LEVEL ASSUME: <
+we are in the less than
+before left 10
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 19
+my left label is: 19
+before right 10
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::c at: 6
+final sys 10
+my right label is: 6
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+1d19-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+1d19-1d6≤-1
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+1d19-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d19-1d6≤-1
+CH_NEW_INNER:
+1d19-1d6≤-1
+inter convex hull is: 
+1d19-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+1d19-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 4 to 5... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 4
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+1d19-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+ai_baset::visit 5 in main
+TVPI domain @ 0x0x14f807770 transform using instruction 5
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+1d19-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+1d19-1d6≤-1
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+1d19-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d19-1d6≤-1
+CH_NEW_INNER:
+1d19-1d6≤-1
+inter convex hull is: 
+1d19-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+1d19-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 5 to 6... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 5
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+1d19-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+1d19-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+ai_baset::visit 6 in main
+TVPI domain @ 0x0x14f8089c0 transform using instruction 6
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d15-1d6≤-1
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 15
+the right system for CONVEX UNION:
+1d19-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+1d19-1d6≤-1
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+1d19-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d19-1d6≤-1
+CH_NEW_INNER:
+1d19-1d6≤-1
+inter convex hull is: 
+1d19-1d6≤-1
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+1d19-1d6≤-1
+system is updated with convex union
+ai_baset::visit_edge from 6 to 7... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 6
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+1d19-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 20
+
+to_p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+1d19-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 20
+
+ai_baset::visit 7 in main
+TVPI domain @ 0x0x14f809780 transform using instruction 7
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main::1::i
+TOP LEVEL EVAL: +
+we are in plus
+PLUS OPsignedbv
+the tmp dim ref is: 21
+PLUS OP AFTERsignedbv
+TOP LEVEL EVAL: symbol
+in eval we found: main::1::i at: 19
+TOP LEVEL EVAL: constant
+we met a constant
+the tmp dim ref is: 22
+u_bound_right: 1
+l_bound_right: 1
+setting: main::1::i 21
+binding found
+sym: main::1::i at dim: 19 the ref count is: 0
+trying to wipe dim: 19
+trying to wipe dim: 22
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+1d21-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: left system for CONVEX UNION:
+1d21-1d6≤0
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: right system for CONVEX UNION:
+1d21-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d21-1d6≤0
+CH_NEW_INNER:
+1d21-1d6≤0
+inter convex hull is: 
+1d21-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+1d21-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 7 to 8... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 7
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+1d19-1d6≤-1
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+1d21-1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+d21 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 8 in main
+TVPI domain @ 0x0x14e6344c0 transform using instruction 8
+The instruction type is: ASSERT
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d17-1d6≤0
+-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+1d21-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: left system for CONVEX UNION:
+1d21-1d6≤0
+-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: right system for CONVEX UNION:
+1d21-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d21-1d6≤0
+CH_NEW_INNER:
+1d21-1d6≤0
+inter convex hull is: 
+1d21-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+the convex hull is:
+1d21-1d6≤0
+system is updated with convex union
+ai_baset::visit_edge from 8 to 9... merges with existing history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 8
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+1d21-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+1d21-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 9 in main
+TVPI domain @ 0x0x14f904fd0 transform using instruction 9
+The instruction type is: GOTO
+inside GOTO
+branch taken
+TOP LEVEL ASSUME: constant
+If only I knew how to assume a constant
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d17-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+1d21-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: left system for CONVEX UNION:
+1d21-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: right system for CONVEX UNION:
+1d21-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+1d21-1d6≤0
+CH_NEW_INNER:
+1d21-1d6≤0
+inter convex hull is: 
+1d21-1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+1d21-1d6≤0
+MERGE CASE 4: WIDEN
+INTERSECTION:
+ai_baset::visit_edge from 9 to 4... merges with existing history... applying transformer... merging... domain unchanged.
+p = local_control_flow_history : location 9
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+1d21-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 4 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+1d21-1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 10 in main
+TVPI domain @ 0x0x14f904fd0 transform using instruction 10
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 10 to 11... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 10 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 11 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 10 in main
+TVPI domain @ 0x0x14f906b10 transform using instruction 10
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 10 to 11... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 10
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 11
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 11 in main
+TVPI domain @ 0x0x14f906d40 transform using instruction 11
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 11 to 12... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 11 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 12 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 11 in main
+TVPI domain @ 0x0x14f907640 transform using instruction 11
+The instruction type is: ASSERT
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 11 to 12... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 11
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 12
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 12 in main
+TVPI domain @ 0x0x14f907f20 transform using instruction 12
+The instruction type is: DEAD
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 12 to 13... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 12 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 13 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 12 in main
+TVPI domain @ 0x0x14f905460 transform using instruction 12
+The instruction type is: DEAD
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 12 to 13... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 12
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 13
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 13 in main
+TVPI domain @ 0x0x14f9090c0 transform using instruction 13
+The instruction type is: DEAD
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 13 to 14... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 13 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 14 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 13 in main
+TVPI domain @ 0x0x14f9046e0 transform using instruction 13
+The instruction type is: DEAD
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 13 to 14... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 13
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 14
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 14 in main
+TVPI domain @ 0x0x14f90a260 transform using instruction 14
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main#return_value
+TOP LEVEL EVAL: side_effect
+No evaluation for e:side_effect
+setting: main#return_value -1
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 14 to 15... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 14 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 15 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 14 in main
+TVPI domain @ 0x0x14f90ac70 transform using instruction 14
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: main#return_value
+TOP LEVEL EVAL: side_effect
+No evaluation for e:side_effect
+setting: main#return_value -1
+binding not found
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 14 to 15... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 14
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 15
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 15 in main
+ai_baset::visit_end_function main
+ai_baset::visit 15 in main
+ai_baset::visit_end_function main
+Handle return edges
+TVPI domain @ 0x0x14f90ac70 transform using instruction 15
+The instruction type is: END_FUNCTION
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 15 to 26... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 15 after 9 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 26 after 23 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 17
+-1d17+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d9 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+TVPI domain @ 0x0x14f90acd0 transform using instruction 15
+The instruction type is: END_FUNCTION
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+ai_baset::visit_edge from 15 to 26... merges with existing history... applying transformer... merging... domain unchanged.
+p = local_control_flow_history : location 15
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d8 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 22
+
+to_p = local_control_flow_history : location 26 after 23 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d8 -> 1
+new_values = 
+the TVPI system: 
+
+dimension counter: 22
+
+ai_baset::visit 26 in __CPROVER__start
+TVPI domain @ 0x0x14f90ac70 transform using instruction 26
+The instruction type is: ASSIGN
+ASSIGN ID is: symbol
+ASSIGN type is: signedbv
+ASSIGN case symbol
+TOP LEVEL ASSIGN: return'
+TOP LEVEL EVAL: symbol
+setting: main#return_value 23
+binding found
+sym: main#return_value at dim: -1 the ref count is: 1
+setting: return' 23
+binding not found
+trying to wipe dim: -1
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 26 to 27... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 26 after 23 taken
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+-1d19+1d6≤0
+the references: 
+-d1 -> 1
+d6 -> 1
+d9 -> 1
+current = 
+the TVPI system: 
+
+dimension counter: 23
+
+to_p = local_control_flow_history : location 27 after 23 taken
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+new_values = 
+the TVPI system: 
+
+dimension counter: 23
+
+ai_baset::visit 27 in __CPROVER__start
+TVPI domain @ 0x0x14f90d3a0 transform using instruction 27
+The instruction type is: DEAD
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 27 to 28... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 27 after 23 taken
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+current = 
+the TVPI system: 
+
+dimension counter: 23
+
+to_p = local_control_flow_history : location 28 after 23 taken
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+new_values = 
+the TVPI system: 
+
+dimension counter: 23
+
+ai_baset::visit 28 in __CPROVER__start
+TVPI domain @ 0x0x14f90acd0 transform using instruction 28
+The instruction type is: OTHER
+MERGE CASE 2: A IS BOTTOM
+ai_baset::visit_edge from 28 to 29... gives a new history... applying transformer... merging... result queued.
+p = local_control_flow_history : location 28 after 23 taken
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+current = 
+the TVPI system: 
+
+dimension counter: 23
+
+to_p = local_control_flow_history : location 29 after 23 taken
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+-1d19+1d6≤0
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+new_values = 
+the TVPI system: 
+
+dimension counter: 23
+
+ai_baset::visit 29 in __CPROVER__start
+ai_baset::visit_end_function __CPROVER__start
+Performing task
+////
+//// Function: main
+////
+
+**** 0 file ././current/loop_ex.c line 2 function main
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 0 file ././current/loop_ex.c line 2 function main
+        DECL main::1::i : signedbv[32]
+
+**** 1 file ././current/loop_ex.c line 3 function main
+the binding: 
+main::1::i-> 5
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d5 -> 1
+
+        // 1 file ././current/loop_ex.c line 3 function main
+        DECL main::1::c : signedbv[32]
+
+**** 2 file ././current/loop_ex.c line 4 function main
+the binding: 
+main::1::c-> 6
+main::1::i-> 5
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d5 -> 1
+d6 -> 1
+
+        // 2 file ././current/loop_ex.c line 4 function main
+        ASSUME main::1::c ≥ 0
+
+**** 3 file ././current/loop_ex.c line 5 function main
+the binding: 
+main::1::c-> 6
+main::1::i-> 5
+
+the TVPI system: 
+-1d6≤0
+
+dimension counter: 23
+the references: 
+d5 -> 1
+d6 -> 1
+
+        // 3 file ././current/loop_ex.c line 5 function main
+        ASSIGN main::1::i := 0
+
+**** 4 file ././current/loop_ex.c line 6 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+1d21-1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+the right system for CONVEX UNION:
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+1d19-1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+system is updated with convex union
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 4 file ././current/loop_ex.c line 6 function main
+     1: IF ¬(main::1::i < main::1::c) THEN GOTO 2
+
+**** 5 file ././current/loop_ex.c line 7 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+1d19-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+1d19-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 5 file ././current/loop_ex.c line 7 function main
+        ASSERT main::1::i < main::1::c // i<c
+
+**** 6 file ././current/loop_ex.c line 8 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+1d19-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+1d19-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 6 file ././current/loop_ex.c line 8 function main
+        ASSERT ¬(overflow-+(main::1::i, 1)) // arithmetic overflow on signed + in i + 1
+
+**** 7 file ././current/loop_ex.c line 8 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+1d19-1d6≤-1
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+1d19-1d6≤-1
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 7 file ././current/loop_ex.c line 8 function main
+        ASSIGN main::1::i := main::1::i + 1
+
+**** 8 file ././current/loop_ex.c line 9 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+the right system for CONVEX UNION:
+1d21-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: left system for CONVEX UNION:
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: right system for CONVEX UNION:
+1d21-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d11 -> 1
+
+        // 8 file ././current/loop_ex.c line 9 function main
+        ASSERT main::1::i ≤ main::1::c // i<=c
+
+**** 9 file ././current/loop_ex.c line 6 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+the right system for CONVEX UNION:
+1d21-1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: left system for CONVEX UNION:
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+after align: right system for CONVEX UNION:
+1d21-1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 21
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+inter convex hull is: 
+[]
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+the binding: 
+main::1::c-> 6
+main::1::i-> 21
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d11 -> 1
+
+        // 9 file ././current/loop_ex.c line 6 function main
+        GOTO 1
+
+**** 10 file ././current/loop_ex.c line 11 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 10 file ././current/loop_ex.c line 11 function main
+     2: ASSERT main::1::i ≥ main::1::c // i>=c
+
+**** 11 file ././current/loop_ex.c line 13 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 11 file ././current/loop_ex.c line 13 function main
+        ASSERT main::1::i = main::1::c // i==c
+
+**** 12 file ././current/loop_ex.c line 15 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 12 file ././current/loop_ex.c line 15 function main
+        DEAD main::1::c
+
+**** 13 file ././current/loop_ex.c line 15 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 13 file ././current/loop_ex.c line 15 function main
+        DEAD main::1::i
+
+**** 14 file ././current/loop_ex.c line 15 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+
+        // 14 file ././current/loop_ex.c line 15 function main
+        ASSIGN main#return_value := side_effect statement="nondet" is_nondet_nullable="1"
+
+**** 15 file ././current/loop_ex.c line 15 function main
+MERGE CASE 2: A IS BOTTOM
+MERGE CASE 4: CONVEX UNION
+the left system for CONVEX UNION:
+-1d17+1d6≤0
+the left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 17
+the right system for CONVEX UNION:
+-1d19+1d6≤0
+the right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: left system for CONVEX UNION:
+-1d19+1d6≤0
+after align: left binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+after align: right system for CONVEX UNION:
+-1d19+1d6≤0
+after align: right binding for CONVEX UNION:
+main::1::c-> 6
+main::1::i-> 19
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+-1d19+1d6≤0
+CH_NEW_INNER:
+-1d19+1d6≤0
+inter convex hull is: 
+-1d19+1d6≤0
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+CH_NEW_INNER:
+inter convex hull is: 
+the convex hull is:
+-1d19+1d6≤0
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+-d1 -> 1
+d6 -> 1
+d9 -> 1
+
+        // 15 file ././current/loop_ex.c line 15 function main
+        END_FUNCTION
+
+////
+//// Function: __CPROVER_initialize
+////
+
+**** 16 
+the binding: 
+
+the TVPI system: 
+[]
+
+dimension counter: 23
+the references: 
+
+        // 16 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+
+**** 17 file <built-in-additions> line 8
+the binding: 
+
+the TVPI system: 
+[]
+
+dimension counter: 23
+the references: 
+
+        // 17 file <built-in-additions> line 8
+        ASSIGN __CPROVER_dead_object := NULL
+
+**** 18 file <built-in-additions> line 7
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 18 file <built-in-additions> line 7
+        ASSIGN __CPROVER_deallocated := NULL
+
+**** 19 file <built-in-additions> line 12
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 19 file <built-in-additions> line 12
+        ASSIGN __CPROVER_max_malloc_size := 36028797018963968
+
+**** 20 file <built-in-additions> line 9
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 20 file <built-in-additions> line 9
+        ASSIGN __CPROVER_memory_leak := NULL
+
+**** 21 file <built-in-additions> line 16
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 21 file <built-in-additions> line 16
+        ASSIGN __CPROVER_rounding_mode := 0
+
+**** 22 
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 22 no location
+        END_FUNCTION
+
+////
+//// Function: __CPROVER__start
+////
+
+**** 23 
+the binding: 
+
+the TVPI system: 
+[]
+
+dimension counter: 23
+the references: 
+
+        // 23 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+
+**** 24 file <built-in-additions> line 24
+the binding: 
+
+the TVPI system: 
+[]
+
+dimension counter: 23
+the references: 
+
+        // 24 file <built-in-additions> line 24
+        CALL __CPROVER_initialize()
+
+**** 25 file ././current/loop_ex.c line 1
+the binding: 
+
+the TVPI system: 
+
+dimension counter: 23
+the references: 
+
+        // 25 file ././current/loop_ex.c line 1
+        CALL main()
+
+**** 26 file ././current/loop_ex.c line 1
+the binding: 
+main::1::c-> 6
+main::1::i-> 19
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+-d1 -> 1
+d6 -> 1
+d9 -> 1
+
+        // 26 file ././current/loop_ex.c line 1
+        ASSIGN return' := main#return_value
+
+**** 27 file ././current/loop_ex.c line 1
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+
+        // 27 file ././current/loop_ex.c line 1
+        DEAD main#return_value
+
+**** 28 file ././current/loop_ex.c line 1
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+
+        // 28 file ././current/loop_ex.c line 1
+        OUTPUT address_of("return'"[0])
+
+**** 29 
+the binding: 
+main#return_value-> 23
+main::1::c-> 6
+main::1::i-> 19
+return'-> 23
+
+the TVPI system: 
+-1d19+1d6≤0
+
+dimension counter: 23
+the references: 
+d6 -> 1
+d9 -> 1
+d23 -> 2
+
+        // 29 no location
+        END_FUNCTION
+

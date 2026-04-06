@@ -12,7 +12,7 @@
 class tvpi_systemt
 {
 public:
-  const static bool dbg_all = false;
+  const static bool dbg_all = true;
   tvpi_systemt();
   typedef mp_integer dimensiont;
   std::vector<std::shared_ptr<inequality>> constraints;
@@ -45,6 +45,9 @@ public:
   std::vector<std::shared_ptr<inequality>>
   filter(const std::vector<std::string> &target_vars) const;
 
+  std::vector<std::shared_ptr<inequality>>
+  project_2D(const std::vector<std::string> &target_vars) const;
+
   std::optional<rationalt> get_ub(mp_integer dimensiont);
 
   std::optional<rationalt> get_lb(mp_integer dimensiont);
@@ -56,6 +59,8 @@ public:
 
   std::vector<std::shared_ptr<inequality>> to_canon();
 
+std::vector<std::shared_ptr<inequality>> remove_duplicates(std::vector<std::shared_ptr<inequality>> input);
+
  //is canon method should be precondition
  //run troough projections
  //all 2d projections should be canonical
@@ -66,5 +71,8 @@ public:
 private:
   static dimensiont dim_counter;
 };
+
+extern void sort_by_angle(std::vector<std::shared_ptr<inequality>> &input);
+
 
 #endif

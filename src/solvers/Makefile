@@ -1,7 +1,7 @@
 include ../config.inc
 
-#subdir:
-#	$(MAKE) -C tvpi
+tvpi:
+	$(MAKE) -C tvpi
 
 ifneq ($(CHAFF),)
   CHAFF_SRC=sat/satcheck_zchaff.cpp sat/satcheck_zcore.cpp
@@ -259,7 +259,7 @@ INCLUDES += -I .. \
 CLEANFILES += solvers$(LIBEXT) \
   smt2_solver$(EXEEXT) smt2/smt2_solver$(OBJEXT) smt2/smt2_solver$(DEPEXT)
 
-all: solvers$(LIBEXT) smt2_solver$(EXEEXT)
+all: tvpi solvers$(LIBEXT) smt2_solver$(EXEEXT)
 
 ifneq ($(SQUOLEM2),)
   CP_CXXFLAGS += -DHAVE_QBF_CORE

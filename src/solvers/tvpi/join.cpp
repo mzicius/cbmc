@@ -6,7 +6,7 @@
 
 std::ofstream join::full_hull_trace;
 int join::hull_ID = 0;
-std::set<std::string> dimensions;
+std::set<std::string,std::greater<std::string>> dimensions;
 
 void join::rm_excess(
   std::shared_ptr<inequality> ref,
@@ -215,7 +215,15 @@ void extract_dimensions(const std::vector<std::shared_ptr<inequality>> &sys)
     dims = std::set<std::string>(vars.begin(), vars.end());
 
     dimensions.insert(dims.begin(), dims.end());
+
+    
+
   }
+  /*
+  for(std::string s:dimensions){
+    std::cout<<"dimension is: "<<s<<std::endl;
+  }
+  */
 }
 
 void sweep_dimensions()

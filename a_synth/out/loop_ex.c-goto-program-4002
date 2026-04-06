@@ -1,0 +1,82 @@
+Storage not specified, defaulting to --one-domain-per-history
+GOTO-ANALYZER version 6.7.1 (cbmc-6.7.1-54-g3dc5a905f8-dirty) 64-bit arm64 macos
+Type-checking loop_ex
+Generating GOTO Program
+Adding CPROVER library (arm64)
+Removal of function pointers and virtual functions
+Partial Inlining
+Generic Property Instrumentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER__start /* __CPROVER__start */
+        // 23 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+        // 24 file <built-in-additions> line 24
+        CALL __CPROVER_initialize()
+        // 25 file ././current/loop_ex.c line 1
+        CALL main()
+        // 26 file ././current/loop_ex.c line 1
+        ASSIGN return' := main#return_value
+        // 27 file ././current/loop_ex.c line 1
+        DEAD main#return_value
+        // 28 file ././current/loop_ex.c line 1
+        OUTPUT address_of("return'"[0])
+        // 29 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER_initialize /* __CPROVER_initialize */
+        // 16 no location
+        // Labels: __CPROVER_HIDE
+        SKIP
+        // 17 file <built-in-additions> line 8
+        ASSIGN __CPROVER_dead_object := NULL
+        // 18 file <built-in-additions> line 7
+        ASSIGN __CPROVER_deallocated := NULL
+        // 19 file <built-in-additions> line 12
+        ASSIGN __CPROVER_max_malloc_size := 36028797018963968
+        // 20 file <built-in-additions> line 9
+        ASSIGN __CPROVER_memory_leak := NULL
+        // 21 file <built-in-additions> line 16
+        ASSIGN __CPROVER_rounding_mode := 0
+        // 22 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+main /* main */
+        // 0 file ././current/loop_ex.c line 2 function main
+        DECL main::1::i : signedbv[32]
+        // 1 file ././current/loop_ex.c line 3 function main
+        DECL main::1::c : signedbv[32]
+        // 2 file ././current/loop_ex.c line 4 function main
+        ASSUME main::1::c ≥ 0
+        // 3 file ././current/loop_ex.c line 5 function main
+        ASSIGN main::1::i := 0
+        // 4 file ././current/loop_ex.c line 6 function main
+     1: IF ¬(main::1::i < main::1::c) THEN GOTO 2
+        // 5 file ././current/loop_ex.c line 7 function main
+        ASSERT main::1::i < main::1::c // i<c
+        // 6 file ././current/loop_ex.c line 8 function main
+        ASSERT ¬(overflow-+(main::1::i, 1)) // arithmetic overflow on signed + in i + 1
+        // 7 file ././current/loop_ex.c line 8 function main
+        ASSIGN main::1::i := main::1::i + 1
+        // 8 file ././current/loop_ex.c line 9 function main
+        ASSERT main::1::i ≤ main::1::c // i<=c
+        // 9 file ././current/loop_ex.c line 6 function main
+        GOTO 1
+        // 10 file ././current/loop_ex.c line 11 function main
+     2: ASSERT main::1::i ≥ main::1::c // i>=c
+        // 11 file ././current/loop_ex.c line 13 function main
+        ASSERT main::1::i = main::1::c // i==c
+        // 12 file ././current/loop_ex.c line 15 function main
+        DEAD main::1::c
+        // 13 file ././current/loop_ex.c line 15 function main
+        DEAD main::1::i
+        // 14 file ././current/loop_ex.c line 15 function main
+        ASSIGN main#return_value := side_effect statement="nondet" is_nondet_nullable="1"
+        // 15 file ././current/loop_ex.c line 15 function main
+        END_FUNCTION
+

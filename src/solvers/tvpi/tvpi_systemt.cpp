@@ -1,10 +1,11 @@
-
 #include "tvpi_systemt.h"
 
 #include "inequality_factory.h"
 
 #include <algorithm>
 #include <fstream>
+
+#include "../../analyses/tvpi/tvpi_logt.h"
 
 tvpi_systemt::dimensiont tvpi_systemt::dim_counter = -1;
 
@@ -15,19 +16,26 @@ tvpi_systemt::dimensiont tvpi_systemt::get_current_dim() const
 
 tvpi_systemt::tvpi_systemt()
 {
-  std::cerr << "Initialize TVPI system" << std::endl;
   constraints = {};
 }
 
 void tvpi_systemt::existential_project(mp_integer dimensiont)
 {
   std::string var = "d" + integer2string(dimensiont);
-  std::cerr << "projecting out: " << var << std::endl;
+
+  if(main_tvpi_log.projection_log == log_level::FULL)
+  {
+    std::cerr << "EXIST_PROJECTION: " << var << std::endl;
+  }
+
   std::vector<std::shared_ptr<inequality>> project;
+
   for(std::shared_ptr<inequality> c : constraints)
   {
     std::vector<std::string> contents = c->vars();
     auto loc = find(contents.begin(), contents.end(), var);
+
+    //if the target var is not found, add the constraint to the system
     if(loc == contents.end())
     {
       project.push_back(c);
@@ -55,8 +63,12 @@ void tvpi_systemt::add_inequality(
   mp_integer c)
 {
   auto i = inequality_factory::make_inequality(x, y, a, b, c);
+
+  if(main_tvpi_log.system_log == log_level::FULL)
+  {
+    std::cerr << "NEW_INEQ: " << i->to_string() << std::endl;
+  }
   constraints.push_back(i);
-  std::cerr << "new_ineq: " << i->to_string() << std::endl;
   constraints = complete::closure(constraints);
 }
 
@@ -68,15 +80,18 @@ void tvpi_systemt::add_inequality(
   rationalt c)
 {
   auto i = inequality_factory::make_inequality(x, y, a, b, c);
+  if(main_tvpi_log.system_log == log_level::FULL)
+  {
+    std::cerr << "NEW_INEQ: " << i->to_string() << std::endl;
+  }
   constraints.push_back(i);
-  std::cerr << "new_ineq: " << i->to_string() << std::endl;
   constraints = complete::closure(constraints);
 }
 
 void tvpi_systemt::print_system()
 {
   std::ofstream system_trace;
-  system_trace.open("../../logs/system_trace.txt");
+
   for(const std::shared_ptr<inequality> &i : constraints)
   {
     system_trace << i->to_string() << "\n";
@@ -96,6 +111,28 @@ tvpi_systemt::filter(const std::vector<std::string> &target_vars) const
     }
   }
   return result;
+}
+
+std::vector<std::shared_ptr<inequality>>
+tvpi_systemt::project_2D(const std::vector<std::string> &target_vars) const
+{
+  std::vector<std::shared_ptr<inequality>> projection;
+  for(const std::shared_ptr<inequality> &c : constraints)
+  {
+    auto vars = c->vars();
+    if(vars.size() == 2 && vars == target_vars)
+    {
+      projection.push_back(c);
+    }
+    if(
+      vars.size() == 1 &&
+      std::find(target_vars.begin(), target_vars.end(), vars[0]) !=
+        target_vars.end())
+    {
+      projection.push_back(c);
+    }
+  }
+  return projection;
 }
 
 //x<=3
@@ -230,6 +267,30 @@ bool tvpi_systemt::is_equal(const std::vector<std::shared_ptr<inequality>> &b)
   }
 }
 
+std::vector<std::shared_ptr<inequality>>
+tvpi_systemt::remove_duplicates(std::vector<std::shared_ptr<inequality>> input)
+{
+  std::sort(
+    input.begin(),
+    input.end(),
+    [](
+      const std::shared_ptr<inequality> &a,
+      const std::shared_ptr<inequality> &b)
+    { return a->to_string() < b->to_string(); });
+
+  input.erase(
+    std::unique(
+      input.begin(),
+      input.end(),
+      [](
+        const std::shared_ptr<inequality> &a,
+        const std::shared_ptr<inequality> &b)
+      { return a->to_string() == b->to_string(); }),
+    input.end());
+
+  return input;
+}
+
 std::vector<std::shared_ptr<inequality>> tvpi_systemt::to_canon()
 {
   //Part I
@@ -251,4 +312,15 @@ std::vector<std::shared_ptr<inequality>> tvpi_systemt::to_canon()
   //removed it will change the space represented.
 
   return output;
+}
+
+extern void sort_by_angle(std::vector<std::shared_ptr<inequality>> &input)
+{
+  std::sort(
+    input.begin(),
+    input.end(),
+    [](
+      const std::shared_ptr<inequality> &a,
+      const std::shared_ptr<inequality> &b)
+    { return cmp_angle(a, b) == inequality::LT; });
 }

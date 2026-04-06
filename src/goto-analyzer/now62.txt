@@ -1,2 +1,0 @@
-GOTO-ANALYZER version 6.0.0-preview (cbmc-5.95.1-521-g2da3350caf-dirty) 64-bit arm64 macos
-Failed to open input file '../../benchmarks/EqBench/airy/Eq/newV.c'

@@ -25,6 +25,6 @@ public:
 
 extern void extract_dimensions(const std::vector<std::shared_ptr<inequality>> &sys);
 extern void sweep_dimensions();
-extern std::set<std::string,std::greater<std::string>> dimensions;
+extern std::set<std::string> dimensions;
 
 #endif

@@ -6,7 +6,7 @@
 
 std::ofstream join::full_hull_trace;
 int join::hull_ID = 0;
-std::set<std::string,std::greater<std::string>> dimensions;
+std::set<std::string> dimensions;
 
 void join::rm_excess(
   std::shared_ptr<inequality> ref,

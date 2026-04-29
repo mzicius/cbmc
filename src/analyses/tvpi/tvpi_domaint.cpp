@@ -87,6 +87,7 @@ void tvpi_domaint::output(
   out << "dimension counter: " << this->sys.get_current_dim() << std::endl;
   std::cout << "the references: " << std::endl;
   this->bind.print_references();
+  std::cout<<"the size of system"<<this->sys.constraints.size()<<std::endl;
 }
 
 //Create a dimension in the TVPI-system that over-approximates
@@ -825,6 +826,8 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   // copy of constrains, binding, ref_counter, dim_counter of system b
   if(this->is_bottom())
   {
+    std::cerr<<"THE B system is:"<<std::endl;
+    print_cons(this->sys.constraints);
     INVARIANT(!b.is_bottom(), "CASE HANDLED");
     std::cerr << "MERGE CASE 2: A IS BOTTOM" << std::endl;
     this->sys.constraints = b.sys.constraints;
@@ -902,9 +905,6 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     //print_val(c);
   }
 
-
-
-
   std::set<std::string> existing_relations = find_relations(this->sys, b.sys);
 
   std::vector<std::shared_ptr<inequality>> interm_union;
@@ -950,15 +950,15 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
     extract_dimensions(filter_left);
     extract_dimensions(filter_right);
 
-    std::cout << "left filter" << std::endl;
-    print_cons(filter_left);
+    //std::cout << "left filter" << std::endl;
+    //print_cons(filter_left);
 
     std::cout << "sorted left filter" << std::endl;
     sort_by_angle(filter_left);
     print_cons(filter_left);
 
-    std::cout << "right filter" << std::endl;
-    print_cons(filter_right);
+    //std::cout << "right filter" << std::endl;
+    //print_cons(filter_right);
 
     std::cout << "sorted right filter" << std::endl;
     sort_by_angle(filter_right);
@@ -983,22 +983,15 @@ bool tvpi_domaint::merge(const tvpi_domaint &b, trace_ptrt from, trace_ptrt to)
   auto widen_mode =
     from->should_widen(*to) ? widen_modet::could_widen : widen_modet::no;
 
-  //std::cerr << "the loop round is: " << loop_round << std::endl;
+  //old
+  /*
+  widen_mode == widen_modet::could_widen &&
+     from->current_location()->is_backwards_goto() &&
+    from->current_location()->get_target() == to->current_location()
 
-  //counting backedges, not loop detection
-  if(
-    from->current_location()->is_backwards_goto() &&
-    from->current_location()->get_target() == to->current_location())
-  {
-    //loop_round = loop_round + 1;
-    //std::cerr << "the loop was updated to: " << loop_round << std::endl;
-  }
+  */
 
-  //This was using the loop_round >=2
-  if(
-    widen_mode == widen_modet::could_widen &&
-    from->current_location()->is_backwards_goto() &&
-    from->current_location()->get_target() == to->current_location())
+  if(widen_mode == widen_modet::could_widen)
   {
     std::cerr << "MERGE CASE 4: WIDEN" << std::endl;
     auto copy_a = this->sys.constraints;

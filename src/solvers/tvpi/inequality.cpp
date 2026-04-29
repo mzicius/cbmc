@@ -551,7 +551,6 @@ void print_ineq(std::shared_ptr<inequality> i)
   }
 }
 
-
 void print_val(std::shared_ptr<inequality> i)
 {
   if(cast_to_unary(i))
@@ -562,7 +561,7 @@ void print_val(std::shared_ptr<inequality> i)
     //Skip the __CPROVER constraints
     if(main_tvpi_log.system_log == log_level::PARTIAL && local_dim > 4)
     {
-      std::cout<<"x,"<<u->a<<","<<u->c<<std::endl;
+      std::cout << "x," << u->a << "," << u->c << std::endl;
     }
   }
 
@@ -583,8 +582,7 @@ void print_val(std::shared_ptr<inequality> i)
       std::cout << d->a << d->x << sign << d->b << d->y << "\u2264" << d->c
                 << std::endl;
 
-        std::cout<<"x,y,"<<d->a<<","<<d->b<<","<<d->c<<std::endl;           
-
+      std::cout << "x,y," << d->a << "," << d->b << "," << d->c << std::endl;
     }
   }
 
@@ -601,7 +599,9 @@ cmp_angle(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
   inequality::ordering res = inequality::EQ;
   mp_integer a1, b1, a2, b2;
 
-  auto get_ab = [&](std::shared_ptr<inequality> ineq, mp_integer &a, mp_integer &b) {
+  auto get_ab =
+    [&](std::shared_ptr<inequality> ineq, mp_integer &a, mp_integer &b)
+  {
     if(cast_to_unary(ineq))
     {
       auto u = cast_to_unary(ineq);
@@ -636,7 +636,8 @@ cmp_angle(std::shared_ptr<inequality> a, std::shared_ptr<inequality> b)
   get_ab(a, a1, b1);
   get_ab(b, a2, b2);
 
-  auto calc_dir = [](mp_integer a, mp_integer b) -> inequality::direction {
+  auto calc_dir = [](mp_integer a, mp_integer b) -> inequality::direction
+  {
     if(a > 0)
       return (b >= 0) ? inequality::East : inequality::South;
     else if(a < 0)
@@ -708,6 +709,21 @@ void normalize_coeff(std::vector<std::shared_ptr<inequality>> &xs)
   }
 }
 
+void print_direction(inequality::direction d)
+{
+  std::string label;
+  if(d == inequality::East)
+    label = "East";
+  else if(d == inequality::North)
+    label = "North";
+  else if(d == inequality::West)
+    label = "West";
+  else if(d == inequality::South)
+    label = "South";
+
+  std::cout << label << std::endl;
+}
+
 inequality::direction inequality::calc_direction()
 {
   direction dir;
@@ -723,7 +739,7 @@ inequality::direction inequality::calc_direction()
     {
       if(tvpi_systemt::dbg_all)
       {
-        std::cout << "Case Unary Monolithic" << std::endl;
+        //std::cout << "Case Unary Monolithic" << std::endl;
       }
       dir = (a > 0) ? East : West;
     }
@@ -731,7 +747,7 @@ inequality::direction inequality::calc_direction()
     {
       if(tvpi_systemt::dbg_all)
       {
-        std::cout << "Case Mixed Unary" << std::endl;
+        //std::cout << "Case Mixed Unary" << std::endl;
       }
 
       auto dim_target = dimensions.find(u->x);
@@ -754,31 +770,18 @@ inequality::direction inequality::calc_direction()
   {
     if(tvpi_systemt::dbg_all)
     {
-      std::cout << "Case Dyadic" << std::endl;
+      //std::cout << "Case Dyadic" << std::endl;
     }
+
     std::shared_ptr<dyadic_inequality> d = cast_to_dyadic(i);
     a = d->a;
     b = d->b;
+
     dir = (a > 0)
             ? ((b >= 0) ? East : South)
             : ((a < 0) ? ((b > 0) ? North : West) : ((b > 0) ? North : South));
   }
   return dir;
-}
-
-void print_direction(inequality::direction d)
-{
-  std::string label;
-  if(d == inequality::East)
-    label = "East";
-  else if(d == inequality::North)
-    label = "North";
-  else if(d == inequality::West)
-    label = "West";
-  else if(d == inequality::South)
-    label = "South";
-
-  std::cout << label << std::endl;
 }
 
 void print_ordering(inequality::ordering o)
@@ -1197,6 +1200,8 @@ bool inbetween(
 {
   bool result = false;
 
+
+
   assert(cast_to_unary(a) || cast_to_dyadic(a));
   assert(cast_to_unary(b) || cast_to_dyadic(b));
   assert(cast_to_unary(e) || cast_to_dyadic(e));
@@ -1217,6 +1222,7 @@ bool inbetween(
     else if(!r1 && !r2)
       result = equal_to_pi(a, b) && determinant(a, e) >= 0;
   }
+
 
   return result;
 }
@@ -1241,20 +1247,16 @@ bool greater_equal_zero(std::optional<rationalt> r)
     auto num = r.value().get_numerator();
     auto den = r.value().get_denominator();
 
-    std::cout << "numerator here: " << num << std::endl;
-    std::cout << "denominator here: " << den << std::endl;
+    //std::cout << "numerator here: " << num << std::endl;
+    //std::cout << "denominator here: " << den << std::endl;
 
     auto product = num * den;
-    std::cout << "product :" << product << std::endl;
-
     return product >= 0;
   }
-  else if(!r.has_value())
+  else
   {
     return true;
   }
-  else
-    return false;
 }
 
 void rm_taut(std::vector<std::shared_ptr<inequality>> &cs)
@@ -1385,7 +1387,6 @@ std::optional<std::shared_ptr<inequality>> delta_combination(
   rationalt fr2,
   std::shared_ptr<inequality> b)
 {
-
   //std::cout << "delta combination called" << std::endl;
   mp_integer check = (fr1.get_numerator() * fr2.get_numerator()) /
                      (fr1.get_denominator() * fr2.get_denominator());
@@ -1639,11 +1640,6 @@ void advance_outer(
   std::shared_ptr<inequality> oP,
   std::vector<std::shared_ptr<inequality>> &os)
 {
-  //std::cout<<"res in outer"<<std::endl;
-  //print_cons(res);
-
-  //hull::full_hull_trace<<"res in outer"<<std::endl;
-
   if(!is.empty() && !os.empty())
   {
     join::hull_ID += 1;
@@ -1664,6 +1660,12 @@ void advance_outer(
       "red");
     */
 
+    //delete this too
+    //std::cout << "is: " << std::endl;
+    //print_cons(is);
+    //std::cout << "os: " << std::endl;
+    //print_cons(os);
+
     if(tvpi_systemt::dbg_all)
     {
       std::cout << "outer: " << "iP: " << iP->to_string()
@@ -1674,6 +1676,23 @@ void advance_outer(
     if(inbetween(iP, oC, iC))
     {
       auto mDInner = calc_dist(iP, oC, iC);
+
+      mp_integer num, den;
+      mp_integer result;
+      if(mDInner.has_value())
+      {
+        //std::cerr << "inside advance outer" << std::endl;
+        result =
+          mDInner.value().get_denominator() * mDInner.value().get_numerator();
+        //den = mDInner.value().get_denominator();
+        //num = mDInner.value().get_numerator();
+        //std::cerr << "den: " << den << std::endl;
+        //std::cerr << "num: " << num << std::endl;
+      }
+      else
+      {
+        //std::cout << "mdInner has no value" << std::endl;
+      }
 
       if(less_equal_zero(mDInner))
       {
@@ -1690,8 +1709,12 @@ void advance_outer(
         }
 
         res.push_back(oC);
+        //OLD
         os.erase(os.begin());
         advance_inner(res, iP, is, oC, os);
+        //ALT
+        //auto os_tail = std::vector<std::shared_ptr<inequality>>(os.begin() + 1, os.end());
+        //advance_inner(res, iP, is, oC, os_tail);
       }
       else
       {
@@ -1775,6 +1798,15 @@ void advance_inner(
                           << " iC: " << iC->to_string()
                           << " oC: " << oC->to_string() << std::endl;
 
+    //delete this too
+    //std::cout << "is: " << std::endl;
+    //print_cons(is);
+    //std::cout << "os: " << std::endl;
+    //print_cons(os);
+
+    //std::cout << "inbetween(oP, iC, oC): " << inbetween(oP, iC, oC)
+    //          << std::endl;
+
     if(inbetween(oP, iC, oC))
     {
       auto mDOuter = calc_dist(oP, iC, oC);
@@ -1786,16 +1818,23 @@ void advance_inner(
       }
 
       //if(greater_equal_zero(mDOuter))
-      rationalt num, den;
+      mp_integer num, den;
       mp_integer result;
       if(mDOuter.has_value())
       {
+        //std::cerr << "inside advance inner" << std::endl;
         result =
           mDOuter.value().get_denominator() * mDOuter.value().get_numerator();
         //den = mDOuter.value().get_denominator();
         //num = mDOuter.value().get_numerator();
+        //std::cerr << "den: " << den << std::endl;
+        //std::cerr << "num: " << num << std::endl;
       }
-      if(result > 0 || !mDOuter.has_value())
+      else
+      {
+        //std::cout << "mdouter has no value" << std::endl;
+      }
+      if(greater_equal_zero(mDOuter))
       //if(greater_equal_zero(mDOuter))
       {
         if(tvpi_systemt::dbg_all)
@@ -1805,9 +1844,12 @@ void advance_inner(
           show_details(iP, iC, is, oP, oC, os, "mDOuter: ", mDOuter);
         }
 
+        //OLD
         is.erase(is.begin());
-
         advance_outer(res, iC, is, oP, os);
+        //ALT
+        //auto is_tail = std::vector<std::shared_ptr<inequality>>(is.begin() + 1, is.end());
+        //advance_outer(res, iC, is_tail, oP, os);
       }
 
       else
@@ -1826,7 +1868,7 @@ void advance_inner(
         if(!new_cons.empty())
         {
           std::cout << "CH_NEW_INNER:" << std::endl;
-          print_ineq(new_cons.back()); 
+          print_ineq(new_cons.back());
         }
 
         advance_outer(res, oP, os, iP, is);

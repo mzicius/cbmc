@@ -33,9 +33,9 @@ public:
     GT
   };
 
-  direction calc_direction();
-
   void print_direction(direction d);
+
+  direction calc_direction();
 
   //haskell extension
 

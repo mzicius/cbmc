@@ -12,7 +12,7 @@
 class tvpi_systemt
 {
 public:
-  const static bool dbg_all = true;
+  const static bool dbg_all = false;
   tvpi_systemt();
   typedef mp_integer dimensiont;
   std::vector<std::shared_ptr<inequality>> constraints;
